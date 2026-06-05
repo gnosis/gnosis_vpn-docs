@@ -1,42 +1,65 @@
-import clsx from 'clsx';
+import React from 'react';
 import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
 
-import Heading from '@theme/Heading';
-import styles from './index.module.css';
+/**
+ * Front page: support-center style hero + category cards.
+ * Icons use the Tabler icon webfont (loaded in docusaurus.config.js).
+ */
 
-function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/intro">
-            Docusaurus Tutorial - 5min ⏱️
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
+const CATEGORIES = [
+  {
+    icon: 'ti-book-2',
+    title: 'Introduction',
+    desc: 'What Gnosis VPN is, the Atlantis MVP, architecture and how it works.',
+    to: '/docs/introduction/overview',
+  },
+  {
+    icon: 'ti-download',
+    title: 'Get started',
+    desc: 'System requirements, installation, and funding your account.',
+    to: '/docs/get-started/requirements',
+  },
+  {
+    icon: 'ti-tool',
+    title: 'Troubleshooting',
+    desc: 'Log locations and fixes for common connection issues.',
+    to: '/docs/troubleshooting/logs',
+  },
+  {
+    icon: 'ti-message-report',
+    title: 'Reporting issues',
+    desc: 'Where to report, what logs to include, and how to write a good report.',
+    to: '/docs/reporting/reporting-issues',
+  },
+];
 
 export default function Home() {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
-      <HomepageHeader />
+      title="Documentation"
+      description="Set up and run Gnosis VPN Atlantis."
+    >
       <main>
-        <HomepageFeatures />
+        <div className="gvpnHero">
+          <h1>Gnosis VPN documentation</h1>
+          <p>Everything you need to set up and run Atlantis.</p>
+        </div>
+
+        <div className="gvpnCards">
+          {CATEGORIES.map((c) => (
+            <Link key={c.title} className="gvpnCard" to={c.to}>
+              <span className="gvpnCardIcon">
+                <i className={`ti ${c.icon}`} aria-hidden="true" />
+              </span>
+              <span className="gvpnCardBody">
+                <span className="gvpnCardTitle">{c.title}</span>
+                <span className="gvpnCardDesc">{c.desc}</span>
+              </span>
+              <i className="ti ti-chevron-right gvpnCardArrow" aria-hidden="true" />
+            </Link>
+          ))}
+        </div>
       </main>
     </Layout>
   );

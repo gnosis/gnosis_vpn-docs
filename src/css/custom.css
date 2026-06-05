@@ -1,30 +1,209 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Gnosis VPN docs theme
+ * Dark navy navbar + light body, indigo accent.
  */
 
-/* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  /* Brand accent (indigo) */
+  --ifm-color-primary: #4f3fd8;
+  --ifm-color-primary-dark: #4334c2;
+  --ifm-color-primary-darker: #3f31b7;
+  --ifm-color-primary-darkest: #342897;
+  --ifm-color-primary-light: #6052e0;
+  --ifm-color-primary-lighter: #6c5fe3;
+  --ifm-color-primary-lightest: #8a80e9;
+
+  /* Dark navy navbar */
+  --ifm-navbar-background-color: #0e1430;
+  --ifm-navbar-link-color: #c3c8e6;
+  --ifm-navbar-link-hover-color: #ffffff;
+  --ifm-navbar-height: 56px;
+
+  /* Typography + headings */
+  --ifm-heading-color: #16182e;
+  --ifm-font-family-base: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ifm-code-font-size: 90%;
+  --ifm-code-border-radius: 8px;
+
+  /* Layout */
+  --ifm-spacing-horizontal: 1.5rem;
+  --gvpn-navy: #0e1430;
+  --gvpn-indigo: #5b4fe0;
+  --gvpn-card-border: #e4e5ef;
+  --gvpn-icon-bg: #eeedfe;
+  --gvpn-muted: #6c7088;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+/* ---- Navbar logo + "Docs" label ---------------------------------------- */
+/* The logo SVG already contains the GNOSIS VPN wordmark, so the navbar
+   title is left empty in the config. We append a divider + "Docs" here. */
+.navbar__brand::after {
+  content: "Docs";
+  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 1px solid #3a4063;
+  color: #c3c8e6;
+  font-size: 15px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.navbar__logo {
+  height: 22px;
+}
+.navbar__logo img {
+  height: 100%;
+  width: auto;
+}
+
+/* Right-side navbar links sit on the dark bar */
+.navbar__link {
+  font-size: 14px;
+}
+
+/* ---- Sidebar ----------------------------------------------------------- */
+.menu__link--active:not(.menu__link--sublist) {
+  background: var(--gvpn-icon-bg);
+  border-left: 2px solid var(--gvpn-indigo);
+  border-radius: 0;
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+}
+
+/* ---- Info admonition → indigo callout ---------------------------------- */
+.theme-admonition-info {
+  background: var(--gvpn-icon-bg);
+  border-color: var(--gvpn-indigo);
+}
+
+/* ---- Front-page category cards ----------------------------------------- */
+.gvpnHero {
+  text-align: center;
+  padding: 4rem 1rem 1.75rem;
+}
+.gvpnHero h1 {
+  font-size: 1.7rem;
+  font-weight: 500;
+  margin: 0 0 0.6rem;
+  color: var(--ifm-heading-color);
+}
+.gvpnHero p {
+  font-size: 0.95rem;
+  color: #4a4e68;
+  margin: 0;
+}
+
+.gvpnCards {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 0 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gvpnCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--gvpn-card-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  text-decoration: none;
+  color: inherit;
+  /* same transition the main site uses */
+  transition-duration: 0.25s;
+  transition-property: color, background-color, border-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.gvpnCard:hover {
+  border-color: var(--gvpn-indigo);
+  background-color: #fafafe;
+  text-decoration: none;
+  color: inherit;
+}
+
+.gvpnCardIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 9px;
+  background: var(--gvpn-icon-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gvpn-indigo);
+  font-size: 20px;
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.gvpnCard:hover .gvpnCardIcon {
+  background-color: #e2dffb;
+}
+
+.gvpnCardBody {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+.gvpnCardTitle {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ifm-heading-color);
+  margin-bottom: 2px;
+}
+.gvpnCardDesc {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--gvpn-muted);
+  line-height: 1.5;
+}
+
+.gvpnCardArrow {
+  color: #b5b8cc;
+  font-size: 18px;
+  transition: color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.gvpnCard:hover .gvpnCardArrow {
+  color: var(--gvpn-indigo);
+}
+
+/* ---- Footer (brand navy) ----------------------------------------------- */
+.footer {
+  background-color: #0e0b2e;
+  --ifm-footer-link-color: #c3c8e6;
+  --ifm-footer-title-color: #ffffff;
+  --ifm-footer-color: #c3c8e6;
+}
+.footer__link-item:hover {
+  color: #ffffff;
+}
+.footer__copyright {
+  color: #8a8fb0;
+}
+
+/* ---- Dark mode: keep navbar dark, soften body -------------------------- */
+[data-theme="dark"] {
+  --ifm-heading-color: #f2f3f8;
+}
+[data-theme="dark"] .gvpnCard {
+  border-color: #2a2d44;
+}
+[data-theme="dark"] .gvpnCard:hover {
+  background-color: #1c1f33;
+}
+[data-theme="dark"] .gvpnHero p {
+  color: #b8bcd4;
+}
+
+/* Color-mode toggle on the dark navbar */
+.navbar .clean-btn {
+  color: #c3c8e6;
+}
+/* Hover state — subtle tint instead of bright white circle */
+.navbar .clean-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.navbar__items--right .colorModeToggle:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
