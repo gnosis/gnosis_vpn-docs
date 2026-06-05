@@ -15,7 +15,7 @@ Gnosis VPN is composed of several main components:
 - **The HOPR network** — provides the decentralized routing layer.
 - **Exits** — exit nodes, which run the Gnosis VPN server side and forward VPN traffic to the public internet.
 
-![Gnosis VPN architecture: the Client (App UI/CLI, Root System Service, Worker Process) connects through the HOPR network to the Exit nodes.](/img/gnosis-vpn-architecture.png)
+![Gnosis VPN architecture: the Client (App UI/CLI, Root System Service, Worker Process) connects through the HOPR network to the Exit nodes.](/img/gnosis_vpn_architecture.png)
 
 ## Client
 
