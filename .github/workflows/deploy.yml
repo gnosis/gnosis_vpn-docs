@@ -35,7 +35,5 @@ jobs:
         id: deploy
         with:
           path-to-deploy: build
-          filebase-bucket: 'gnosis-vpn-docs'
-          filebase-access-key: ${{ secrets.FILEBASE_ACCESS_KEY }}
-          filebase-secret-key: ${{ secrets.FILEBASE_SECRET_KEY }}
+          pinata-jwt: ${{ secrets.PINATA_JWT }}
           github-token: ${{ github.token }}
