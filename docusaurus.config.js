@@ -8,7 +8,7 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set these to your real deployment URL when you have one.
-  url: 'https://docs.vpn.gnosis.eth.limo',
+  url: 'https://andste.eth.limo',
   baseUrl: '/',
 
   // IMPORTANT for IPFS gateway routing.

@@ -33,7 +33,7 @@ Prefer to do it by hand? Download the `.deb` package from the downloads page and
 
 ### After installing
 
-Your Gnosis VPN account must be funded before you can connect. See [Funding your account](https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/) for the next step.
+Your Gnosis VPN account must be funded before you can connect. See [Funding your account](funding.md) for the next step.
 
 ## Onboarding tool
 
