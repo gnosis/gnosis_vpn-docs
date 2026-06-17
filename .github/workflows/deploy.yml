@@ -30,11 +30,18 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Install Kubo (IPFS)
+      - name: Install Kubo and start daemon
         run: |
           curl -sL https://dist.ipfs.tech/kubo/v0.32.0/kubo_v0.32.0_linux-amd64.tar.gz | tar xz
           sudo install -m 0755 kubo/ipfs /usr/local/bin/ipfs
           ipfs init --profile server
+          ipfs daemon &
+          # Wait until the daemon has peers (connected to IPFS network)
+          echo "Waiting for IPFS daemon..."
+          for i in $(seq 1 30); do
+            ipfs swarm peers 2>/dev/null | grep -q . && echo "Daemon ready" && break
+            sleep 2
+          done
 
       - name: Deploy to IPFS via Pinata
         id: deploy
@@ -43,15 +50,10 @@ jobs:
         run: |
           npm install pinata --no-save
 
-          # Compute the canonical inner CID locally (no wrapper, index.html at root).
-          # kubo and Pinata both use dag-pb + sha2-256 + balanced 256KB chunker,
-          # so this CID should match the inner directory Pinata creates.
-          LOCAL_CID=$(ipfs add -r --cid-version=1 --quieter build)
-          echo "Local CID: $LOCAL_CID"
-
-          LOCAL_CID="$LOCAL_CID" node <<'EOF'
+          node <<'EOF'
           const fs = require('fs');
           const path = require('path');
+          const { execSync } = require('child_process');
           const { PinataSDK } = require('pinata');
           const pinata = new PinataSDK({ pinataJwt: process.env.PINATA_JWT });
 
@@ -81,8 +83,6 @@ jobs:
             const files = collect('build', 'build');
             console.log(`Uploading ${files.length} files...`);
 
-            // fileArray wraps files under a folder named after .name().
-            // We resolve the inner (unwrapped) CID right after upload.
             const uploadName = `${process.env.GITHUB_REPOSITORY}@${process.env.GITHUB_SHA}`;
             const res = await pinata.upload.public.fileArray(files)
               .name(uploadName)
@@ -94,36 +94,44 @@ jobs:
             const outerCid = res.cid;
             console.log('Outer CID:', outerCid);
 
-            // Resolve the inner directory CID from the outer using Pinata's gateway.
-            // Content is immediately available there after upload.
-            let finalCid = process.env.LOCAL_CID; // fallback: kubo-computed CID
+            // Give Pinata a moment to announce the content on the DHT
+            await new Promise(r => setTimeout(r, 5000));
+
+            // Use the running kubo daemon to fetch the outer directory block
+            // from the IPFS network and extract the inner CID
+            let finalCid;
             try {
-              // The folder entry name: SDK uses only the repo name part before any slash
-              const folderName = uploadName.includes('/') ? uploadName.split('/').slice(1).join('/') : uploadName;
-              const dagRes = await fetch(
-                `https://gateway.pinata.cloud/ipfs/${outerCid}?format=dag-json`,
-                { headers: { Authorization: `Bearer ${process.env.PINATA_JWT}` }, signal: AbortSignal.timeout(15000) }
-              );
-              if (dagRes.ok) {
-                const dag = await dagRes.json();
-                const link = dag.Links?.find(l => l.Name === folderName || l.Name === uploadName);
-                if (link) {
-                  finalCid = link.Hash['/'];
-                  console.log('Resolved inner CID from gateway:', finalCid);
-                } else {
-                  console.log('dag Links:', JSON.stringify(dag.Links?.map(l => l.Name)));
-                }
-              } else {
-                console.warn('Gateway dag-json fetch failed:', dagRes.status, await dagRes.text());
-              }
+              const lsOutput = execSync(`ipfs ls --cid-base=base32 /ipfs/${outerCid}`, { timeout: 30000 }).toString().trim();
+              console.log('ipfs ls output:', lsOutput);
+              // Output format: "<cid> <size> <name>"
+              finalCid = lsOutput.split(/\s+/)[0];
             } catch (e) {
-              console.warn('Gateway resolution failed, using local CID:', e.message);
+              console.warn('ipfs ls failed:', e.message);
             }
 
-            console.log('Final CID:', finalCid);
-            if (finalCid === process.env.LOCAL_CID) {
-              console.log('(using kubo-computed CID as fallback)');
+            if (!finalCid) {
+              // Last resort: use the folderName to guess the inner CID via gateway dag-json
+              try {
+                const folderName = uploadName.includes('/') ? uploadName.split('/').slice(1).join('/') : uploadName;
+                const dagRes = await fetch(
+                  `https://gateway.pinata.cloud/ipfs/${outerCid}?format=dag-json`,
+                  { headers: { Authorization: `Bearer ${process.env.PINATA_JWT}` }, signal: AbortSignal.timeout(15000) }
+                );
+                if (dagRes.ok) {
+                  const dag = await dagRes.json();
+                  const link = dag.Links?.find(l => l.Name === folderName || l.Name === uploadName);
+                  if (link) finalCid = link.Hash['/'];
+                }
+              } catch (e) {
+                console.warn('Gateway dag-json also failed:', e.message);
+              }
             }
+
+            if (!finalCid) {
+              throw new Error(`Could not resolve inner CID from outer CID ${outerCid}. Check IPFS daemon connectivity.`);
+            }
+
+            console.log('Inner CID:', finalCid);
             fs.appendFileSync(process.env.GITHUB_OUTPUT, `cid=${finalCid}\n`);
           })().catch(e => { console.error(e); process.exit(1); });
           EOF
