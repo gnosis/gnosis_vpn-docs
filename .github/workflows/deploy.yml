@@ -35,5 +35,6 @@ jobs:
         id: deploy
         with:
           path-to-deploy: build
-          pinata-jwt: ${{ secrets.PINATA_JWT }}
+          pinata-jwt-token: ${{ secrets.PINATA_JWT }}
+          pinata-pinning-url: 'https://api.pinata.cloud/psa'
           github-token: ${{ github.token }}
