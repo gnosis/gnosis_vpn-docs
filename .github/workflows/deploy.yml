@@ -77,8 +77,23 @@ jobs:
                 commit: process.env.GITHUB_SHA,
                 branch: process.env.GITHUB_REF_NAME
               });
-            console.log('CID:', res.cid);
-            fs.appendFileSync(process.env.GITHUB_OUTPUT, `cid=${res.cid}\n`);
+            // fileArray wraps files under a subdirectory named after .name().
+            // Resolve the inner directory CID so gateway links serve from root.
+            const uploadName = `${process.env.GITHUB_REPOSITORY}@${process.env.GITHUB_SHA}`;
+            let finalCid = res.cid;
+            try {
+              const dagRes = await fetch(`https://dweb.link/api/v0/ls?arg=${res.cid}`, { method: 'POST' });
+              if (dagRes.ok) {
+                const data = await dagRes.json();
+                const link = data.Objects?.[0]?.Links?.find(l => l.Name === uploadName);
+                if (link) finalCid = link.Hash;
+              }
+            } catch (e) {
+              console.warn('Could not resolve inner CID, falling back to outer:', e.message);
+            }
+            console.log('Outer CID:', res.cid);
+            console.log('Content CID:', finalCid);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `cid=${finalCid}\n`);
           })().catch(e => { console.error(e); process.exit(1); });
           EOF
 
