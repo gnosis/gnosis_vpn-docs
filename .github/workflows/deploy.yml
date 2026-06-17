@@ -35,74 +35,29 @@ jobs:
         env:
           PINATA_JWT: ${{ secrets.PINATA_JWT }}
         run: |
-          npm install form-data node-fetch@2 --no-save
+          npm install @pinata/sdk --no-save
           node <<'EOF'
           const fs = require('fs');
-          const path = require('path');
-          const FormData = require('form-data');
-          const fetch = require('node-fetch');
+          const pinataSDK = require('@pinata/sdk');
 
-          const mime = {
-            '.html':'text/html','.css':'text/css','.js':'application/javascript',
-            '.json':'application/json','.png':'image/png','.jpg':'image/jpeg',
-            '.jpeg':'image/jpeg','.gif':'image/gif','.svg':'image/svg+xml',
-            '.txt':'text/plain','.md':'text/markdown','.wasm':'application/wasm',
-            '.woff':'font/woff','.woff2':'font/woff2','.ico':'image/x-icon'
-          };
-
-          function collect(dir, base, out = []) {
-            for (const name of fs.readdirSync(dir)) {
-              const full = path.join(dir, name);
-              if (fs.statSync(full).isDirectory()) {
-                collect(full, base, out);
-              } else {
-                const rel = path.relative(base, full);
-                out.push({ full, rel, type: mime[path.extname(name).toLowerCase()] || 'application/octet-stream' });
-              }
-            }
-            return out;
-          }
+          const pinata = new pinataSDK({ pinataJWTKey: process.env.PINATA_JWT });
 
           (async () => {
-            const sourceDir = 'build';
-            const files = collect(sourceDir, sourceDir);
-            console.log(`Uploading ${files.length} files...`);
-
-            const form = new FormData();
-            for (const { full, rel, type } of files) {
-              form.append('file', fs.createReadStream(full), {
-                filename: `site/${rel}`,
-                contentType: type
-              });
-            }
-            // wrapWithDirectory: false means the returned CID points directly
-            // to the directory containing index.html — no outer wrapper.
-            form.append('pinataOptions', JSON.stringify({ wrapWithDirectory: false }));
-            form.append('pinataMetadata', JSON.stringify({
-              name: `${process.env.GITHUB_REPOSITORY}@${process.env.GITHUB_SHA}`,
-              keyvalues: {
-                repository: process.env.GITHUB_REPOSITORY,
-                commit: process.env.GITHUB_SHA,
-                branch: process.env.GITHUB_REF_NAME
-              }
-            }));
-
-            const res = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${process.env.PINATA_JWT}`,
-                ...form.getHeaders()
+            const result = await pinata.pinFromFS('./build', {
+              pinataMetadata: {
+                name: `${process.env.GITHUB_REPOSITORY}@${process.env.GITHUB_SHA}`,
+                keyvalues: {
+                  repository: process.env.GITHUB_REPOSITORY,
+                  commit: process.env.GITHUB_SHA,
+                  branch: process.env.GITHUB_REF_NAME
+                }
               },
-              body: form
+              pinataOptions: {
+                wrapWithDirectory: false
+              }
             });
 
-            if (!res.ok) {
-              const text = await res.text();
-              throw new Error(`Pinata API error: ${res.status} ${text}`);
-            }
-
-            const data = await res.json();
-            const cid = data.IpfsHash;
+            const cid = result.IpfsHash;
             console.log('CID:', cid);
             fs.appendFileSync(process.env.GITHUB_OUTPUT, `cid=${cid}\n`);
           })().catch(e => { console.error(e); process.exit(1); });
