@@ -18,7 +18,7 @@ If the issue is confirmed or requires developer tracking, it may later be moved 
 
 Official support channels may also be used if provided during onboarding, for example:
 
-- Telegram → `@GnosisVPN_Support`
+- Telegram → [@GnosisVPN_Support](https://t.me/GnosisVPN_Support)
 - Signal → `GnosisVPN_Support.01`
 - Email → `support@gnosisvpn.com`
 

@@ -30,12 +30,106 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Deploy to IPFS
-        uses: ipshipyard/ipfs-deploy-action@v1
+      - name: Deploy to IPFS via Pinata
         id: deploy
-        with:
-          path-to-deploy: build
-          filebase-bucket: 'gnosis-vpn-docs'
-          filebase-access-key: ${{ secrets.FILEBASE_ACCESS_KEY }}
-          filebase-secret-key: ${{ secrets.FILEBASE_SECRET_KEY }}
-          github-token: ${{ github.token }}
+        env:
+          PINATA_JWT: ${{ secrets.PINATA_JWT }}
+        run: |
+          npm install pinata --no-save
+          node <<'EOF'
+          const fs = require('fs');
+          const path = require('path');
+          const { PinataSDK } = require('pinata');
+          const pinata = new PinataSDK({ pinataJwt: process.env.PINATA_JWT });
+
+          const mime = {
+            '.html':'text/html','.css':'text/css','.js':'application/javascript',
+            '.json':'application/json','.png':'image/png','.jpg':'image/jpeg',
+            '.jpeg':'image/jpeg','.gif':'image/gif','.svg':'image/svg+xml',
+            '.txt':'text/plain','.md':'text/markdown','.wasm':'application/wasm',
+            '.woff':'font/woff','.woff2':'font/woff2','.ico':'image/x-icon'
+          };
+
+          function collect(dir, base, out = []) {
+            for (const name of fs.readdirSync(dir)) {
+              const full = path.join(dir, name);
+              if (fs.statSync(full).isDirectory()) {
+                collect(full, base, out);
+              } else {
+                const rel = path.relative(base, full);
+                const buf = fs.readFileSync(full);
+                out.push(new File([buf], rel, { type: mime[path.extname(name).toLowerCase()] || 'application/octet-stream' }));
+              }
+            }
+            return out;
+          }
+
+          (async () => {
+            const files = collect('build', 'build');
+            console.log(`Uploading ${files.length} files...`);
+
+            // Pinata's fileArray wraps all files under a folder. With
+            // GITHUB_REPOSITORY = "org/repo", only "repo@sha" becomes the folder name.
+            const repoName = (process.env.GITHUB_REPOSITORY || '').split('/').pop();
+            const folderName = `${repoName}@${process.env.GITHUB_SHA}`;
+
+            const res = await pinata.upload.public.fileArray(files)
+              .name(`${process.env.GITHUB_REPOSITORY}@${process.env.GITHUB_SHA}`)
+              .keyvalues({
+                repository: process.env.GITHUB_REPOSITORY,
+                commit: process.env.GITHUB_SHA,
+                branch: process.env.GITHUB_REF_NAME
+              });
+            const outerCid = res.cid;
+            console.log('Outer CID:', outerCid);
+            console.log('Folder name:', folderName);
+
+            // Fetch the outer directory listing and parse the inner CID from the HTML.
+            // ipfs.io includes the inner CID in an href like:
+            //   /ipfs/<innerCid>?filename=<folderName>
+            // We fetch just the top-level directory (one block) — fast and reliable.
+            let finalCid;
+
+            const tryParseInnerCid = (html) => {
+              const m = html.match(/\/ipfs\/(bafybei[a-z2-7A-Z0-9]+)\?filename=/);
+              return m ? m[1] : null;
+            };
+
+            // Primary: ipfs.io directory listing (wait briefly for DHT propagation)
+            await new Promise(r => setTimeout(r, 8000));
+            for (const gw of ['https://ipfs.io', 'https://cloudflare-ipfs.com', 'https://dweb.link']) {
+              try {
+                const r = await fetch(`${gw}/ipfs/${outerCid}/`, { signal: AbortSignal.timeout(25000) });
+                const html = await r.text();
+                console.log(`${gw} status:`, r.status, '| body[:200]:', html.slice(0, 200));
+                finalCid = tryParseInnerCid(html);
+                if (finalCid) { console.log(`Resolved via ${gw}:`, finalCid); break; }
+              } catch (e) {
+                console.warn(`${gw} failed:`, e.message);
+              }
+            }
+
+            if (!finalCid) {
+              throw new Error(`Could not resolve inner CID. Outer: ${outerCid}, folder: ${folderName}`);
+            }
+
+            console.log('Inner CID:', finalCid);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `cid=${finalCid}\n`);
+          })().catch(e => { console.error(e); process.exit(1); });
+          EOF
+
+      - name: Show result
+        run: |
+          CID="${{ steps.deploy.outputs.cid }}"
+          echo "Deployed CID: $CID"
+          {
+            echo "## IPFS Deployment"
+            echo ""
+            echo "**CID:** \`$CID\`"
+            echo ""
+            echo "| Gateway | Link |"
+            echo "|---------|------|"
+            echo "| inbrowser.link | https://${CID}.ipfs.inbrowser.link/ |"
+            echo "| ipfs.io | https://ipfs.io/ipfs/${CID}/ |"
+            echo "| Cloudflare | https://cloudflare-ipfs.com/ipfs/${CID}/ |"
+          } >> "$GITHUB_STEP_SUMMARY"

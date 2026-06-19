@@ -168,6 +168,10 @@
   color: var(--gvpn-indigo);
 }
 
+.gvpnAgentLabel {
+  font-weight: 600;
+}
+
 /* ---- Footer (brand navy) ----------------------------------------------- */
 .footer {
   background-color: #0e0b2e;

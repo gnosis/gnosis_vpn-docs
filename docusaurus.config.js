@@ -8,14 +8,18 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set these to your real deployment URL when you have one.
-  url: 'https://docs.gnosisvpn.com',
+  url: 'https://docs.vpn.gnosis.eth.limo',
   baseUrl: '/',
 
   // IMPORTANT for IPFS gateway routing.
   trailingSlash: true,
 
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
   onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
 
   i18n: {
     defaultLocale: 'en',
@@ -26,7 +30,23 @@ const config = {
   stylesheets: [
     'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css',
   ],
-
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'llms',
+        href: '/llms.txt',
+        type: 'text/markdown',
+      },
+    },
+    {
+      tagName: 'meta',
+      attributes: {
+        name: 'google-site-verification',
+        content: 'ZCsofUSc0BNyfcE2zikbCS7MqgyZ88s6062MXHzfrNs',
+      }
+    }
+  ],
   presets: [
     [
       'classic',
@@ -94,8 +114,9 @@ const config = {
           {
             title: 'More',
             items: [
-              {label: 'Onboarding tool', href: 'https://self-onboarding.gnosisvpn.com/'},
-              {label: 'Downloads', href: 'https://downloads.vpn.gnosis.eth.limo/'},
+              {label: 'Onboarding tool', href: 'https://self-onboarding.gnosisvpn.com'},
+              {label: 'Downloads', href: 'https://downloads.vpn.gnosis.eth.limo'},
+              {label: 'Docs for LLMs', href: 'pathname:///llms.txt'}
             ],
           },
         ],
