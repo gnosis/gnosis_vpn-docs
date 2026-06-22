@@ -93,3 +93,35 @@ jobs:
       pinata_action_ref: 907c86d213eac8cceb5e020e101c308acd42557a # mj/unify-workflow — match scripts to pinned workflow until merged
     secrets:
       PINATA_JWT: ${{ secrets.PINATA_JWT }}
+
+  propose-ens:
+    needs: [read-node-version, build, deploy-ipfs]
+    runs-on: ubuntu-latest
+    environment: prod
+    timeout-minutes: 15
+    steps:
+      - name: Validate required variables and secrets
+        env:
+          ENS_NAME: ${{ vars.ENS_NAME }}
+          RESOLVER_ADDRESS: ${{ vars.RESOLVER_ADDRESS }}
+          SAFE_ADDRESS: ${{ vars.SAFE_ADDRESS }}
+          ENS_DELEGATE_PRIVATE_KEY: ${{ secrets.ENS_DELEGATE_PRIVATE_KEY }}
+          SAFE_API_KEY: ${{ secrets.SAFE_API_KEY }}
+        run: |
+          set -euo pipefail
+          MISSING=0
+          for n in ENS_NAME RESOLVER_ADDRESS SAFE_ADDRESS ENS_DELEGATE_PRIVATE_KEY SAFE_API_KEY; do
+            [ -n "${!n:-}" ] || { echo "::error::$n is required but not set"; MISSING=1; }
+          done
+          if [ "$MISSING" -ne 0 ]; then exit 1; fi
+
+      - name: Propose ENS contenthash update
+        uses: hoprnet/hopr-workflows/actions/propose-ens-contenthash@5375cddc22b79c733d9bff049d30e1359a06601f # propose-ens-contenthash
+        with:
+          CID: ${{ needs.deploy-ipfs.outputs.ipfs_hash }}
+          ENS_NAME: ${{ vars.ENS_NAME }}
+          RESOLVER_ADDRESS: ${{ vars.RESOLVER_ADDRESS }}
+          SAFE_ADDRESS: ${{ vars.SAFE_ADDRESS }}
+          ENS_DELEGATE_PRIVATE_KEY: ${{ secrets.ENS_DELEGATE_PRIVATE_KEY }}
+          SAFE_API_KEY: ${{ secrets.SAFE_API_KEY }}
+          TX_ORIGIN: 'gnosis_vpn-docs/deploy' 
