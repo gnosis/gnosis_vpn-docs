@@ -5,13 +5,13 @@ This website is built using [Docusaurus](https://docusaurus.io/), a modern stati
 ## Installation
 
 ```bash
-yarn
+pnpm install
 ```
 
 ## Local Development
 
 ```bash
-yarn start
+pnpm start
 ```
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
@@ -19,23 +19,16 @@ This command starts a local development server and opens up a browser window. Mo
 ## Build
 
 ```bash
-yarn build
+pnpm build
 ```
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
 
 ## Deployment
 
-Using SSH:
+Deployment is automated via the **Deploy to IPFS** GitHub Actions workflow
+([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)). It builds the
+site and publishes the `dist` output to IPFS through Pinata.
 
-```bash
-USE_SSH=true yarn deploy
-```
-
-Not using SSH:
-
-```bash
-GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+The workflow is triggered manually from the **Actions** tab via
+`workflow_dispatch` — it does not deploy automatically on push.

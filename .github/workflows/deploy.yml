@@ -1,135 +1,95 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Deploy to IPFS
 
-permissions:
-  contents: read
-  pull-requests: write
-  statuses: write
-
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_dispatch:
+
+env:
+  PROJECT_NAME: 'gnosis-vpn-docs'
+
+concurrency:
+  group: deploy-prod-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  deploy:
+  read-node-version:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      node_version: ${{ steps.read.outputs.node_version }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 1
+
+      - name: Read Node version from .nvmrc
+        id: read
+        run: |
+          if [ ! -f .nvmrc ]; then
+            echo "❌ .nvmrc not found"
+            exit 1
+          fi
+
+          NODE_VERSION="$(sed 's/^v//' .nvmrc | tr -d '[:space:]')"
+          if [ -z "$NODE_VERSION" ]; then
+            echo "❌ .nvmrc did not contain a Node version"
+            exit 1
+          fi
+
+          echo "node_version=$NODE_VERSION" >> "$GITHUB_OUTPUT"
+
+  build-prod:
+    needs: read-node-version
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+    steps:
+      - name: Validate required variables and secrets
+        env:
+          PINATA_JWT: ${{ secrets.PINATA_JWT  }}
+        run: |
+          set -euo pipefail
+          MISSING=0
+          for n in PINATA_JWT; do
+            [ -n "${!n:-}" ] || { echo "::error::$n is required but not set"; MISSING=1; }
+          done
+          [ "$MISSING" -ne 0 ] && exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 1
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: 'lts/*'
-          cache: 'npm'
+          node-version: ${{ needs.read-node-version.outputs.node_version }}
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
-      - name: Build project
-        run: npm run build
+      - name: Build
+        run: pnpm run build
 
-      - name: Deploy to IPFS via Pinata
-        id: deploy
-        env:
-          PINATA_JWT: ${{ secrets.PINATA_JWT }}
-        run: |
-          npm install pinata --no-save
-          node <<'EOF'
-          const fs = require('fs');
-          const path = require('path');
-          const { PinataSDK } = require('pinata');
-          const pinata = new PinataSDK({ pinataJwt: process.env.PINATA_JWT });
+      - name: Upload build artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: build-${{ github.sha }}
+          path: dist
+          if-no-files-found: error
 
-          const mime = {
-            '.html':'text/html','.css':'text/css','.js':'application/javascript',
-            '.json':'application/json','.png':'image/png','.jpg':'image/jpeg',
-            '.jpeg':'image/jpeg','.gif':'image/gif','.svg':'image/svg+xml',
-            '.txt':'text/plain','.md':'text/markdown','.wasm':'application/wasm',
-            '.woff':'font/woff','.woff2':'font/woff2','.ico':'image/x-icon'
-          };
-
-          function collect(dir, base, out = []) {
-            for (const name of fs.readdirSync(dir)) {
-              const full = path.join(dir, name);
-              if (fs.statSync(full).isDirectory()) {
-                collect(full, base, out);
-              } else {
-                const rel = path.relative(base, full);
-                const buf = fs.readFileSync(full);
-                out.push(new File([buf], rel, { type: mime[path.extname(name).toLowerCase()] || 'application/octet-stream' }));
-              }
-            }
-            return out;
-          }
-
-          (async () => {
-            const files = collect('build', 'build');
-            console.log(`Uploading ${files.length} files...`);
-
-            // Pinata's fileArray wraps all files under a folder. With
-            // GITHUB_REPOSITORY = "org/repo", only "repo@sha" becomes the folder name.
-            const repoName = (process.env.GITHUB_REPOSITORY || '').split('/').pop();
-            const folderName = `${repoName}@${process.env.GITHUB_SHA}`;
-
-            const res = await pinata.upload.public.fileArray(files)
-              .name(`${process.env.GITHUB_REPOSITORY}@${process.env.GITHUB_SHA}`)
-              .keyvalues({
-                repository: process.env.GITHUB_REPOSITORY,
-                commit: process.env.GITHUB_SHA,
-                branch: process.env.GITHUB_REF_NAME
-              });
-            const outerCid = res.cid;
-            console.log('Outer CID:', outerCid);
-            console.log('Folder name:', folderName);
-
-            // Fetch the outer directory listing and parse the inner CID from the HTML.
-            // ipfs.io includes the inner CID in an href like:
-            //   /ipfs/<innerCid>?filename=<folderName>
-            // We fetch just the top-level directory (one block) — fast and reliable.
-            let finalCid;
-
-            const tryParseInnerCid = (html) => {
-              const m = html.match(/\/ipfs\/(bafybei[a-z2-7A-Z0-9]+)\?filename=/);
-              return m ? m[1] : null;
-            };
-
-            // Primary: ipfs.io directory listing (wait briefly for DHT propagation)
-            await new Promise(r => setTimeout(r, 8000));
-            for (const gw of ['https://ipfs.io', 'https://cloudflare-ipfs.com', 'https://dweb.link']) {
-              try {
-                const r = await fetch(`${gw}/ipfs/${outerCid}/`, { signal: AbortSignal.timeout(25000) });
-                const html = await r.text();
-                console.log(`${gw} status:`, r.status, '| body[:200]:', html.slice(0, 200));
-                finalCid = tryParseInnerCid(html);
-                if (finalCid) { console.log(`Resolved via ${gw}:`, finalCid); break; }
-              } catch (e) {
-                console.warn(`${gw} failed:`, e.message);
-              }
-            }
-
-            if (!finalCid) {
-              throw new Error(`Could not resolve inner CID. Outer: ${outerCid}, folder: ${folderName}`);
-            }
-
-            console.log('Inner CID:', finalCid);
-            fs.appendFileSync(process.env.GITHUB_OUTPUT, `cid=${finalCid}\n`);
-          })().catch(e => { console.error(e); process.exit(1); });
-          EOF
-
-      - name: Show result
-        run: |
-          CID="${{ steps.deploy.outputs.cid }}"
-          echo "Deployed CID: $CID"
-          {
-            echo "## IPFS Deployment"
-            echo ""
-            echo "**CID:** \`$CID\`"
-            echo ""
-            echo "| Gateway | Link |"
-            echo "|---------|------|"
-            echo "| inbrowser.link | https://${CID}.ipfs.inbrowser.link/ |"
-            echo "| ipfs.io | https://ipfs.io/ipfs/${CID}/ |"
-            echo "| Cloudflare | https://cloudflare-ipfs.com/ipfs/${CID}/ |"
-          } >> "$GITHUB_STEP_SUMMARY"
+  deploy-prod:
+    needs: [read-node-version, build-prod]
+    uses: gnosis/gh-action-pinata/.github/workflows/pinata-deployment.yml@b0c35b508473efd3b5a826bba4d66de8cb699c29 # mj/unify-workflow
+    with:
+      environment: prod
+      project_name: ${{ env.PROJECT_NAME }}
+      build_dir: dist
+      build_artifact_name: build-${{ github.sha }}
+    secrets:
+      PINATA_JWT: ${{ secrets.PINATA_JWT }}
