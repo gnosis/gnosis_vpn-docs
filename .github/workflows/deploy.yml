@@ -4,9 +4,6 @@ name: Deploy to IPFS
 on:
   workflow_dispatch:
 
-env:
-  PROJECT_NAME: 'gnosis-vpn-docs'
-
 concurrency:
   group: deploy-prod-${{ github.ref }}
   cancel-in-progress: true
@@ -39,10 +36,10 @@ jobs:
 
           echo "node_version=$NODE_VERSION" >> "$GITHUB_OUTPUT"
 
-  build-prod:
+  build:
     needs: read-node-version
     runs-on: ubuntu-latest
-    environment: production
+    environment: prod
     timeout-minutes: 30
     steps:
       - name: Validate required variables and secrets
@@ -54,7 +51,7 @@ jobs:
           for n in PINATA_JWT; do
             [ -n "${!n:-}" ] || { echo "::error::$n is required but not set"; MISSING=1; }
           done
-          [ "$MISSING" -ne 0 ] && exit 1
+          if [ "$MISSING" -ne 0 ]; then exit 1; fi
 
       - name: Checkout code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -63,6 +60,8 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        with:
+          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
@@ -80,16 +79,17 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: build-${{ github.sha }}
-          path: dist
+          path: build
           if-no-files-found: error
 
-  deploy-prod:
-    needs: [read-node-version, build-prod]
-    uses: gnosis/gh-action-pinata/.github/workflows/pinata-deployment.yml@b0c35b508473efd3b5a826bba4d66de8cb699c29 # mj/unify-workflow
+  deploy-ipfs:
+    needs: [read-node-version, build]
+    uses: gnosis/gh-action-pinata/.github/workflows/pinata-deployment.yml@907c86d213eac8cceb5e020e101c308acd42557a # mj/unify-workflow
     with:
       environment: prod
-      project_name: ${{ env.PROJECT_NAME }}
-      build_dir: dist
+      project_name: gnosis-vpn-docs
+      build_dir: build
       build_artifact_name: build-${{ github.sha }}
+      pinata_action_ref: 907c86d213eac8cceb5e020e101c308acd42557a # mj/unify-workflow — match scripts to pinned workflow until merged
     secrets:
       PINATA_JWT: ${{ secrets.PINATA_JWT }}
