@@ -1,6 +1,10 @@
 # Dependencies
 /node_modules
 
+# Lockfiles (project uses pnpm)
+yarn.lock
+package-lock.json
+
 # Production
 /build
 
