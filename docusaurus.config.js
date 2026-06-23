@@ -116,7 +116,7 @@ const config = {
             items: [
               {label: 'Onboarding tool', href: 'https://self-onboarding.gnosisvpn.com'},
               {label: 'Downloads', href: 'https://downloads.vpn.gnosis.eth.limo'},
-              {label: 'Docs for LLMs', href: 'pathname:///llms.txt'}
+              {label: 'Docs for LLMs', href: 'https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt'}
             ],
           },
         ],
