@@ -84,13 +84,12 @@ jobs:
 
   deploy-ipfs:
     needs: [read-node-version, build]
-    uses: gnosis/gh-action-pinata/.github/workflows/pinata-deployment.yml@907c86d213eac8cceb5e020e101c308acd42557a # mj/unify-workflow
+    uses: gnosis/gh-action-pinata/.github/workflows/pinata-deployment.yml@6197bbf8ffd6bee0d4ddb633af27633ca80a6a26 # 0.2.0
     with:
       environment: prod
       project_name: gnosis-vpn-docs
       build_dir: build
       build_artifact_name: build-${{ github.sha }}
-      pinata_action_ref: 907c86d213eac8cceb5e020e101c308acd42557a # mj/unify-workflow — match scripts to pinned workflow until merged
     secrets:
       PINATA_JWT: ${{ secrets.PINATA_JWT }}
 
@@ -116,7 +115,7 @@ jobs:
           if [ "$MISSING" -ne 0 ]; then exit 1; fi
 
       - name: Propose ENS contenthash update
-        uses: hoprnet/hopr-workflows/actions/propose-ens-contenthash@5375cddc22b79c733d9bff049d30e1359a06601f # propose-ens-contenthash
+        uses: hoprnet/hopr-workflows/actions/propose-ens-contenthash@b705e6ea5d876087e98307c76a12b821e38f030e # propose-ens-contenthash
         with:
           CID: ${{ needs.deploy-ipfs.outputs.ipfs_hash }}
           ENS_NAME: ${{ vars.ENS_NAME }}
