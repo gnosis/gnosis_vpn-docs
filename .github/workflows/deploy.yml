@@ -3,6 +3,11 @@ name: Deploy to IPFS
 
 on:
   workflow_dispatch:
+    inputs:
+      propose_ens:
+        description: Propose the ENS contenthash update to the Safe after deploy
+        type: boolean
+        default: true
 
 concurrency:
   group: deploy-prod-${{ github.ref }}
@@ -95,6 +100,7 @@ jobs:
 
   propose-ens:
     needs: [read-node-version, build, deploy-ipfs]
+    if: ${{ inputs.propose_ens }}
     runs-on: ubuntu-latest
     environment: prod
     timeout-minutes: 15
