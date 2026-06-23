@@ -26,3 +26,5 @@ yarn-error.log*
 # Local environment variables and secrets
 .secrets
 .variables
+
+pnpm-workspace.yaml
