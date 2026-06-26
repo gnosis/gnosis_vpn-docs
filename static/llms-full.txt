@@ -7,7 +7,7 @@
 
 This file inlines the complete text of every Gnosis VPN documentation page so an
 agent can ingest the entire doc set in a single fetch. For the structured index
-with per-page links, see [llms.txt](https://docs.vpn.gnosis.eth.limo/llms.txt).
+with per-page links, see [llms.txt](https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt).
 
 ---
 

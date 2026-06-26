@@ -10,7 +10,7 @@ Docs-Updated: 2026-06-18
 Canonical: https://docs.vpn.gnosis.eth.limo/llms.txt
 Gnosis VPN releases: https://github.com/gnosis/gnosis_vpn/releases
 
-For the complete documentation as a single file (every page inlined, no crawling required), see [llms-full.txt](https://docs.vpn.gnosis.eth.limo/llms-full.txt).
+For the complete documentation as a single file (every page inlined, no crawling required), see [llms-full.txt](https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt).
 
 ## Getting Started
 - [Requirements](https://docs.vpn.gnosis.eth.limo/docs/get-started/requirements/): System requirements for Gnosis VPN El Dorado — supported platforms (macOS and Linux (Debian) only; not Windows, iOS, Android, or other Linux distros), minimum hardware (64-bit CPU, 4 GB RAM), and network prerequisites (outbound access and ability to establish VPN tunnels).
