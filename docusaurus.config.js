@@ -83,7 +83,11 @@ const config = {
           href: '/',
         },
         items: [
-          {to: '/', label: 'Categories', position: 'right'},
+          {
+            href: 'https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt',
+            label: 'Docs for LLMs',
+            position: 'right',
+          },
           {
             href: 'https://github.com/gnosis/gnosis_vpn',
             label: 'GitHub',
@@ -115,8 +119,7 @@ const config = {
             title: 'More',
             items: [
               {label: 'Onboarding tool', href: 'https://self-onboarding.gnosisvpn.com'},
-              {label: 'Downloads', href: 'https://downloads.vpn.gnosis.eth.limo'},
-              {label: 'Docs for LLMs', href: 'https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt'}
+              {label: 'Downloads', href: 'https://downloads.vpn.gnosis.eth.limo'}
             ],
           },
         ],
