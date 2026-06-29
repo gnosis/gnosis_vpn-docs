@@ -14,7 +14,7 @@ El Dorado is a working implementation of a decentralized VPN architecture. It ru
 - A functional VPN client
 - HOPR-based routing
 - End-to-end encrypted tunnelling
-- Six exit node locations
+- Multiple exit node locations
 - On-chain metered payments
 - macOS
 - Linux (Debian)

@@ -1,0 +1,435 @@
+# Gnosis VPN Documentation — Full Text
+
+> Set up and run Gnosis VPN "El Dorado" (beta) — a decentralized VPN built on
+> the HOPR mixnet with accounts funded on Gnosis Chain. This release supports
+> macOS and Linux (Debian) only; Windows, iOS, Android, and other Linux
+> distributions are not supported. Design and commands may change during beta.
+
+This file inlines the complete text of every Gnosis VPN documentation page so an
+agent can ingest the entire doc set in a single fetch. For the structured index
+with per-page links, see [llms.txt](https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt).
+
+---
+
+## Getting Started
+
+### System requirements
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/requirements/
+
+Gnosis VPN El Dorado currently supports macOS and Linux (Debian). Windows, iOS, Android, and other Linux distributions are not supported in this release.
+
+#### Minimum requirements
+
+- 64-bit CPU
+- 4 GB RAM
+- Stable internet connection
+- Permission to install and run VPN/networking software
+- Early-access credentials or access to the onboarding flow
+
+#### Network requirements
+
+- Outbound internet access
+- Ability to establish VPN/network tunnel connections
+- No firewall or network policy blocking the Gnosis VPN client
+
+> Info: Connection quality may affect latency, throughput, and session stability.
+
+---
+
+### Installation
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/
+
+There are currently two ways to install and set up Gnosis VPN El Dorado.
+
+#### Manual installation
+
+This route is open to everyone but assumes some technical knowledge. You'll download the client yourself, install it manually, and fund your VPN account with tokens before connecting.
+
+##### macOS
+
+Download the latest macOS installer from the downloads page, then follow the macOS installation guide in the wiki:
+
+- Downloads: https://downloads.vpn.gnosis.eth.limo/
+- Guide: [github.com/gnosis/gnosis_vpn/wiki/macOS](https://github.com/gnosis/gnosis_vpn/wiki/macOS)
+
+##### Debian / Ubuntu Linux
+
+Install via the APT repository (recommended — you then get updates through `apt upgrade`):
+
+```
+curl -fsSL https://download.gnosisvpn.io/linux/install.sh | sudo bash
+```
+
+Prefer to do it by hand? Download the `.deb` package from the downloads page and follow the Debian guide in the wiki:
+
+- Downloads: [https://downloads.vpn.gnosis.eth.limo](https://downloads.vpn.gnosis.eth.limo/)
+- Guide: [https://github.com/gnosis/gnosis_vpn/wiki/Debian](https://github.com/gnosis/gnosis_vpn/wiki/Debian)
+
+##### After installing
+
+Your Gnosis VPN account must be funded before you can connect. See [Funding your account](https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/) for the next step.
+
+#### Onboarding tool
+
+Participants in our tester program can use the Gnosis VPN self-onboarding tool:
+
+[https://self-onboarding.gnosisvpn.com](https://self-onboarding.gnosisvpn.com)
+
+The onboarding tool guides you through the setup process and helps you prepare everything needed to install and use Gnosis VPN.
+
+You can use this option if you have been given a login and password for the Gnosis VPN onboarding tool. Access via the onboarding tool is currently gated. If you have not been given onboarding credentials but still want to use Gnosis VPN, you can use the manual installation option above.
+
+To join the tester pool, please visit [https://vpn.gnosis.eth.limo](https://vpn.gnosis.eth.limo) and complete the form.
+
+---
+
+### Funding your account
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/
+
+After installation, your Gnosis VPN account must be funded before you can connect. To use Gnosis VPN, you need both **wxHOPR** and **xDAI**.
+
+For the full funding requirements and step-by-step funding instructions, see the funding guide:
+
+[Account funding — funding requirements](https://github.com/gnosis/gnosis_vpn/wiki/Account-Funding#funding-requirements)
+
+#### Funding via the faucet
+
+If you have been given a secret code, you can also fund your Gnosis VPN account via the faucet:
+
+[https://faucet.vpn.gnosis.eth.limo](https://faucet.vpn.gnosis.eth.limo)
+
+---
+
+## Concepts
+
+### What is Gnosis VPN?
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/introduction/overview/
+
+Gnosis VPN is a privacy-focused VPN built on the HOPR mixnet. It lets you route internet traffic through HOPR-based infrastructure instead of sending it through a single centralized VPN provider. The aim is to provide a familiar VPN experience while reducing the amount of metadata exposed to any single party.
+
+#### How it differs from a traditional VPN
+
+Traditional VPNs usually create an encrypted tunnel between you and one VPN provider. This can hide your IP address from websites, but it also means the VPN provider may be able to observe connection metadata.
+
+Gnosis VPN takes a different approach by using HOPR as the routing layer underneath the VPN client. This reduces reliance on a single trusted operator and is designed to limit what can be observed about your activity, including where traffic comes from, where it exits, and when communication happens.
+
+---
+
+### The El Dorado Beta
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/introduction/el-dorado-beta/
+
+The current Beta release of Gnosis VPN is called **El Dorado**. It replaces the previous MVP, Atlantis.
+
+El Dorado is a working implementation of a decentralized VPN architecture. It runs on early infrastructure and is intended for real usage by a limited group of testers and contributors. It is for users who understand that the product is still in development and are willing to test the client, routing behavior, reliability, and performance under real conditions.
+
+#### What El Dorado supports
+
+- A functional VPN client
+- HOPR-based routing
+- End-to-end encrypted tunnelling
+- Multiple exit node locations
+- On-chain metered payments
+- macOS
+- Linux (Debian)
+
+#### What El Dorado does not support yet
+
+> Info: El Dorado does not yet support Windows, any Linux distribution other than Debian, or mobile. It is not a finished product, not fully optimized, and not intended to provide the same stability or polish as a consumer-ready VPN service.
+
+---
+
+### Architecture overview
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/introduction/architecture/
+
+Gnosis VPN is a decentralized VPN built on top of the HOPR mixnet, designed to provide privacy-preserving internet access without relying on centralized infrastructure.
+
+Unlike a traditional VPN, where traffic usually goes through servers controlled by one company, Gnosis VPN uses a decentralized network of independent nodes. This helps reduce reliance on a single provider and improves privacy.
+
+Gnosis VPN is composed of several main components:
+
+- **Client** — the user-facing application or CLI and local components such as Root and Worker.
+- **The HOPR network** — provides the decentralized routing layer.
+- **Exits** — exit nodes, which run the Gnosis VPN server side and forward VPN traffic to the public internet.
+
+![Gnosis VPN architecture: the Client (App UI/CLI, Root System Service, Worker Process) connects through the HOPR network to the Exit nodes.](https://docs.vpn.gnosis.eth.limo/img/gnosis_vpn_architecture.png)
+
+#### Client
+
+The client runs on your device and is responsible for managing the VPN connection. It includes the user-facing application or CLI, as well as local components that prepare and maintain the connection. The client offers three binaries:
+
+- `gnosis_vpn-root`
+- `gnosis_vpn-worker`
+- `gnosis_vpn-ctl` (CLI)
+
+The client system service (`gnosis_vpn-root`) runs with root privileges and takes care of routing setup. It spawns the worker process (`gnosis_vpn-worker`), which is responsible for the application logic. The control application (`gnosis_vpn-ctl`) is used to manage the client and its connections.
+
+#### The HOPR network
+
+Gnosis VPN routes traffic through the HOPR mixnet — a decentralized network designed to protect both data and metadata. Instead of a single tunnel, traffic is relayed across multiple independent nodes, making it difficult to trace user activity or correlate network patterns. Gnosis VPN is implemented as a service layer on top of this network, rather than replacing it.
+
+#### Exits
+
+Exit nodes are the server-side endpoints of a Gnosis VPN connection. They receive the VPN connection from the client side and forward your traffic to the public internet. In the Gnosis VPN architecture, an exit node runs the Gnosis VPN server component together with a WireGuard server.
+
+During connection setup, the client-side Worker communicates with the selected exit node, registers the client's WireGuard public key, and opens the required network sessions. After that, the local VPN interface can be brought up on your device.
+
+An exit node is responsible for:
+
+- Accepting the client connection
+- Registering the client's WireGuard public key
+- Managing the WireGuard server-side configuration
+- Forwarding VPN traffic to the public internet
+- Returning responses back to the client through the VPN path
+
+The visible IP address and location are determined by the exit node's network connection. For example, if the selected exit node is hosted in a specific region, websites will usually see traffic as coming from that region.
+
+> Info: Exit nodes should not be described as ordinary HOPR relay nodes. In this context, they are Gnosis VPN server-side nodes that use the HOPR-based connection flow and provide the final path from the VPN tunnel to the public internet.
+
+Their availability and performance may depend on several factors, including server uptime, public reachability, network configuration, WireGuard configuration, and the selected route through the network.
+
+---
+
+### How does Gnosis VPN work?
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/introduction/how-it-works/
+
+Gnosis VPN operates by replacing the traditional, centralized VPN model with a decentralized, multi-hop routing system. Instead of trusting a single company's server with your traffic, Gnosis VPN separates the connection process across three distinct layers: your local client, the decentralized HOPR network, and an independent exit node.
+
+#### Establishing a connection
+
+1. **Connection initiation and local setup.** When you start a connection via the app or CLI (`gnosis_vpn-ctl`), your device's root system service (`gnosis_vpn-root`) takes charge. To keep your system secure, it spawns an unprivileged worker process (`gnosis_vpn-worker`) that handles the actual application logic and network communication.
+
+2. **Secure handshake via the mixnet.** Instead of connecting directly to a VPN server, the worker process routes its initial communication through the HOPR mixnet. It uses this decentralized network of independent nodes to securely reach your selected exit node. Over this secure HOPR path, the worker registers your client's WireGuard public key and opens the necessary TCP and UDP sessions.
+
+3. **Establishing the WireGuard tunnel.** Once the exit node accepts the connection and registers your key, the worker signals the root service to bring up the local VPN interface. Simultaneously, the exit node configures its side of the connection. This establishes a secure WireGuard tunnel between your device and the exit node, with the HOPR network acting as the transport layer in between.
+
+#### The traffic flow
+
+Once the connection is fully established, your internet traffic follows a unique, privacy-preserving path:
+
+- **From your device:** data enters the local WireGuard tunnel.
+- **Through the HOPR network:** the data is relayed across multiple independent nodes in the HOPR mixnet. This multi-hop process protects your metadata, making it difficult for anyone to trace your activity or correlate network patterns.
+- **To the exit node:** the traffic arrives at the exit node (the Gnosis VPN server), which acts as the bridge between the HOPR network and the regular web.
+- **To the public internet:** the exit node forwards your traffic to its final destination. Websites will see the IP address and geographical location of the exit node, not your actual device.
+
+When websites respond, the data travels back through the exit node, back across the HOPR mixnet, and finally to your device. By never relying on a single trusted intermediary, this architecture keeps your browsing activity private.
+
+---
+
+## Troubleshooting
+
+### Log location
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/logs/
+
+#### Gnosis VPN app
+
+If you are using the Gnosis VPN desktop app, logs can be exported directly from the application:
+
+1. Open the Gnosis VPN app.
+2. Click the **Settings** button with the gear icon.
+3. Open the **Logs** tab.
+4. Click **Export service logs**.
+5. Attach the exported log file when reporting the issue.
+
+#### Terminal
+
+##### macOS
+
+If you are using Gnosis VPN on macOS without exporting logs from the desktop app, log files can be found in:
+
+```
+/Library/Logs/GnosisVPN/gnosisvpn.log
+```
+
+##### Linux
+
+If you are running Gnosis VPN on Linux without the desktop app, service logs are stored on the system at:
+
+```
+/var/log/gnosisvpn/gnosisvpn.log
+```
+
+---
+
+### Common issues
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/common-issues/
+
+#### Connected but no internet (or unstable)
+
+The VPN reports a connected state, but internet access is missing or drops in and out.
+
+##### Symptoms
+
+- The client status shows "Connected", but web browsers display timeout errors.
+- Internet routing functions intermittently or drops completely every few minutes.
+- IP verification websites (e.g. `ifconfig.me`, `icanhazip.com`) fail to load.
+
+##### Resolution steps
+
+**macOS and Linux with GUI**
+
+1. **Switch exit nodes:** click the location dropdown and select an alternative node with the lowest available latency (ms).
+2. **Verify wallet balance:** click the wallet icon in the top-right corner. Ensure your account balance is sufficient; top up if it is depleted.
+3. **Hard restart:** completely terminate the application. Right-click the Gnosis VPN tray icon, select **Quit**, and relaunch the application.
+
+**Linux without GUI**
+
+1. Check your node and wallet status — verify your Safe and channel balances with your active exit node:
+   ```
+   gnosis_vpn-ctl balance
+   ```
+2. If your balance is sufficient, restart the background service to flush stuck routing tables:
+   ```
+   # Linux
+   sudo systemctl restart gnosisvpn.service
+
+   # macOS
+   sudo launchctl kickstart -k system/com.gnosisvpn.gnosisvpnclient
+   ```
+
+If this behavior persists, attach your client logs to your support ticket. See [Finding your logs](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/logs/).
+
+#### Connection handshake takes over 60 seconds
+
+The client hangs indefinitely in a "Connecting" state when attempting to establish a tunnel with an exit node.
+
+##### Symptoms
+
+- The interface or terminal status stays frozen in the connecting phase for over 1–2 minutes.
+- Specific geographic locations fail to hand over traffic, while others connect instantly.
+- Connection eventually succeeds, but only after an unacceptable delay.
+
+##### Resolution steps
+
+**macOS and Linux with GUI**
+
+1. Click the wallet icon to verify your account balance.
+2. Pick an alternate exit node with lower latency.
+3. Restart the app via the tray icon menu if it remains frozen.
+
+**Linux without GUI**
+
+1. Inspect the handshake state:
+   ```
+   gnosis_vpn-ctl status
+   ```
+2. Force a reconnection to a different node endpoint:
+   ```
+   gnosis_vpn-ctl connect --node <alternative_node_id>
+   ```
+
+If this behavior persists, attach your client logs to your support ticket. See [Finding your logs](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/logs/).
+
+---
+
+## Reporting
+
+### Reporting issues
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/reporting/reporting-issues/
+
+Bug reports should include enough information to understand what happened, when it happened, and how to reproduce it. Before opening a new report, check whether the issue has already been reported.
+
+#### Where to report
+
+Use GitHub Discussions first for user reports, questions, and reproducible issues.
+
+- [Gnosis VPN GitHub Discussions](https://github.com/gnosis/gnosis_vpn/discussions)
+- [Category: Issues & Bug Reports](https://github.com/gnosis/gnosis_vpn/discussions/categories/issues-bug-reports)
+
+If the issue is confirmed or requires developer tracking, it may later be moved or linked to a GitHub Issue.
+
+Official support channels may also be used if provided during onboarding, for example:
+
+- Telegram → [@GnosisVPN_Support](https://t.me/GnosisVPN_Support)
+- Signal → `GnosisVPN_Support.01`
+- Email → `support@gnosisvpn.com`
+
+Use the support channel that was provided to you during testing or onboarding.
+
+#### What logs to include
+
+Include logs from the affected environment.
+
+**Export logs from the Gnosis VPN app:**
+
+1. Open the Gnosis VPN app.
+2. Click the **Settings** button with the gear icon.
+3. Open the **Logs** tab.
+4. Click **Export service logs**.
+5. Attach the exported log file when reporting the issue.
+
+**Or find the log file based on your environment:**
+
+- macOS: `/Library/Logs/GnosisVPN/gnosisvpn.log`
+- Linux without GUI: `/var/log/gnosisvpn/gnosisvpn.log`
+
+#### How to describe reproduction steps
+
+When reporting an issue, describe the steps as clearly and simply as possible. The report should explain what action was performed, what was expected to happen, what actually happened, and whether the issue is reproducible.
+
+##### Title
+
+Use a short, clear title that starts with `[Bug]:`. Examples:
+
+- `[Bug]: Connected, but websites do not load`
+- `[Bug]: Connection takes more than 2 minutes`
+- `[Bug]: App reconnects repeatedly after connecting`
+- `[Bug]: Selected location is not available`
+
+##### Issue description
+
+Describe the problem in a clear and simple way. Include:
+
+- What you were trying to do
+- What happened instead
+- Whether the issue happened once or repeatedly
+- Any visible error messages or unusual app behavior
+- Screenshots or screen recordings, if useful
+
+> Example: I connected to the Netherlands – Amsterdam exit location. The app showed "Connected", but websites did not load. The issue happened several times after reconnecting.
+
+##### Steps to reproduce
+
+List the exact steps needed to reproduce the issue.
+
+**Example (GUI):**
+
+1. Open the Gnosis VPN app.
+2. Select Netherlands – Amsterdam as the exit location.
+3. Click Connect.
+4. Wait until the app shows Connected.
+5. Open a website in the browser.
+
+**Example (CLI / without GUI):**
+
+1. Start the Gnosis VPN service.
+2. Connect to an exit location using the CLI.
+3. Run `gnosis_vpn-ctl status`.
+4. Check internet access in the browser or another application.
+
+##### Environment / versions
+
+Include information about your system and Gnosis VPN version:
+
+- Operating system
+- Gnosis VPN package version
+- Installation type: desktop app / CLI / headless
+- Exit node
+- Approximate time of the issue
+
+> Example: OS: Ubuntu 24.04 · Package version: x.xx.x · Installation type: desktop app · Exit location: Netherlands – Amsterdam · Time: 2026-05-21 12:40
+
+##### Acknowledgement
+
+Before submitting the report, confirm that you have searched for existing issues and discussions. In the GitHub form, check **"I have searched for existing issues and discussions."**
+
+A clear report with logs, version information, and reproduction steps makes it easier to understand and resolve the issue.

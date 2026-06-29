@@ -25,6 +25,16 @@ If you are using Gnosis VPN on macOS without exporting logs from the desktop app
 /Library/Logs/GnosisVPN/gnosisvpn.log
 ```
 
+#### Installer logs
+
+If the issue occurred during installation, the macOS installer writes separate logs:
+
+| Path | Content |
+| --- | --- |
+| `/Library/Logs/GnosisVPN/installer/installer.log` | Main installer log |
+| `/Library/Logs/GnosisVPN/installer/preinstall.log` | Preinstall script output |
+| `/Library/Logs/GnosisVPN/installer/postinstall.log` | Postinstall script output |
+
 ### Linux
 
 If you are running Gnosis VPN on Linux without the desktop app, service logs are stored on the system at:
