@@ -14,43 +14,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Keeps the `Docs-Updated:` field in static/llms.txt current in the repo itself,
-  # so the GitHub source (the trusted copy agents fetch via raw.githubusercontent.com)
-  # reflects when the docs were last published. Runs independently so a push failure
-  # (e.g. branch protection) never blocks the actual deploy.
-  commit-llms-date:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          ref: ${{ github.ref_name }}
-          # Full history so git log can read the docs' real last-modified date.
-          fetch-depth: 0
-
-      - name: Stamp Docs-Updated and commit back
-        run: |
-          set -euo pipefail
-          DATE="$(git log -1 --format=%cs -- docs static/llms.txt static/llms-full.txt)"
-          if [ -z "$DATE" ]; then
-            echo "::warning::Could not determine docs commit date; falling back to today (UTC)"
-            DATE="$(date -u +%F)"
-          fi
-          sed -i "s/^Docs-Updated:.*/Docs-Updated: ${DATE}/" static/llms.txt
-          if git diff --quiet -- static/llms.txt; then
-            echo "Docs-Updated already current (${DATE}); nothing to commit."
-            exit 0
-          fi
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add static/llms.txt
-          git commit -m "chore: stamp Docs-Updated ${DATE} [skip ci]"
-          git push
-          echo "Committed Docs-Updated: ${DATE}"
-
   read-node-version:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -98,20 +61,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          # Full history so we can read the file's real last-modified date from git.
-          fetch-depth: 0
-
-      - name: Stamp Docs-Updated date in the deployed copy
-        run: |
-          set -euo pipefail
-          DATE="$(git log -1 --format=%cs -- docs static/llms.txt static/llms-full.txt || true)"
-          if [ -z "$DATE" ]; then
-            echo "::warning::Could not determine docs commit date; falling back to today (UTC)"
-            DATE="$(date -u +%F)"
-          fi
-          sed -i "s/^Docs-Updated:.*/Docs-Updated: ${DATE}/" static/llms.txt
-          echo "Stamped Docs-Updated: ${DATE}"
-          grep '^Docs-Updated:' static/llms.txt
+          fetch-depth: 1
 
       - name: Setup pnpm
         uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9

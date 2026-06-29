@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-06-18
+Docs-Updated: 2026-06-29
 Canonical: https://docs.vpn.gnosis.eth.limo/llms.txt
 Gnosis VPN releases: https://github.com/gnosis/gnosis_vpn/releases
 

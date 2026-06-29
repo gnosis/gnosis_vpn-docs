@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+# Keep `Docs-Updated:` in static/llms.txt current whenever documentation changes.
+# Runs at commit time with your own credentials, so it needs no CI write access
+# and works regardless of branch protection. Portable across macOS (BSD sed) and
+# Linux (GNU sed) by avoiding `sed -i`.
+set -eu
+
+LLMS="static/llms.txt"
+
+# Only act when the staged changes touch documentation.
+if git diff --cached --name-only | grep -qE '^docs/|^static/llms\.txt$|^static/llms-full\.txt$'; then
+  [ -f "$LLMS" ] || exit 0
+  grep -q '^Docs-Updated:' "$LLMS" || exit 0
+
+  TODAY="$(date +%F)"
+  CURRENT="$(sed -n 's/^Docs-Updated:[[:space:]]*//p' "$LLMS")"
+
+  if [ "$CURRENT" != "$TODAY" ]; then
+    TMP="$(mktemp)"
+    sed "s/^Docs-Updated:.*/Docs-Updated: ${TODAY}/" "$LLMS" > "$TMP" && mv "$TMP" "$LLMS"
+    git add "$LLMS"
+    echo "pre-commit: stamped Docs-Updated: ${TODAY}"
+  fi
+fi
