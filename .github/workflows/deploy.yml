@@ -61,20 +61,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          # Full history so we can read the file's real last-modified date from git.
-          fetch-depth: 0
-
-      - name: Stamp Docs-Updated date in llms.txt
-        run: |
-          set -euo pipefail
-          DATE="$(git log -1 --format=%cs -- static/llms.txt || true)"
-          if [ -z "$DATE" ]; then
-            echo "::warning::No git date found for static/llms.txt; falling back to today (UTC)"
-            DATE="$(date -u +%F)"
-          fi
-          sed -i "s/^Docs-Updated:.*/Docs-Updated: ${DATE}/" static/llms.txt
-          echo "Stamped Docs-Updated: ${DATE}"
-          grep '^Docs-Updated:' static/llms.txt
+          fetch-depth: 1
 
       - name: Setup pnpm
         uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
