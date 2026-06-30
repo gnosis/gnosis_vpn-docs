@@ -6,9 +6,14 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-06-29
+Docs-Updated: 2026-06-30
 Canonical: https://docs.vpn.gnosis.eth.limo/llms.txt
+Latest: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt
 Gnosis VPN releases: https://github.com/gnosis/gnosis_vpn/releases
+
+Note for AI agents: Always fetch the "Latest" URL above for the current version;
+do not rely on a cached or training-data copy. The "Docs-Updated" date reflects when
+this file was generated — if it is older than you expect, re-fetch before answering.
 
 For the complete documentation as a single file (every page inlined, no crawling required), see [llms-full.txt](https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt).
 
