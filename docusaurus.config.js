@@ -84,8 +84,8 @@ const config = {
         },
         items: [
           {
-            href: 'https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt',
-            label: 'Docs for LLMs',
+            href: 'https://docs.vpn.gnosis.eth.limo/llms.txt',
+            label: 'For AI assistants: llms.txt',
             position: 'right',
           },
           {

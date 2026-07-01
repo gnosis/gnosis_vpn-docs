@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
-# Keep `Docs-Updated:` in static/llms.txt current whenever documentation changes.
+# Keep the generated LLM files current whenever documentation changes:
+#   - static/llms-full.txt is fully regenerated from docs/ (the generator also
+#     stamps its own Docs-Updated: line with today's date).
+#   - static/llms.txt is hand-maintained, so we only stamp its Docs-Updated:.
 # Runs at commit time with your own credentials, so it needs no CI write access
 # and works regardless of branch protection. Portable across macOS (BSD sed) and
 # Linux (GNU sed) by avoiding `sed -i`.
@@ -9,16 +12,24 @@ LLMS="static/llms.txt"
 
 # Only act when the staged changes touch documentation.
 if git diff --cached --name-only | grep -qE '^docs/|^static/llms\.txt$|^static/llms-full\.txt$'; then
-  [ -f "$LLMS" ] || exit 0
-  grep -q '^Docs-Updated:' "$LLMS" || exit 0
 
-  TODAY="$(date +%F)"
-  CURRENT="$(sed -n 's/^Docs-Updated:[[:space:]]*//p' "$LLMS")"
+  # 1. Regenerate the full-text bundle from docs/ and re-stage it. The
+  #    generator stamps its own Docs-Updated: line, so no sed step is needed.
+  if [ -f scripts/generate-llms-full.js ]; then
+    node scripts/generate-llms-full.js
+    git add static/llms-full.txt
+  fi
 
-  if [ "$CURRENT" != "$TODAY" ]; then
-    TMP="$(mktemp)"
-    sed "s/^Docs-Updated:.*/Docs-Updated: ${TODAY}/" "$LLMS" > "$TMP" && mv "$TMP" "$LLMS"
-    git add "$LLMS"
-    echo "pre-commit: stamped Docs-Updated: ${TODAY}"
+  # 2. Stamp Docs-Updated: in the hand-maintained index llms.txt.
+  if [ -f "$LLMS" ] && grep -q '^Docs-Updated:' "$LLMS"; then
+    TODAY="$(date +%F)"
+    CURRENT="$(sed -n 's/^Docs-Updated:[[:space:]]*//p' "$LLMS")"
+
+    if [ "$CURRENT" != "$TODAY" ]; then
+      TMP="$(mktemp)"
+      sed "s/^Docs-Updated:.*/Docs-Updated: ${TODAY}/" "$LLMS" > "$TMP" && mv "$TMP" "$LLMS"
+      git add "$LLMS"
+      echo "pre-commit: stamped Docs-Updated: ${TODAY}"
+    fi
   fi
 fi

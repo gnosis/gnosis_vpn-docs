@@ -5,9 +5,10 @@
 > macOS and Linux (Debian) only; Windows, iOS, Android, and other Linux
 > distributions are not supported. Design and commands may change during beta.
 
-This file inlines the complete text of every Gnosis VPN documentation page so an
-agent can ingest the entire doc set in a single fetch. For the structured index
-with per-page links, see [llms.txt](https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt).
+Status: Beta ("El Dorado")
+Docs-Updated: 2026-07-01
+
+This file inlines the complete text of every Gnosis VPN documentation page so an agent can ingest the entire doc set in a single fetch. For the structured index with per-page links, see llms.txt: https://docs.vpn.gnosis.eth.limo/llms.txt (mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt).
 
 ---
 
@@ -64,7 +65,7 @@ curl -fsSL https://download.gnosisvpn.io/linux/install.sh | sudo bash
 
 Prefer to do it by hand? Download the `.deb` package from the downloads page and follow the Debian guide in the wiki:
 
-- Downloads: [https://downloads.vpn.gnosis.eth.limo](https://downloads.vpn.gnosis.eth.limo/)
+- Downloads: [https://downloads.vpn.gnosis.eth.limo](https://downloads.vpn.gnosis.eth.limo)
 - Guide: [https://github.com/gnosis/gnosis_vpn/wiki/Debian](https://github.com/gnosis/gnosis_vpn/wiki/Debian)
 
 ##### After installing
@@ -247,6 +248,16 @@ If you are using Gnosis VPN on macOS without exporting logs from the desktop app
 ```
 /Library/Logs/GnosisVPN/gnosisvpn.log
 ```
+
+###### Installer logs
+
+If the issue occurred during installation, the macOS installer writes separate logs:
+
+| Path | Content |
+| --- | --- |
+| `/Library/Logs/GnosisVPN/installer/installer.log` | Main installer log. |
+| `/Library/Logs/GnosisVPN/installer/preinstall.log` | Preinstall script output. |
+| `/Library/Logs/GnosisVPN/installer/postinstall.log` | Postinstall script output. |
 
 ##### Linux
 
