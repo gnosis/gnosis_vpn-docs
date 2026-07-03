@@ -3,6 +3,9 @@ sidebar_position: 2
 title: Installation
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Installation
 
 There are currently two ways to install and set up Gnosis VPN El Dorado.
@@ -11,25 +14,41 @@ There are currently two ways to install and set up Gnosis VPN El Dorado.
 
 This route is open to everyone but assumes some technical knowledge. You'll download the client yourself, install it manually, and fund your VPN account with tokens before connecting.
 
-### macOS
+:::warning Upgrading from an older version?
 
-Download the latest macOS installer from the downloads page, then follow the macOS installation guide in the wiki:
+Uninstall the older version first — this step is mandatory before installing a newer version. See [Managing the client](managing-the-client.md).
 
-- Downloads: https://downloads.vpn.gnosis.eth.limo/
-- Guide: [github.com/gnosis/gnosis_vpn/wiki/macOS](https://github.com/gnosis/gnosis_vpn/wiki/macOS)
+:::
 
-### Debian / Ubuntu Linux
+<Tabs groupId="operating-systems">
+<TabItem value="macos" label="macOS">
 
-Install via the APT repository (recommended — you then get updates through `apt upgrade`):
+1. Download the latest `GnosisVPN-Installer.pkg` from the [downloads page](https://downloads.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest).
+2. Double-click the downloaded file to run the installer.
 
-​```
+</TabItem>
+<TabItem value="debian" label="Debian / Ubuntu">
+
+**Via the APT repository (recommended)** — you then get updates through `apt upgrade`:
+
+```bash
 curl -fsSL https://download.gnosisvpn.io/linux/install.sh | sudo bash
-​```
+```
 
-Prefer to do it by hand? Download the `.deb` package from the downloads page and follow the Debian guide in the wiki:
+**Or install the package by hand:**
 
-- Downloads: [https://downloads.vpn.gnosis.eth.limo](https://downloads.vpn.gnosis.eth.limo)
-- Guide: [https://github.com/gnosis/gnosis_vpn/wiki/Debian](https://github.com/gnosis/gnosis_vpn/wiki/Debian)
+1. Download the latest `gnosisvpn_<arch>.deb` package from the [downloads page](https://downloads.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest).
+2. Run the installation procedure:
+
+```bash
+# assuming download to the default location; replace <arch> with your architecture
+sudo apt install ~/Downloads/gnosisvpn_<arch>.deb
+```
+
+</TabItem>
+</Tabs>
+
+For a full list of files and directories the installer creates, see the reference pages for [macOS](../reference/file-locations-macos.md) and [Debian](../reference/file-locations-debian.md).
 
 ### After installing
 

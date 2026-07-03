@@ -22,6 +22,7 @@ const sidebars = {
         'get-started/requirements',
         'get-started/installation',
         'get-started/funding',
+        'get-started/managing-the-client',
       ],
     },
     {
@@ -39,6 +40,15 @@ const sidebars = {
       collapsed: false,
       items: [
         'reporting/reporting-issues',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Reference',
+      collapsed: false,
+      items: [
+        'reference/file-locations-macos',
+        'reference/file-locations-debian',
       ],
     },
   ],

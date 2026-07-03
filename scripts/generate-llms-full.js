@@ -47,6 +47,7 @@ const SECTIONS = [
   { label: 'Concepts', dir: 'introduction' },
   { label: 'Troubleshooting', dir: 'troubleshooting' },
   { label: 'Reporting', dir: 'reporting' },
+  { label: 'Reference', dir: 'reference' },
 ];
 
 // Header block. {{DATE}} is replaced with the current date (YYYY-MM-DD).
@@ -140,10 +141,15 @@ function transformBody(body, currentDir) {
   body = body.replace(/[​‌‍﻿]/g, '');
   const lines = body.split('\n');
 
-  // Drop the leading H1 (it becomes the "###" section title) and any blank
-  // lines before it.
+  // Drop the leading H1 (it becomes the "###" section title), plus any blank
+  // lines and MDX import statements before it.
   let start = 0;
-  while (start < lines.length && lines[start].trim() === '') start++;
+  while (
+    start < lines.length &&
+    (lines[start].trim() === '' || /^import\s.+from\s+['"].+['"];?\s*$/.test(lines[start]))
+  ) {
+    start++;
+  }
   if (start < lines.length && /^#\s+/.test(lines[start])) {
     start++;
   }
@@ -173,6 +179,17 @@ function transformBody(body, currentDir) {
     }
     if (inFence) {
       out.push(line);
+      continue;
+    }
+
+    // MDX Tabs components: render each <TabItem label="X"> as a bold
+    // paragraph and drop the wrapper tags entirely.
+    const tabItemOpen = line.match(/^<TabItem\b[^>]*\blabel="([^"]+)"[^>]*>\s*$/);
+    if (tabItemOpen) {
+      out.push(`**${tabItemOpen[1]}**`);
+      continue;
+    }
+    if (/^<\/?Tabs\b[^>]*>\s*$/.test(line) || /^<\/TabItem>\s*$/.test(line)) {
       continue;
     }
 

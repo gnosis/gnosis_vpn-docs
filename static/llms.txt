@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-07-01
+Docs-Updated: 2026-07-03
 Canonical: https://docs.vpn.gnosis.eth.limo/llms.txt
 Mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt
 Gnosis VPN releases: https://github.com/gnosis/gnosis_vpn/releases
@@ -23,9 +23,10 @@ For the complete documentation as a single file (every page inlined, no crawling
 
 ## Getting Started
 - [Requirements](https://docs.vpn.gnosis.eth.limo/docs/get-started/requirements/): System requirements for Gnosis VPN El Dorado — supported platforms (macOS and Linux (Debian) only; not Windows, iOS, Android, or other Linux distros), minimum hardware (64-bit CPU, 4 GB RAM), and network prerequisites (outbound access and ability to establish VPN tunnels).
-- [Installation](https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/): How to install Gnosis VPN El Dorado, via either manual installation (download the OS-specific package, then follow the macOS or Linux (Debian) wiki guide) or the gated onboarding tool for tester-program participants.
+- [Installation](https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/): How to install Gnosis VPN El Dorado, via either manual installation (macOS .pkg installer, or Debian/Ubuntu via the APT repository or a .deb package) or the gated onboarding tool for tester-program participants.
 - [Downloads](https://downloads.vpn.gnosis.eth.limo/): Download page for Gnosis VPN client installers ("Powered by HOPR"). Note: the page is rendered client-side, so automated agents may see an empty shell — the GitHub releases page (github.com/gnosis/gnosis_vpn/releases) lists the actual versioned artifacts.
-- [Funding your account](https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/): How to fund your Gnosis VPN account, required before connecting — you need both wxHOPR and xDAI (tokens on Gnosis Chain). Links to the full funding guide, plus faucet funding for users with a secret code.
+- [Funding your account](https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/): How to fund your Gnosis VPN account, required before connecting — you need both wxHOPR and xDAI (tokens on Gnosis Chain). Covers acquiring HOPR and DAI, bridging to Gnosis Chain, wrapping xHOPR to wxHOPR, first-time funding and top-ups in the app, wallet-privacy tips, plus faucet funding for users with a secret code.
+- [Managing the client](https://docs.vpn.gnosis.eth.limo/docs/get-started/managing-the-client/): Lifecycle operations for the Gnosis VPN client on macOS and Debian/Ubuntu — restarting the client service, upgrading (uninstall first unless using APT), uninstalling, and where the client identity/state is stored.
 
 ## Concepts
 - [Overview](https://docs.vpn.gnosis.eth.limo/docs/introduction/overview/): What Gnosis VPN is — a privacy-focused VPN built on the HOPR mixnet that routes traffic through decentralized infrastructure instead of one centralized provider, and how this differs from a traditional single-provider VPN.
@@ -35,10 +36,14 @@ For the complete documentation as a single file (every page inlined, no crawling
 
 ## Troubleshooting
 - [Finding your logs](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/logs/): How to get Gnosis VPN client logs — exporting them from the desktop app (Settings → Logs → Export service logs), or finding the log file directly on macOS (/Library/Logs/GnosisVPN/) and Linux (/var/log/gnosisvpn/).
-- [Common issues](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/common-issues/): Symptoms and resolution steps for two connection problems — connected but no internet (or unstable) and a connection handshake taking over 60 seconds — with both GUI and CLI (gnosis_vpn-ctl) fixes such as switching exit nodes, checking wallet balance, and restarting the service.
+- [Common issues](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/common-issues/): Symptoms and resolution steps for common problems — connected but no internet (or unstable), a connection handshake taking over 60 seconds, and incorrect app scaling on Linux/Wayland — with both GUI and CLI (gnosis_vpn-ctl) fixes such as switching exit nodes, checking wallet balance, and restarting the service.
 
 ## Reporting
-- [Reporting issues](https://docs.vpn.gnosis.eth.limo/docs/reporting/reporting-issues/): How to report a Gnosis VPN bug — where to report (GitHub Discussions first, or onboarding-provided support channels), what logs to attach (app export or the macOS/Linux log file), and how to write the report (a [Bug]: title, description, reproduction steps, and environment/version details).
+- [Reporting issues](https://docs.vpn.gnosis.eth.limo/docs/reporting/reporting-issues/): How to report a Gnosis VPN bug — where to report (GitHub Discussions first, or onboarding-provided support channels), what logs to attach (app export, the macOS/Linux log file, or via the log uploader at log-uploader.gnosisvpn.com), and how to write the report (a [Bug]: title, description, reproduction steps, and environment/version details).
+
+## Reference
+- [File locations (macOS)](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/): Every file and directory the macOS installer creates — application state and identity under /Library/Application Support/GnosisVPN/, logs, config in /etc/gnosisvpn/, binaries in /usr/local/bin/, the LaunchDaemon, and related system files — with owners and permissions.
+- [File locations (Debian)](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/): Every file and directory the Debian package creates — config in /etc/gnosisvpn/, state in /var/lib/gnosisvpn/, logs in /var/log/gnosisvpn/, the systemd unit, APT keyring/sources, and related system files — with owners and permissions.
 
 ## Optional
 - [GitHub repository](https://github.com/gnosis/gnosis_vpn/): Source code (mostly Shell and TypeScript) and binary build/packaging for the Gnosis VPN client, under the LGPL-3.0 license, with releases, the wiki install guides, and a discussion-first reporting process (bugs start in GitHub Discussions; confirmed ones are promoted to Issues).
