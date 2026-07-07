@@ -29,13 +29,3 @@ This page lists every file and directory the Debian package creates, for users w
 | `/etc/logrotate.d/gnosisvpn` | Log rotation policy | Daily, 7 days, gzip |
 | `/etc/gnosisvpn/config.toml` | Symlink to active network config | Points to `config-jura.toml` (default network: `jura`) |
 | `/etc/gnosisvpn/gnosisvpn.env` | Service environment variables | `RUST_LOG=info`, log to `/var/log/gnosisvpn/gnosisvpn.log`, static routing forced |
-
-## Uninstalling
-
-To remove the package:
-
-```bash
-sudo apt remove gnosisvpn
-```
-
-See [Managing the client](../get-started/managing-the-client.md).

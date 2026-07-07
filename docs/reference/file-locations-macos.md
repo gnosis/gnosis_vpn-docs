@@ -32,13 +32,3 @@ This page lists every file and directory the macOS installer creates, for users 
 | `/etc/gnosisvpn/config.toml` | Symlink to active network config | Points to `templates/jura.toml.template` (default network: `jura`) |
 | `/Applications/Gnosis VPN.app` | GUI application bundle | Extracted from archive during postinstall; `root:admin`, `0755` |
 | `/var/run/gnosisvpn.pid` | Daemon PID file | Written by the daemon at startup |
-
-## Uninstalling
-
-To remove the installation, run the uninstall script:
-
-```bash
-sudo /Library/Application\ Support/GnosisVPN/uninstall.sh
-```
-
-See [Managing the client](../get-started/managing-the-client.md).

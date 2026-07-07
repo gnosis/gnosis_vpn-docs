@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-07-03
+Docs-Updated: 2026-07-07
 
 This file inlines the complete text of every Gnosis VPN documentation page so an agent can ingest the entire doc set in a single fetch. For the structured index with per-page links, see llms.txt: https://docs.vpn.gnosis.eth.limo/llms.txt (mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt).
 
@@ -160,6 +160,30 @@ If you have been given a secret code, you can also fund your Gnosis VPN account 
 
 [https://faucet.vpn.gnosis.eth.limo](https://faucet.vpn.gnosis.eth.limo)
 
+#### Your identity
+
+Every Gnosis VPN node manages access to the tokens it needs to function via a Safe smart account powered by HOPR Safe Staking. Your identity key is what links your client to that Safe, which handles payment channels and ticket settlement on Gnosis Chain.
+
+> Warning: Warning! If the identity file is deleted or lost, the client generates a new one — meaning any funds, open payment channels, or Safe association tied to the old identity are no longer reachable from that client and can't be restored.
+
+Where your identity is stored:
+
+**macOS**
+
+The identity is stored in `/Library/Application Support/GnosisVPN/.config`. To get there:
+
+```bash
+sudo su -
+cd /Library/Application\ Support/GnosisVPN/
+```
+
+**Debian / Ubuntu**
+
+Application state lives in `/var/lib/gnosisvpn/`.
+
+
+For a complete list of files and directories used by Gnosis VPN, see the reference pages for [macOS](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/) and [Debian](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/).
+
 ---
 
 ### Managing the client
@@ -189,10 +213,18 @@ sudo systemctl restart gnosisvpn.service
 
 #### Upgrading
 
-> Warning: Before installing a newer version of Gnosis VPN, the older version must first be uninstalled (see below). On Debian/Ubuntu, this does not apply if you installed via the APT repository — there you simply run `sudo apt upgrade`.
+**macOS**
 
-1. Uninstall the currently installed version (see below).
-2. Install the new version following the [installation guide](https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/).
+To upgrade Gnosis VPN, download and run the latest installer, following the same steps as in the [installation guide](https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/). The installer will replace your existing version while preserving your configuration and identity.
+
+**Debian / Ubuntu**
+
+In a terminal, run:
+
+```bash
+sudo apt upgrade gnosisvpn
+```
+
 
 #### Uninstalling
 
@@ -211,25 +243,6 @@ In a terminal, run:
 ```bash
 sudo apt remove gnosisvpn
 ```
-
-
-#### Where your identity is stored
-
-**macOS**
-
-The identity is stored in `/Library/Application Support/GnosisVPN/.config`. To get there:
-
-```bash
-sudo su -
-cd /Library/Application\ Support/GnosisVPN/
-```
-
-**Debian / Ubuntu**
-
-Application state lives in `/var/lib/gnosisvpn/`.
-
-
-For a complete list of files and directories used by Gnosis VPN, see the reference pages for [macOS](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/) and [Debian](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/).
 
 ---
 
@@ -628,16 +641,6 @@ This page lists every file and directory the macOS installer creates, for users 
 | `/Applications/Gnosis VPN.app` | GUI application bundle | Extracted from archive during postinstall; `root:admin`, `0755` |
 | `/var/run/gnosisvpn.pid` | Daemon PID file | Written by the daemon at startup |
 
-#### Uninstalling
-
-To remove the installation, run the uninstall script:
-
-```bash
-sudo /Library/Application\ Support/GnosisVPN/uninstall.sh
-```
-
-See [Managing the client](https://docs.vpn.gnosis.eth.limo/docs/get-started/managing-the-client/).
-
 ---
 
 ### File locations on Debian / Ubuntu
@@ -668,13 +671,3 @@ This page lists every file and directory the Debian package creates, for users w
 | `/etc/logrotate.d/gnosisvpn` | Log rotation policy | Daily, 7 days, gzip |
 | `/etc/gnosisvpn/config.toml` | Symlink to active network config | Points to `config-jura.toml` (default network: `jura`) |
 | `/etc/gnosisvpn/gnosisvpn.env` | Service environment variables | `RUST_LOG=info`, log to `/var/log/gnosisvpn/gnosisvpn.log`, static routing forced |
-
-#### Uninstalling
-
-To remove the package:
-
-```bash
-sudo apt remove gnosisvpn
-```
-
-See [Managing the client](https://docs.vpn.gnosis.eth.limo/docs/get-started/managing-the-client/).

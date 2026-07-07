@@ -3,6 +3,9 @@ sidebar_position: 3
 title: Funding your account
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Funding your account
 
 After installation, your Gnosis VPN account must be funded before you can connect. To use Gnosis VPN, you need both **wxHOPR** and **xDAI** on Gnosis Chain.
@@ -74,3 +77,33 @@ Once you have wxHOPR and xDAI in your wallet:
 If you have been given a secret code, you can also fund your Gnosis VPN account via the faucet:
 
 [https://faucet.vpn.gnosis.eth.limo](https://faucet.vpn.gnosis.eth.limo)
+
+## Your identity
+
+Every Gnosis VPN node manages access to the tokens it needs to function via a Safe smart account powered by HOPR Safe Staking. Your identity key is what links your client to that Safe, which handles payment channels and ticket settlement on Gnosis Chain.
+
+:::warning Warning!
+If the identity file is deleted or lost, the client generates a new one — meaning any funds, open payment channels, or Safe association tied to the old identity are no longer reachable from that client and can't be restored.
+:::
+
+Where your identity is stored:
+
+<Tabs groupId="operating-systems">
+<TabItem value="macos" label="macOS">
+
+The identity is stored in `/Library/Application Support/GnosisVPN/.config`. To get there:
+
+```bash
+sudo su -
+cd /Library/Application\ Support/GnosisVPN/
+```
+
+</TabItem>
+<TabItem value="debian" label="Debian / Ubuntu">
+
+Application state lives in `/var/lib/gnosisvpn/`.
+
+</TabItem>
+</Tabs>
+
+For a complete list of files and directories used by Gnosis VPN, see the reference pages for [macOS](../reference/file-locations-macos.md) and [Debian](../reference/file-locations-debian.md).

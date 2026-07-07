@@ -35,14 +35,22 @@ sudo systemctl restart gnosisvpn.service
 
 ## Upgrading
 
-:::warning
+<Tabs groupId="upgrading">
+<TabItem value="macos" label="macOS">
 
-Before installing a newer version of Gnosis VPN, the older version must first be uninstalled (see below). On Debian/Ubuntu, this does not apply if you installed via the APT repository — there you simply run `sudo apt upgrade`.
+To upgrade Gnosis VPN, download and run the latest installer, following the same steps as in the [installation guide](installation.md). The installer will replace your existing version while preserving your configuration and identity.
 
-:::
+</TabItem>
+<TabItem value="debian" label="Debian / Ubuntu">
 
-1. Uninstall the currently installed version (see below).
-2. Install the new version following the [installation guide](installation.md).
+In a terminal, run:
+
+```bash
+sudo apt upgrade gnosisvpn
+```
+
+</TabItem>
+</Tabs>
 
 ## Uninstalling
 
@@ -66,25 +74,3 @@ sudo apt remove gnosisvpn
 
 </TabItem>
 </Tabs>
-
-## Where your identity is stored
-
-<Tabs groupId="operating-systems">
-<TabItem value="macos" label="macOS">
-
-The identity is stored in `/Library/Application Support/GnosisVPN/.config`. To get there:
-
-```bash
-sudo su -
-cd /Library/Application\ Support/GnosisVPN/
-```
-
-</TabItem>
-<TabItem value="debian" label="Debian / Ubuntu">
-
-Application state lives in `/var/lib/gnosisvpn/`.
-
-</TabItem>
-</Tabs>
-
-For a complete list of files and directories used by Gnosis VPN, see the reference pages for [macOS](../reference/file-locations-macos.md) and [Debian](../reference/file-locations-debian.md).
