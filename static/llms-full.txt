@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-07-07
+Docs-Updated: 2026-07-08
 
 This file inlines the complete text of every Gnosis VPN documentation page so an agent can ingest the entire doc set in a single fetch. For the structured index with per-page links, see llms.txt: https://docs.vpn.gnosis.eth.limo/llms.txt (mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt).
 
@@ -47,8 +47,6 @@ There are currently two ways to install and set up Gnosis VPN El Dorado.
 #### Manual installation
 
 This route is open to everyone but assumes some technical knowledge. You'll download the client yourself, install it manually, and fund your VPN account with tokens before connecting.
-
-> Warning: Upgrading from an older version? Uninstall the older version first — this step is mandatory before installing a newer version. See [Managing the client](https://docs.vpn.gnosis.eth.limo/docs/get-started/managing-the-client/).
 
 **macOS**
 
