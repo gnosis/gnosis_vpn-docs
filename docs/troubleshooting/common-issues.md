@@ -70,3 +70,15 @@ The client hangs indefinitely in a "Connecting" state when attempting to establi
    ```
 
 If this behavior persists, attach your client logs to your support ticket. See [Finding your logs](./logs.md).
+
+## App looks too big, too small, or incorrectly scaled (Linux)
+
+The Gnosis VPN app is built on GTK3, which runs through the legacy X11 compatibility layer on Wayland. This can cause incorrect scaling when display scaling is set manually.
+
+### Resolution steps
+
+Find the scaling option for legacy (X11) apps in your desktop environment's display settings and set it to **"Scaled by the system"**.
+
+On KDE, this is typically found under **Display Configuration**:
+
+![KDE legacy X11 app scaling setting](https://github.com/user-attachments/assets/1fa3e541-dbb8-45aa-bad8-7877d57a9a93)

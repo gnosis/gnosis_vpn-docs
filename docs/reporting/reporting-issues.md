@@ -41,6 +41,12 @@ Include logs from the affected environment.
 - macOS: `/Library/Logs/GnosisVPN/gnosisvpn.log`
 - Linux without GUI: `/var/log/gnosisvpn/gnosisvpn.log`
 
+**Uploading log files:**
+
+Instead of attaching the exported (compressed) log file to your report, you can upload it via the log uploader and reference it:
+
+[https://log-uploader.gnosisvpn.com/](https://log-uploader.gnosisvpn.com/)
+
 ## How to describe reproduction steps
 
 When reporting an issue, describe the steps as clearly and simply as possible. The report should explain what action was performed, what was expected to happen, what actually happened, and whether the issue is reproducible.
