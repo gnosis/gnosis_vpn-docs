@@ -2,6 +2,18 @@
 name: Deploy to IPFS
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'static/**'
+      - 'src/**'
+      - 'scripts/**'
+      - 'docusaurus.config.js'
+      - 'sidebars.js'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
   workflow_dispatch:
     inputs:
       propose_ens:
@@ -100,7 +112,8 @@ jobs:
 
   propose-ens:
     needs: [read-node-version, build, deploy-ipfs]
-    if: ${{ inputs.propose_ens }}
+    # Run on automatic (push) deploys always; on manual runs, respect the checkbox.
+    if: ${{ github.event_name == 'push' || inputs.propose_ens }}
     runs-on: ubuntu-latest
     environment: prod
     timeout-minutes: 15

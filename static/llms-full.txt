@@ -6,7 +6,15 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-07-08
+Docs-Updated: 2026-07-09T09:30:01Z
+Canonical: https://docs.vpn.gnosis.eth.limo/llms-full.txt
+Mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
+
+Note for AI agents: this file may reach you through caches you do not control
+(including your own fetch tooling). Docs-Updated above identifies the exact
+build you are holding. If it looks stale, re-fetch with a throwaway query
+parameter (e.g. ?t=<unix-time>) to bypass caches; if Canonical and Mirror
+disagree, trust the copy with the newer Docs-Updated.
 
 This file inlines the complete text of every Gnosis VPN documentation page so an agent can ingest the entire doc set in a single fetch. For the structured index with per-page links, see llms.txt: https://docs.vpn.gnosis.eth.limo/llms.txt (mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt).
 

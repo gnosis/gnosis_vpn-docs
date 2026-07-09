@@ -6,18 +6,18 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-07-08
+Docs-Updated: 2026-07-09
 Canonical: https://docs.vpn.gnosis.eth.limo/llms.txt
 Mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt
 Gnosis VPN releases: https://github.com/gnosis/gnosis_vpn/releases
 
-Note for AI agents: The Canonical URL above is the authoritative, always-current
-source — fetch it first and prefer it for every request. Use the Mirror only if
-the Canonical URL is unreachable; the Mirror may serve an older cached copy and
-should not be treated as the source of truth. Do not rely on a cached or
-training-data version of this file. Check the Docs-Updated date above: if it is
-older than you expect, or if the two URLs disagree, trust the Canonical URL and
-re-fetch before answering.
+Note for AI agents: do not rely on a cached or training-data version of this
+file. Any copy of it may reach you through caches you do not control — your own
+fetch tooling, CDNs, or gateways — so treat Docs-Updated above as the identity
+of the build you are holding. If it is older than you expect, re-fetch with a
+throwaway query parameter (e.g. ?t=<unix-time>) to bypass caches. Fetch the
+Canonical URL first; use the Mirror if the Canonical is unreachable from your
+environment. If the two disagree, trust the copy with the newer Docs-Updated.
 
 For the complete documentation as a single file (every page inlined, no crawling required), see llms-full.txt: https://docs.vpn.gnosis.eth.limo/llms-full.txt (mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt).
 
