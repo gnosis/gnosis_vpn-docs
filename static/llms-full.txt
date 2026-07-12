@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-07-09T09:30:01Z
+Docs-Updated: 2026-07-12T19:55:18Z
 Canonical: https://docs.vpn.gnosis.eth.limo/llms-full.txt
 Mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 
@@ -59,25 +59,44 @@ This route is open to everyone but assumes some technical knowledge. You'll down
 **macOS**
 
 1. Download the latest `GnosisVPN-Installer.pkg` from the [downloads page](https://downloads.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest).
-2. Double-click the downloaded file to run the installer.
+2. Double-click `GnosisVPN-Installer.pkg` to launch the installer. Follow the on-screen steps and click **Install**.
+3. When the installation finishes, the Gnosis VPN app starts automatically. You can also launch it anytime from the **Applications** folder.
 
 **Debian / Ubuntu**
 
-**Via the APT repository (recommended)** — you then get updates through `apt upgrade`:
+**Via the APT repository (recommended)** — the app then receives updates automatically the `sudo apt upgrade`:
 
-```bash
-curl -fsSL https://download.gnosisvpn.io/linux/install.sh | sudo bash
-```
+1. Run the install script, which adds the Gnosis VPN APT repository and
+   installs the package:
 
-**Or install the package by hand:**
+    ```bash
+    curl -fsSL https://download.gnosisvpn.io/linux/install.sh | sudo bash
+    ```
+
+2. Launch the Gnosis VPN app from your application menu, or from the
+   terminal:
+
+    ```bash
+    gnosis_vpn-app
+    ```
+
+**Or install the package manually** — note that you won't receive automatic
+updates and will need to repeat these steps for each new release:
 
 1. Download the latest `gnosisvpn_<arch>.deb` package from the [downloads page](https://downloads.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest).
-2. Run the installation procedure:
 
-```bash
-# assuming download to the default location; replace <arch> with your architecture
-sudo apt install ~/Downloads/gnosisvpn_<arch>.deb
-```
+2. Install the package (adjust the path and `<arch>` to match your download):
+
+    ```bash
+    sudo apt install ~/Downloads/gnosisvpn_.deb
+    ```
+
+3. Launch the Gnosis VPN app from your application menu, or from the
+   terminal:
+
+    ```bash
+    gnosis_vpn-app
+    ```
 
 
 For a full list of files and directories the installer creates, see the reference pages for [macOS](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/) and [Debian](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/).
@@ -227,9 +246,17 @@ To upgrade Gnosis VPN, download and run the latest installer, following the same
 
 In a terminal, run:
 
-```bash
-sudo apt upgrade gnosisvpn
-```
+1. Refresh your system's package list so it knows about the latest Gnosis VPN release:
+
+    ```bash
+    sudo apt update
+    ```
+
+2. Upgrade Gnosis VPN:
+
+    ```bash
+    sudo apt upgrade gnosisvpn
+    ```
 
 
 #### Uninstalling
