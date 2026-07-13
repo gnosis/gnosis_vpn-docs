@@ -45,9 +45,17 @@ To upgrade Gnosis VPN, download and run the latest installer, following the same
 
 In a terminal, run:
 
-```bash
-sudo apt upgrade gnosisvpn
-```
+1. Refresh your system's package list so it knows about the latest Gnosis VPN release:
+
+    ```bash
+    sudo apt update
+    ```
+
+2. Upgrade Gnosis VPN:
+
+    ```bash
+    sudo apt upgrade gnosisvpn
+    ```
 
 </TabItem>
 </Tabs>

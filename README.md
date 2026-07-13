@@ -28,7 +28,8 @@ This command generates static content into the `build` directory and can be serv
 
 Deployment is automated via the **Deploy to IPFS** GitHub Actions workflow
 ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)). It builds the
-site and publishes the `dist` output to IPFS through Pinata.
+site (regenerating and stamping the llms files as part of the build) and
+publishes the `build` output to IPFS through Pinata.
 
 The workflow is triggered manually from the **Actions** tab via
 `workflow_dispatch` — it does not deploy automatically on push.

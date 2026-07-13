@@ -50,7 +50,7 @@ const SECTIONS = [
   { label: 'Reference', dir: 'reference' },
 ];
 
-// Header block. {{DATE}} is replaced with the current date (YYYY-MM-DD).
+// Header block. {{DATE}} is replaced with the build timestamp (ISO-8601 UTC).
 const HEADER = `# Gnosis VPN Documentation — Full Text
 
 > Set up and run Gnosis VPN "El Dorado" (beta) — a decentralized VPN built on
@@ -60,6 +60,14 @@ const HEADER = `# Gnosis VPN Documentation — Full Text
 
 Status: Beta ("El Dorado")
 Docs-Updated: {{DATE}}
+Canonical: ${SITE}/llms-full.txt
+Mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
+
+Note for AI agents: this file may reach you through caches you do not control
+(including your own fetch tooling). Docs-Updated above identifies the exact
+build you are holding. If it looks stale, re-fetch with a throwaway query
+parameter (e.g. ?t=<unix-time>) to bypass caches; if Canonical and Mirror
+disagree, trust the copy with the newer Docs-Updated.
 
 This file inlines the complete text of every Gnosis VPN documentation page so an agent can ingest the entire doc set in a single fetch. For the structured index with per-page links, see llms.txt: ${SITE}/llms.txt (mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt).`;
 
@@ -67,10 +75,14 @@ This file inlines the complete text of every Gnosis VPN documentation page so an
 // Helpers
 // ---------------------------------------------------------------------------
 
-function today() {
-  const d = new Date();
-  const p = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+const { execSync } = require('child_process');
+
+function buildStamp() {
+  const stamp = execSync('git log -1 --format=%cI HEAD', { encoding: 'utf8' }).trim();
+  if (!stamp) {
+    throw new Error('git log returned empty output — cannot derive build stamp');
+  }
+  return stamp;
 }
 
 // Split YAML frontmatter (--- ... ---) from the markdown body.
@@ -275,8 +287,8 @@ function readSectionPages(dir) {
 // Build
 // ---------------------------------------------------------------------------
 
-function build() {
-  const units = [HEADER.replace('{{DATE}}', today())];
+function build(stamp) {
+  const units = [HEADER.replace('{{DATE}}', stamp)];
 
   for (const section of SECTIONS) {
     const pages = readSectionPages(section.dir);
@@ -293,13 +305,28 @@ function build() {
   return units.join('\n\n---\n\n') + '\n';
 }
 
+// Rewrite the Docs-Updated line of static/llms.txt with the same stamp, so
+// both llms files always carry the identical build timestamp.
+function stampLlmsIndex(stamp) {
+  const file = path.join(REPO_ROOT, 'static', 'llms.txt');
+  const raw = fs.readFileSync(file, 'utf8');
+  const updated = raw.replace(/^Docs-Updated: .*$/m, `Docs-Updated: ${stamp}`);
+  if (updated === raw && !raw.includes(`Docs-Updated: ${stamp}`)) {
+    throw new Error('static/llms.txt: no "Docs-Updated:" line found to stamp');
+  }
+  fs.writeFileSync(file, updated, 'utf8');
+  console.log(`Stamped static/llms.txt (Docs-Updated: ${stamp})`);
+}
+
 function main() {
-  const output = build();
+  const stamp = buildStamp();
+  const output = build(stamp);
   fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
   fs.writeFileSync(OUTPUT_FILE, output, 'utf8');
   console.log(
-    `Wrote ${path.relative(REPO_ROOT, OUTPUT_FILE)} (${output.length} bytes, Docs-Updated: ${today()})`
+    `Wrote ${path.relative(REPO_ROOT, OUTPUT_FILE)} (${output.length} bytes, Docs-Updated: ${stamp})`
   );
+  stampLlmsIndex(stamp);
 }
 
 main();
