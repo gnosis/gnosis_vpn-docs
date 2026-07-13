@@ -48,7 +48,7 @@ updates and will need to repeat these steps for each new release:
 2. Install the package (adjust the path and `<arch>` to match your download):
 
     ```bash
-    sudo apt install ~/Downloads/gnosisvpn_.deb
+    sudo apt install ~/Downloads/gnosisvpn_<arch>.deb
     ```
 
 3. Launch the Gnosis VPN app from your application menu, or from the

@@ -75,10 +75,16 @@ This file inlines the complete text of every Gnosis VPN documentation page so an
 // Helpers
 // ---------------------------------------------------------------------------
 
-function buildStamp() {
-  // Full ISO-8601 UTC timestamp: two builds on the same day stay distinguishable.
-  return new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
-}
+ const { execSync } = require('child_process');
+
+  function buildStamp() {
+    try {
+      return execSync('git log -1 --format=%cI HEAD', { encoding: 'utf8' }).trim();
+    } catch {
+      // fallback when git is unavailable (e.g. in a zip export)
+      return new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+    }
+  }
 
 // Split YAML frontmatter (--- ... ---) from the markdown body.
 function splitFrontmatter(raw) {
