@@ -59,7 +59,7 @@ const HEADER = `# Gnosis VPN Documentation — Full Text
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-07-13T12:07:22+03:00
+Docs-Updated: {{DATE}}
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: ${SITE}/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
