@@ -5,7 +5,7 @@ title: Overview
 
 # What is Gnosis VPN?
 
-Gnosis VPN is a privacy-focused VPN built on the HOPR mixnet. It lets you route internet traffic through HOPR-based infrastructure instead of sending it through a single centralized VPN provider. The aim is to provide a familiar VPN experience while reducing the amount of metadata exposed to any single party. For a detailed account of what each party in the system can and cannot see — and what this design does not protect against — read [Privacy and threat model](./privacy-and-threat-model.md).
+Gnosis VPN is a privacy-focused VPN built on the HOPR mixnet. It lets you route internet traffic through HOPR-based infrastructure instead of sending it through a single centralized VPN provider. The aim is to provide a familiar VPN experience while reducing the amount of metadata exposed to any single party.
 
 ## How it differs from a traditional VPN
 
