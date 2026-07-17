@@ -5,15 +5,18 @@ title: Requirements
 
 # System requirements
 
-Gnosis VPN El Dorado currently supports macOS and Linux (Debian). Windows, iOS, Android, and other Linux distributions are not supported in this release.
-
 ## Minimum requirements
 
-- 64-bit CPU
-- 4 GB RAM
-- Stable internet connection
-- Permission to install and run VPN/networking software
-- Early-access credentials or access to the onboarding flow
+- **Operating system:**
+  - **macOS** — Apple Silicon (M1 or later)
+  - **Linux** — Debian-based distributions
+- **CPU:** 64-bit
+- **RAM:** 4 GB
+- **Internet:** Stable internet connection
+- **Permissions:** Administrator (root/sudo) rights to install and run VPN/networking software
+- **Access:** Early-access credentials or access to the onboarding flow
+
+> **Note:** Windows, iOS, Android, and other Linux distributions are not supported in this release.
 
 ## Network requirements
 

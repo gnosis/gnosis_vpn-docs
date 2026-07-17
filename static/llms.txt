@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-07-17T09:44:04+03:00
+Docs-Updated: 2026-07-17T10:23:45+03:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt
 Full docs, single ~32 KB file: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
