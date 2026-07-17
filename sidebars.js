@@ -12,6 +12,7 @@ const sidebars = {
         'introduction/el-dorado-beta',
         'introduction/architecture',
         'introduction/how-it-works',
+        'introduction/privacy-and-threat-model',
       ],
     },
     {

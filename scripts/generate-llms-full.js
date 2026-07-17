@@ -147,6 +147,11 @@ function transformBody(body, currentDir) {
   // Scrub zero-width / BOM characters that sometimes sneak into source
   // markdown (e.g. before a code fence) so they don't leak into the output.
   body = body.replace(/[​‌‍﻿]/g, '');
+
+  // Strip HTML comments (single- and multi-line). They hold internal notes
+  // (e.g. TODOs pending engineering confirmation) that the rendered site
+  // never shows, so the LLM bundle must not ship them either.
+  body = body.replace(/<!--[\s\S]*?-->/g, '');
   const lines = body.split('\n');
 
   // Drop the leading H1 (it becomes the "###" section title), plus any blank

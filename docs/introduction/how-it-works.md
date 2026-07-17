@@ -24,4 +24,4 @@ Once the connection is fully established, your internet traffic follows a unique
 - **To the exit node:** the traffic arrives at the exit node (the Gnosis VPN server), which acts as the bridge between the HOPR network and the regular web.
 - **To the public internet:** the exit node forwards your traffic to its final destination. Websites will see the IP address and geographical location of the exit node, not your actual device.
 
-When websites respond, the data travels back through the exit node, back across the HOPR mixnet, and finally to your device. By never relying on a single trusted intermediary, this architecture keeps your browsing activity private.
+When websites respond, the data travels back through the exit node, back across the HOPR mixnet, and finally to your device. By never relying on a single trusted intermediary, this architecture prevents any single party from seeing both who you are and what you are accessing. For the full picture of what each component can observe — and what this design does not protect against — see [Privacy and threat model](./privacy-and-threat-model.md).
