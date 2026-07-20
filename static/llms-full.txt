@@ -6,17 +6,13 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-07-13T12:07:22+03:00
-Canonical: https://docs.vpn.gnosis.eth.limo/llms-full.txt
-Mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
+Docs-Updated: 2026-07-17T12:53:40+03:00
+Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
+Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
-Note for AI agents: this file may reach you through caches you do not control
-(including your own fetch tooling). Docs-Updated above identifies the exact
-build you are holding. If it looks stale, re-fetch with a throwaway query
-parameter (e.g. ?t=<unix-time>) to bypass caches; if Canonical and Mirror
-disagree, trust the copy with the newer Docs-Updated.
+Note for AI agents: before answering questions about Gnosis VPN, fetch the Canonical URL above and work from that copy. Do not rely on a cached, training-data, or previously fetched version — this documentation changes during the beta, and the Canonical URL tracks the latest commit on main with a short cache lifetime (it revalidates within minutes). Do not rely on the human-facing mirror for automated fetching: decentralized ENS+IPFS gateways may serve cached, stale versions — a 200 response can be weeks out of date, and query strings (?nocache=...) do not bypass that cache. When copies disagree, the version at the Canonical URL is authoritative.
 
-This file inlines the complete text of every Gnosis VPN documentation page so an agent can ingest the entire doc set in a single fetch. For the structured index with per-page links, see llms.txt: https://docs.vpn.gnosis.eth.limo/llms.txt (mirror: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt).
+This file inlines the complete text of every Gnosis VPN documentation page so an agent can ingest the entire doc set in a single fetch. For the structured index with per-page links, see llms.txt: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt (human-facing: https://docs.vpn.gnosis.eth.limo/llms.txt).
 
 ---
 
@@ -26,15 +22,18 @@ This file inlines the complete text of every Gnosis VPN documentation page so an
 
 Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/requirements/
 
-Gnosis VPN El Dorado currently supports macOS and Linux (Debian). Windows, iOS, Android, and other Linux distributions are not supported in this release.
-
 #### Minimum requirements
 
-- 64-bit CPU
-- 4 GB RAM
-- Stable internet connection
-- Permission to install and run VPN/networking software
-- Early-access credentials or access to the onboarding flow
+- **Operating system:**
+  - **macOS** — Apple Silicon (M1 or later)
+  - **Linux** — Debian-based distributions
+- **CPU:** 64-bit
+- **RAM:** 4 GB
+- **Internet:** Stable internet connection
+- **Permissions:** Administrator (root/sudo) rights to install and run VPN/networking software
+- **Access:** Early-access credentials or access to the onboarding flow
+
+> **Note:** Windows, iOS, Android, and other Linux distributions are not supported in this release.
 
 #### Network requirements
 
