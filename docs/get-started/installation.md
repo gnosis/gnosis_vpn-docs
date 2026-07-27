@@ -17,7 +17,7 @@ This route is open to everyone but assumes some technical knowledge. You'll down
 <Tabs groupId="operating-systems">
 <TabItem value="macos" label="macOS">
 
-1. Download the latest `GnosisVPN-Installer.pkg` from the [downloads page](https://downloads.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest).
+1. Download the latest `GnosisVPN-Installer.pkg` from the [downloads page](https://download.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest).
 2. Double-click `GnosisVPN-Installer.pkg` to launch the installer. Follow the on-screen steps and click **Install**.
 3. When the installation finishes, the Gnosis VPN app starts automatically. You can also launch it anytime from the **Applications** folder.
 
@@ -43,7 +43,7 @@ This route is open to everyone but assumes some technical knowledge. You'll down
 **Or install the package manually** — note that you won't receive automatic
 updates and will need to repeat these steps for each new release:
 
-1. Download the latest `gnosisvpn_<arch>.deb` package from the [downloads page](https://downloads.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest).
+1. Download the latest `gnosisvpn_<arch>.deb` package from the [downloads page](https://download.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest).
 
 2. Install the package (adjust the path and `<arch>` to match your download):
 
