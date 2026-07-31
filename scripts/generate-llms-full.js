@@ -206,6 +206,20 @@ function transformBody(body, currentDir) {
       continue;
     }
 
+    // MDX Issues/Issue components (the collapsible issue list on the
+    // troubleshooting pages): render each issue title as the section heading
+    // it stands in for, and drop the wrapper tags. The title is emitted at the
+    // level a source "## " heading would land on after the demote below, so
+    // the bundle keeps the same outline it had before the page used <Issue>.
+    const issueOpen = line.match(/^<Issue\b[^>]*\btitle="([^"]+)"[^>]*>\s*$/);
+    if (issueOpen) {
+      out.push(`#### ${issueOpen[1]}`);
+      continue;
+    }
+    if (/^<\/?Issues?\b[^>]*>\s*$/.test(line)) {
+      continue;
+    }
+
     // Admonition block:  :::type [Title]  ...  :::
     const admOpen = line.match(/^:::(\w+)(?:\[(.*?)\])?\s*(.*)$/);
     if (admOpen) {
