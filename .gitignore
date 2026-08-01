@@ -28,3 +28,8 @@ yarn-error.log*
 .variables
 
 pnpm-workspace.yaml
+# Local tooling
+.claude/
+
+# Slides
+*.pptx
