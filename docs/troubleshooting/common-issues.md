@@ -94,9 +94,13 @@ On KDE, this is typically found under **Display Configuration**:
 
 On some Linux desktops, a 1-pixel fully transparent line can appear just below the window's title bar. It's easiest to notice when another window is directly behind Gnosis VPN, since whatever is behind shows through that single pixel row.
 
-This happens because the app window doesn't set a custom title bar, so it uses your desktop's native GTK client-side decorations (CSD). GTK CSD windows get rounded corners and a drop shadow drawn by the compositor as an alpha-blended mask around the window. That mask's edge sits right at the boundary between the GTK-drawn title bar and the embedded WebKitGTK content area, and its antialiasing doesn't line up exactly with where the webview starts painting — leaving a single device-pixel row with no opaque paint, so the compositor blends in whatever is behind the window.
+This happens because the app window doesn't set a custom title bar, so it uses your desktop's native GTK client-side decorations (CSD). GTK CSD windows get rounded corners and a drop shadow drawn by the compositor as an alpha-blended mask around the window. That mask's edge sits right at the boundary between the GTK-drawn title bar and the embedded WebKitGTK content area, and its antialiasing doesn't line up exactly with where the webview starts painting — leaving a single device pixel row with no opaque paint, so the compositor blends in whatever is behind the window.
 
 This is a known class of rendering artifact with GTK CSD + WebKitGTK (and shows up in other Linux apps built the same way, including Electron/Chromium apps with rounded CSD corners). It's purely cosmetic and does not affect the VPN connection or app functionality.
+
+**Resolution steps**
+
+No action required — this is a cosmetic rendering artifact only. It doesn't affect the VPN connection or app functionality, and can be safely ignored.
 
 </Issue>
 
