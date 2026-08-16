@@ -30,8 +30,8 @@ This route is open to everyone but assumes some technical knowledge. You'll down
    repository and installs the package (requires `curl` and `sha256sum`):
 
     ```bash
-    curl -s https://download.gnosisvpn.io/linux/install.sh -O && \
-    curl -s https://download.gnosisvpn.io/linux/install.sh.sha256 -O && \
+    curl -fsSLO https://download.gnosisvpn.io/linux/install.sh && \
+    curl -fsSLO https://download.gnosisvpn.io/linux/install.sh.sha256 && \
     sha256sum -c install.sh.sha256
     ```
 
@@ -64,8 +64,8 @@ updates and will need to repeat these steps for each new release:
 2. Download and verify the package (adjust `<version>` and `<arch>` to match):
 
     ```bash
-    curl -s https://download.gnosisvpn.io/linux/apt/pool/main/g/gnosisvpn/gnosisvpn_<version>_<arch>.deb -O && \
-    curl -s https://download.gnosisvpn.io/linux/apt/pool/main/g/gnosisvpn/gnosisvpn_<version>_<arch>.deb.sha256 -O && \
+    curl -fsSLO https://download.gnosisvpn.io/linux/apt/pool/main/g/gnosisvpn/gnosisvpn_<version>_<arch>.deb && \
+    curl -fsSLO https://download.gnosisvpn.io/linux/apt/pool/main/g/gnosisvpn/gnosisvpn_<version>_<arch>.deb.sha256 && \
     sha256sum -c gnosisvpn_<version>_<arch>.deb.sha256
     ```
 
