@@ -59,20 +59,22 @@ This route is open to everyone but assumes some technical knowledge. You'll down
 **Or install the package manually** — note that you won't receive automatic
 updates and will need to repeat these steps for each new release:
 
-1. Download the latest `gnosisvpn_<arch>.deb` package and its `.sha256` checksum from the [downloads page](https://download.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest).
+1. Find the latest version on the [downloads page](https://download.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest) (`<arch>` is `amd64` or `arm64`).
 
-2. Verify the checksum (adjust `<version>` and `<arch>` to match your download):
+2. Download and verify the package (adjust `<version>` and `<arch>` to match):
 
     ```bash
+    curl -s https://download.gnosisvpn.io/linux/apt/pool/main/g/gnosisvpn/gnosisvpn_<version>_<arch>.deb -O && \
+    curl -s https://download.gnosisvpn.io/linux/apt/pool/main/g/gnosisvpn/gnosisvpn_<version>_<arch>.deb.sha256 -O && \
     sha256sum -c gnosisvpn_<version>_<arch>.deb.sha256
     ```
 
     `gnosisvpn_<version>_<arch>.deb: OK` means the checksum is correct.
 
-3. Install the package (adjust the path and `<arch>` to match your download):
+3. Install the package (adjust `<version>` and `<arch>` to match):
 
     ```bash
-    sudo apt install ~/Downloads/gnosisvpn_<arch>.deb
+    sudo apt install ./gnosisvpn_<version>_<arch>.deb
     ```
 
 4. Launch the Gnosis VPN app from your application menu, or from the
