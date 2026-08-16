@@ -22,32 +22,32 @@
  * Usage:  node scripts/generate-llms-full.js
  */
 
-'use strict';
+"use strict";
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // ---------------------------------------------------------------------------
 // Configuration
 // ---------------------------------------------------------------------------
 
-const REPO_ROOT = path.resolve(__dirname, '..');
-const DOCS_DIR = path.join(REPO_ROOT, 'docs');
-const OUTPUT_FILE = path.join(REPO_ROOT, 'static', 'llms-full.txt');
+const REPO_ROOT = path.resolve(__dirname, "..");
+const DOCS_DIR = path.join(REPO_ROOT, "docs");
+const OUTPUT_FILE = path.join(REPO_ROOT, "static", "llms-full.txt");
 
 // Base URL of the published docs site. Used to build Source: lines and to
 // rewrite relative doc links and absolute-path assets (e.g. /img/...).
-const SITE = 'https://docs.vpn.gnosis.eth.limo';
+const SITE = "https://docs.vpn.gnosis.eth.limo";
 
 // Section order + labels. `dir` is a folder under docs/; `label` is the
 // heading used in the output ("## <label>"). Pages inside each folder are
 // ordered by their `sidebar_position` frontmatter (ties broken by filename).
 const SECTIONS = [
-  { label: 'Getting Started', dir: 'get-started' },
-  { label: 'Concepts', dir: 'introduction' },
-  { label: 'Troubleshooting', dir: 'troubleshooting' },
-  { label: 'Reporting', dir: 'reporting' },
-  { label: 'Reference', dir: 'reference' },
+  { label: "Getting Started", dir: "get-started" },
+  { label: "Concepts", dir: "introduction" },
+  { label: "Troubleshooting", dir: "troubleshooting" },
+  { label: "Reporting", dir: "reporting" },
+  { label: "Reference", dir: "reference" },
 ];
 
 // Header block. {{DATE}} is replaced with the build timestamp (ISO-8601 UTC).
@@ -71,12 +71,16 @@ This file inlines the complete text of every Gnosis VPN documentation page so an
 // Helpers
 // ---------------------------------------------------------------------------
 
-const { execSync } = require('child_process');
+const { execSync } = require("child_process");
 
 function buildStamp() {
-  const stamp = execSync('git log -1 --format=%cI HEAD', { encoding: 'utf8' }).trim();
+  const stamp = execSync("git log -1 --format=%cI HEAD", {
+    encoding: "utf8",
+  }).trim();
   if (!stamp) {
-    throw new Error('git log returned empty output — cannot derive build stamp');
+    throw new Error(
+      "git log returned empty output — cannot derive build stamp",
+    );
   }
   return stamp;
 }
@@ -86,7 +90,7 @@ function splitFrontmatter(raw) {
   const m = raw.match(/^---\n([\s\S]*?)\n---\n?/);
   if (!m) return { frontmatter: {}, body: raw };
   const frontmatter = {};
-  for (const line of m[1].split('\n')) {
+  for (const line of m[1].split("\n")) {
     const mm = line.match(/^\s*([A-Za-z0-9_-]+)\s*:\s*(.*)\s*$/);
     if (mm) {
       let val = mm[2].trim();
@@ -114,20 +118,19 @@ function rewriteInline(line, currentDir) {
     if (/^(https?:)?\/\//i.test(target) || /^(mailto:|tel:)/i.test(target)) {
       return target;
     }
-    if (target.startsWith('#')) return target;
+    if (target.startsWith("#")) return target;
 
     // Absolute-path asset/link (e.g. /img/foo.png, /docs/...): prefix SITE.
-    if (target.startsWith('/')) return SITE + target;
+    if (target.startsWith("/")) return SITE + target;
 
     // Relative link to another doc page (.md, optional #anchor).
     const mdMatch = target.match(/^([^#]*\.md)(#.*)?$/i);
     if (mdMatch) {
-      const anchor = mdMatch[2] || '';
+      const anchor = mdMatch[2] || "";
       // Resolve relative to the current page's directory, within docs/.
-      const resolved = path
-        .posix
+      const resolved = path.posix
         .normalize(path.posix.join(currentDir, mdMatch[1]))
-        .replace(/\.md$/i, '');
+        .replace(/\.md$/i, "");
       return `${SITE}/docs/${resolved}/${anchor}`;
     }
 
@@ -137,29 +140,33 @@ function rewriteInline(line, currentDir) {
 
   // Images first (leading !), then plain links. The (!?) capture keeps them
   // distinguishable so we don't double-process.
-  return line.replace(/(!?)\[([^\]]*)\]\(([^)\s]+)\)/g, (full, bang, text, target) => {
-    return `${bang}[${text}](${rewriteTarget(target)})`;
-  });
+  return line.replace(
+    /(!?)\[([^\]]*)\]\(([^)\s]+)\)/g,
+    (full, bang, text, target) => {
+      return `${bang}[${text}](${rewriteTarget(target)})`;
+    },
+  );
 }
 
 // Convert a page's markdown body into the inlined form.
 function transformBody(body, currentDir) {
   // Scrub zero-width / BOM characters that sometimes sneak into source
   // markdown (e.g. before a code fence) so they don't leak into the output.
-  body = body.replace(/[​‌‍﻿]/g, '');
+  body = body.replace(/[​‌‍﻿]/g, "");
 
   // Strip HTML comments (single- and multi-line). They hold internal notes
   // (e.g. TODOs pending engineering confirmation) that the rendered site
   // never shows, so the LLM bundle must not ship them either.
-  body = body.replace(/<!--[\s\S]*?-->/g, '');
-  const lines = body.split('\n');
+  body = body.replace(/<!--[\s\S]*?-->/g, "");
+  const lines = body.split("\n");
 
   // Drop the leading H1 (it becomes the "###" section title), plus any blank
   // lines and MDX import statements before it.
   let start = 0;
   while (
     start < lines.length &&
-    (lines[start].trim() === '' || /^import\s.+from\s+['"].+['"];?\s*$/.test(lines[start]))
+    (lines[start].trim() === "" ||
+      /^import\s.+from\s+['"].+['"];?\s*$/.test(lines[start]))
   ) {
     start++;
   }
@@ -170,7 +177,7 @@ function transformBody(body, currentDir) {
 
   const out = [];
   let inFence = false;
-  let fenceMarker = '';
+  let fenceMarker = "";
 
   for (let i = 0; i < rest.length; i++) {
     const line = rest[i];
@@ -185,7 +192,7 @@ function transformBody(body, currentDir) {
         fenceMarker = marker;
       } else if (marker === fenceMarker) {
         inFence = false;
-        fenceMarker = '';
+        fenceMarker = "";
       }
       out.push(line);
       continue;
@@ -197,7 +204,9 @@ function transformBody(body, currentDir) {
 
     // MDX Tabs components: render each <TabItem label="X"> as a bold
     // paragraph and drop the wrapper tags entirely.
-    const tabItemOpen = line.match(/^<TabItem\b[^>]*\blabel="([^"]+)"[^>]*>\s*$/);
+    const tabItemOpen = line.match(
+      /^<TabItem\b[^>]*\blabel="([^"]+)"[^>]*>\s*$/,
+    );
     if (tabItemOpen) {
       out.push(`**${tabItemOpen[1]}**`);
       continue;
@@ -225,7 +234,7 @@ function transformBody(body, currentDir) {
     if (admOpen) {
       const type = admOpen[1];
       const customTitle = admOpen[2];
-      const inlineRest = admOpen[3] ? admOpen[3].trim() : '';
+      const inlineRest = admOpen[3] ? admOpen[3].trim() : "";
       const contentLines = [];
       if (inlineRest) contentLines.push(inlineRest);
       i++;
@@ -240,7 +249,7 @@ function transformBody(body, currentDir) {
       const content = contentLines
         .map((l) => rewriteInline(l, currentDir).trim())
         .filter((l) => l.length)
-        .join(' ');
+        .join(" ");
       out.push(`> ${title}: ${content}`);
       continue;
     }
@@ -249,7 +258,7 @@ function transformBody(body, currentDir) {
     const heading = line.match(/^(#{1,6})(\s+.*)$/);
     if (heading) {
       const level = Math.min(heading[1].length + 2, 6);
-      out.push('#'.repeat(level) + rewriteInline(heading[2], currentDir));
+      out.push("#".repeat(level) + rewriteInline(heading[2], currentDir));
       continue;
     }
 
@@ -258,10 +267,10 @@ function transformBody(body, currentDir) {
   }
 
   // Trim leading/trailing blank lines.
-  while (out.length && out[0].trim() === '') out.shift();
-  while (out.length && out[out.length - 1].trim() === '') out.pop();
+  while (out.length && out[0].trim() === "") out.shift();
+  while (out.length && out[out.length - 1].trim() === "") out.pop();
 
-  return out.join('\n');
+  return out.join("\n");
 }
 
 // Read + order the pages of one section directory.
@@ -269,17 +278,17 @@ function readSectionPages(dir) {
   const abs = path.join(DOCS_DIR, dir);
   const files = fs
     .readdirSync(abs)
-    .filter((f) => f.endsWith('.md'))
+    .filter((f) => f.endsWith(".md"))
     .sort();
 
   const pages = files.map((file) => {
-    const raw = fs.readFileSync(path.join(abs, file), 'utf8');
+    const raw = fs.readFileSync(path.join(abs, file), "utf8");
     const { frontmatter, body } = splitFrontmatter(raw);
-    const slug = file.replace(/\.md$/i, '');
+    const slug = file.replace(/\.md$/i, "");
 
     // The "###" title is the page's first H1; fall back to frontmatter title.
     const h1 = body.match(/^\s*#\s+(.*)$/m);
-    const title = h1 ? h1[1].trim() : (frontmatter.title || slug);
+    const title = h1 ? h1[1].trim() : frontmatter.title || slug;
 
     const position = frontmatter.sidebar_position
       ? Number(frontmatter.sidebar_position)
@@ -303,7 +312,7 @@ function readSectionPages(dir) {
 // ---------------------------------------------------------------------------
 
 function build(stamp) {
-  const units = [HEADER.replace('{{DATE}}', stamp)];
+  const units = [HEADER.replace("{{DATE}}", stamp)];
 
   for (const section of SECTIONS) {
     const pages = readSectionPages(section.dir);
@@ -313,23 +322,23 @@ function build(stamp) {
       parts.push(`### ${page.title}\n`);
       parts.push(`Source: ${page.source}\n`);
       parts.push(page.content);
-      units.push(parts.join('\n'));
+      units.push(parts.join("\n"));
     });
   }
 
-  return units.join('\n\n---\n\n') + '\n';
+  return units.join("\n\n---\n\n") + "\n";
 }
 
 // Rewrite the Docs-Updated line of static/llms.txt with the same stamp, so
 // both llms files always carry the identical build timestamp.
 function stampLlmsIndex(stamp) {
-  const file = path.join(REPO_ROOT, 'static', 'llms.txt');
-  const raw = fs.readFileSync(file, 'utf8');
+  const file = path.join(REPO_ROOT, "static", "llms.txt");
+  const raw = fs.readFileSync(file, "utf8");
   const updated = raw.replace(/^Docs-Updated: .*$/m, `Docs-Updated: ${stamp}`);
   if (updated === raw && !raw.includes(`Docs-Updated: ${stamp}`)) {
     throw new Error('static/llms.txt: no "Docs-Updated:" line found to stamp');
   }
-  fs.writeFileSync(file, updated, 'utf8');
+  fs.writeFileSync(file, updated, "utf8");
   console.log(`Stamped static/llms.txt (Docs-Updated: ${stamp})`);
 }
 
@@ -337,9 +346,9 @@ function main() {
   const stamp = buildStamp();
   const output = build(stamp);
   fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
-  fs.writeFileSync(OUTPUT_FILE, output, 'utf8');
+  fs.writeFileSync(OUTPUT_FILE, output, "utf8");
   console.log(
-    `Wrote ${path.relative(REPO_ROOT, OUTPUT_FILE)} (${output.length} bytes, Docs-Updated: ${stamp})`
+    `Wrote ${path.relative(REPO_ROOT, OUTPUT_FILE)} (${output.length} bytes, Docs-Updated: ${stamp})`,
   );
   stampLlmsIndex(stamp);
 }

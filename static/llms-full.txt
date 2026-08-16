@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-08-16T23:03:59+02:00
+Docs-Updated: 2026-08-16T23:08:13+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -68,32 +68,32 @@ This route is open to everyone but assumes some technical knowledge. You'll down
 1. Download and verify the install script, which adds the Gnosis VPN APT
    repository and installs the package (requires `curl` and `sha256sum`):
 
-    ```bash
-    curl -fsSLO https://download.gnosisvpn.io/linux/install.sh && \
-    curl -fsSLO https://download.gnosisvpn.io/linux/install.sh.sha256 && \
-    sha256sum -c install.sh.sha256
-    ```
+   ```bash
+   curl -fsSLO https://download.gnosisvpn.io/linux/install.sh && \
+   curl -fsSLO https://download.gnosisvpn.io/linux/install.sh.sha256 && \
+   sha256sum -c install.sh.sha256
+   ```
 
-    `install.sh: OK` means the checksum is correct.
+   `install.sh: OK` means the checksum is correct.
 
 2. You can optionally inspect the script to see what it does before executing it:
 
-    ```bash
-    less install.sh
-    ```
+   ```bash
+   less install.sh
+   ```
 
 3. Then execute it:
 
-    ```bash
-    sudo bash install.sh
-    ```
+   ```bash
+   sudo bash install.sh
+   ```
 
 4. Launch the Gnosis VPN app from your application menu, or from the
    terminal:
 
-    ```bash
-    gnosis_vpn-app
-    ```
+   ```bash
+   gnosis_vpn-app
+   ```
 
 **Or install the package manually** — note that you won't receive automatic
 updates and will need to repeat these steps for each new release:
@@ -102,16 +102,16 @@ updates and will need to repeat these steps for each new release:
 
 2. Install the package (adjust the path and `<arch>` to match your download):
 
-    ```bash
-    sudo apt install ~/Downloads/gnosisvpn_<arch>.deb
-    ```
+   ```bash
+   sudo apt install ~/Downloads/gnosisvpn_<arch>.deb
+   ```
 
 3. Launch the Gnosis VPN app from your application menu, or from the
    terminal:
 
-    ```bash
-    gnosis_vpn-app
-    ```
+   ```bash
+   gnosis_vpn-app
+   ```
 
 
 For a full list of files and directories the installer creates, see the reference pages for [macOS](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/) and [Debian](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/).
@@ -263,15 +263,15 @@ In a terminal, run:
 
 1. Refresh your system's package list so it knows about the latest Gnosis VPN release:
 
-    ```bash
-    sudo apt update
-    ```
+   ```bash
+   sudo apt update
+   ```
 
 2. Upgrade Gnosis VPN:
 
-    ```bash
-    sudo apt upgrade gnosisvpn
-    ```
+   ```bash
+   sudo apt upgrade gnosisvpn
+   ```
 
 
 #### Uninstalling
@@ -443,10 +443,10 @@ If you are using Gnosis VPN on macOS without exporting logs from the desktop app
 
 If the issue occurred during installation, the macOS installer writes separate logs:
 
-| Path | Content |
-| --- | --- |
-| `/Library/Logs/GnosisVPN/installer/installer.log` | Main installer log. |
-| `/Library/Logs/GnosisVPN/installer/preinstall.log` | Preinstall script output. |
+| Path                                                | Content                    |
+| --------------------------------------------------- | -------------------------- |
+| `/Library/Logs/GnosisVPN/installer/installer.log`   | Main installer log.        |
+| `/Library/Logs/GnosisVPN/installer/preinstall.log`  | Preinstall script output.  |
 | `/Library/Logs/GnosisVPN/installer/postinstall.log` | Postinstall script output. |
 
 ##### Linux
@@ -489,6 +489,7 @@ The VPN reports a connected state, but internet access is missing or drops in an
    gnosis_vpn-ctl balance
    ```
 2. If your balance is sufficient, restart the background service to flush stuck routing tables:
+
    ```
    # Linux
    sudo systemctl restart gnosisvpn.service
@@ -561,13 +562,13 @@ The client fails to start after an update and shows **Critical error during init
 - The app shows **Critical error during initialization**, with a construction or chain error mentioning the network endpoint.
 - Syncing appears to resume on its own, then the same error returns shortly after.
 - The service log repeats the same failure every 10 seconds:
-   ```
-   INFO  hopr_lib::builder: registering safe with this node safe_addr=<safe_address>
-   ERROR hopr_lib::builder: safe registration failed safe_addr=<safe_address> error=safe registration error: safe <safe_address> does not exist
-   WARN  hopr_chain_connector::connector: chain subscription stream ended, marking chain health as degraded
-   ERROR gnosis_vpn_lib::hopr::api: error=Construction error: chain error: safe registration error: safe <safe_address> does not exist
-   ERROR gnosis_vpn_lib::core: hopr runner failed to start - trying again in 10 seconds
-   ```
+  ```
+  INFO  hopr_lib::builder: registering safe with this node safe_addr=<safe_address>
+  ERROR hopr_lib::builder: safe registration failed safe_addr=<safe_address> error=safe registration error: safe <safe_address> does not exist
+  WARN  hopr_chain_connector::connector: chain subscription stream ended, marking chain health as degraded
+  ERROR gnosis_vpn_lib::hopr::api: error=Construction error: chain error: safe registration error: safe <safe_address> does not exist
+  ERROR gnosis_vpn_lib::core: hopr runner failed to start - trying again in 10 seconds
+  ```
 
 **Resolution steps**
 
@@ -754,29 +755,29 @@ This page lists every file and directory the macOS installer creates, for users 
 
 #### Directories created by the installer
 
-| Folder | Purpose | Owner | Permissions | Notes |
-|--------|---------|-------|-------------|-------|
-| `/Library/Application Support/GnosisVPN/` | Application state and home directory | `gnosisvpn:gnosisvpn` | `0750` | Service working directory; also set as `TMPDIR` and `HOME` for the daemon. The identity is stored in the `.config` subdirectory. |
-| `/Library/Logs/GnosisVPN/` | Service log directory | `gnosisvpn:gnosisvpn` | `0755` | `gnosisvpn.log` written here; rotated via newsyslog at 100 MB, 10 copies |
-| `/Library/Logs/GnosisVPN/installer/` | Installer log directory | `root:wheel` | `0755` | `installer.log` written during install/uninstall steps |
-| `/etc/gnosisvpn/` | Configuration directory | `root:gnosisvpn` | — | Network config templates and `config.toml` symlink; `/etc` is a symlink to `/private/etc` on macOS |
-| `/etc/gnosisvpn/templates/` | Network config templates | `root:gnosisvpn` | — | `jura.toml.template`, `rotsee.toml.template`, `dufour.toml.template` |
+| Folder                                    | Purpose                              | Owner                 | Permissions | Notes                                                                                                                            |
+| ----------------------------------------- | ------------------------------------ | --------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `/Library/Application Support/GnosisVPN/` | Application state and home directory | `gnosisvpn:gnosisvpn` | `0750`      | Service working directory; also set as `TMPDIR` and `HOME` for the daemon. The identity is stored in the `.config` subdirectory. |
+| `/Library/Logs/GnosisVPN/`                | Service log directory                | `gnosisvpn:gnosisvpn` | `0755`      | `gnosisvpn.log` written here; rotated via newsyslog at 100 MB, 10 copies                                                         |
+| `/Library/Logs/GnosisVPN/installer/`      | Installer log directory              | `root:wheel`          | `0755`      | `installer.log` written during install/uninstall steps                                                                           |
+| `/etc/gnosisvpn/`                         | Configuration directory              | `root:gnosisvpn`      | —           | Network config templates and `config.toml` symlink; `/etc` is a symlink to `/private/etc` on macOS                               |
+| `/etc/gnosisvpn/templates/`               | Network config templates             | `root:gnosisvpn`      | —           | `jura.toml.template`, `rotsee.toml.template`, `dufour.toml.template`                                                             |
 
 #### Key files placed into existing system directories
 
-| Path | Purpose | Notes |
-|------|---------|-------|
-| `/usr/local/bin/gnosis_vpn-root` | Main VPN daemon binary | `root:wheel`, `0750` |
-| `/usr/local/bin/gnosis_vpn-worker` | Worker process binary | `root:gnosisvpn`, `0750` |
-| `/usr/local/bin/gnosis_vpn-ctl` | CLI control tool | `gnosisvpn:gnosisvpn`, `0755` |
-| `/usr/local/bin/gnosis_vpn-manager` | Management utility script | `root:gnosisvpn`, `0755` |
-| `/usr/local/bin/{wg,wg-quick,wireguard-go}` | Bundled WireGuard tools | `root:wheel`, `0755`; bundled so no separate WireGuard install is needed |
-| `/Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist` | LaunchDaemon service definition | Loaded and enabled at boot, runs as root |
-| `/etc/newsyslog.d/gnosisvpn.conf` | Log rotation policy | 100 MB threshold, 10 rotations |
-| `/etc/sudoers.d/gnosis-vpn` | Sudoers drop-in for launchctl operations | Allows the `gnosisvpn` group to run specific `launchctl` subcommands without a password; `root:wheel`, `0440` |
-| `/etc/gnosisvpn/config.toml` | Symlink to active network config | Points to `templates/jura.toml.template` (default network: `jura`) |
-| `/Applications/Gnosis VPN.app` | GUI application bundle | Extracted from archive during postinstall; `root:admin`, `0755` |
-| `/var/run/gnosisvpn.pid` | Daemon PID file | Written by the daemon at startup |
+| Path                                                         | Purpose                                  | Notes                                                                                                         |
+| ------------------------------------------------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `/usr/local/bin/gnosis_vpn-root`                             | Main VPN daemon binary                   | `root:wheel`, `0750`                                                                                          |
+| `/usr/local/bin/gnosis_vpn-worker`                           | Worker process binary                    | `root:gnosisvpn`, `0750`                                                                                      |
+| `/usr/local/bin/gnosis_vpn-ctl`                              | CLI control tool                         | `gnosisvpn:gnosisvpn`, `0755`                                                                                 |
+| `/usr/local/bin/gnosis_vpn-manager`                          | Management utility script                | `root:gnosisvpn`, `0755`                                                                                      |
+| `/usr/local/bin/{wg,wg-quick,wireguard-go}`                  | Bundled WireGuard tools                  | `root:wheel`, `0755`; bundled so no separate WireGuard install is needed                                      |
+| `/Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist` | LaunchDaemon service definition          | Loaded and enabled at boot, runs as root                                                                      |
+| `/etc/newsyslog.d/gnosisvpn.conf`                            | Log rotation policy                      | 100 MB threshold, 10 rotations                                                                                |
+| `/etc/sudoers.d/gnosis-vpn`                                  | Sudoers drop-in for launchctl operations | Allows the `gnosisvpn` group to run specific `launchctl` subcommands without a password; `root:wheel`, `0440` |
+| `/etc/gnosisvpn/config.toml`                                 | Symlink to active network config         | Points to `templates/jura.toml.template` (default network: `jura`)                                            |
+| `/Applications/Gnosis VPN.app`                               | GUI application bundle                   | Extracted from archive during postinstall; `root:admin`, `0755`                                               |
+| `/var/run/gnosisvpn.pid`                                     | Daemon PID file                          | Written by the daemon at startup                                                                              |
 
 ---
 
@@ -788,23 +789,23 @@ This page lists every file and directory the Debian package creates, for users w
 
 #### Directories created by the installer
 
-| Folder | Purpose | Owner | Permissions | Notes |
-|--------|---------|-------|-------------|-------|
-| `/etc/gnosisvpn/` | Configuration directory | `gnosisvpn:gnosisvpn` | `0755` | Contains env file, network config files, and a `config.toml` symlink pointing to the active network |
-| `/var/lib/gnosisvpn/` | State and cache directory | `gnosisvpn:gnosisvpn` | `0775` | Service working directory; holds `.cache/wg0_gnosisvpn.conf` (WireGuard config written at runtime) |
-| `/var/log/gnosisvpn/` | Log directory | `gnosisvpn:gnosisvpn` | `0755` | `gnosisvpn.log` is written here; rotated daily, 7-day retention |
-| `/run/gnosisvpn/` | Runtime directory | `root:root` | `0755` | Created by systemd at service start, not by the installer scripts |
-| `/etc/apt/keyrings/` | APT signing keys | `root:root` | `0644` (file) | `gnosisvpn-archive-keyring.gpg` copied from bundled `/usr/share/gnosisvpn/` during postinstall |
-| `/etc/apt/sources.list.d/` | APT repository source | `root:root` | `0644` (file) | `gnosisvpn.sources` written during postinstall; URI `https://download.gnosisvpn.io/linux/apt`, suite `stable`, component `main` |
-| `/etc/apparmor.d/local/` | AppArmor local drop-ins | `root:root` | `0644` (file) | `wg-quick` drop-in allowing wg-quick to read `/var/lib/gnosisvpn/.cache/wg0_gnosisvpn.conf`; Ubuntu-only |
-| `/usr/share/gnosisvpn/` | Shared package resources | `root:root` | `0644` (files) | Bundles the APT keyring GPG file used during postinstall |
-| `/usr/share/doc/gnosisvpn/` | Documentation | `root:root` | `0644` (files) | Copyright notice and changelog; removed on uninstall (not purge) |
+| Folder                      | Purpose                   | Owner                 | Permissions    | Notes                                                                                                                           |
+| --------------------------- | ------------------------- | --------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `/etc/gnosisvpn/`           | Configuration directory   | `gnosisvpn:gnosisvpn` | `0755`         | Contains env file, network config files, and a `config.toml` symlink pointing to the active network                             |
+| `/var/lib/gnosisvpn/`       | State and cache directory | `gnosisvpn:gnosisvpn` | `0775`         | Service working directory; holds `.cache/wg0_gnosisvpn.conf` (WireGuard config written at runtime)                              |
+| `/var/log/gnosisvpn/`       | Log directory             | `gnosisvpn:gnosisvpn` | `0755`         | `gnosisvpn.log` is written here; rotated daily, 7-day retention                                                                 |
+| `/run/gnosisvpn/`           | Runtime directory         | `root:root`           | `0755`         | Created by systemd at service start, not by the installer scripts                                                               |
+| `/etc/apt/keyrings/`        | APT signing keys          | `root:root`           | `0644` (file)  | `gnosisvpn-archive-keyring.gpg` copied from bundled `/usr/share/gnosisvpn/` during postinstall                                  |
+| `/etc/apt/sources.list.d/`  | APT repository source     | `root:root`           | `0644` (file)  | `gnosisvpn.sources` written during postinstall; URI `https://download.gnosisvpn.io/linux/apt`, suite `stable`, component `main` |
+| `/etc/apparmor.d/local/`    | AppArmor local drop-ins   | `root:root`           | `0644` (file)  | `wg-quick` drop-in allowing wg-quick to read `/var/lib/gnosisvpn/.cache/wg0_gnosisvpn.conf`; Ubuntu-only                        |
+| `/usr/share/gnosisvpn/`     | Shared package resources  | `root:root`           | `0644` (files) | Bundles the APT keyring GPG file used during postinstall                                                                        |
+| `/usr/share/doc/gnosisvpn/` | Documentation             | `root:root`           | `0644` (files) | Copyright notice and changelog; removed on uninstall (not purge)                                                                |
 
 #### Key files placed into existing system directories
 
-| Path | Purpose | Notes |
-|------|---------|-------|
-| `/usr/lib/systemd/system/gnosisvpn.service` | Systemd unit | Enabled and started post-install |
-| `/etc/logrotate.d/gnosisvpn` | Log rotation policy | Daily, 7 days, gzip |
-| `/etc/gnosisvpn/config.toml` | Symlink to active network config | Points to `config-jura.toml` (default network: `jura`) |
-| `/etc/gnosisvpn/gnosisvpn.env` | Service environment variables | `RUST_LOG=info`, log to `/var/log/gnosisvpn/gnosisvpn.log`, static routing forced |
+| Path                                        | Purpose                          | Notes                                                                             |
+| ------------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------- |
+| `/usr/lib/systemd/system/gnosisvpn.service` | Systemd unit                     | Enabled and started post-install                                                  |
+| `/etc/logrotate.d/gnosisvpn`                | Log rotation policy              | Daily, 7 days, gzip                                                               |
+| `/etc/gnosisvpn/config.toml`                | Symlink to active network config | Points to `config-jura.toml` (default network: `jura`)                            |
+| `/etc/gnosisvpn/gnosisvpn.env`              | Service environment variables    | `RUST_LOG=info`, log to `/var/log/gnosisvpn/gnosisvpn.log`, static routing forced |

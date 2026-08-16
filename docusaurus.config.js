@@ -1,65 +1,65 @@
 // @ts-check
-const {themes} = require('prism-react-renderer');
+const { themes } = require("prism-react-renderer");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Gnosis VPN',
-  tagline: 'Privacy-focused VPN built on the HOPR mixnet',
-  favicon: 'img/favicon.ico',
+  title: "Gnosis VPN",
+  tagline: "Privacy-focused VPN built on the HOPR mixnet",
+  favicon: "img/favicon.ico",
 
   // Set these to your real deployment URL when you have one.
-  url: 'https://docs.vpn.gnosis.eth.limo',
-  baseUrl: '/',
+  url: "https://docs.vpn.gnosis.eth.limo",
+  baseUrl: "/",
 
   // IMPORTANT for IPFS gateway routing.
   trailingSlash: true,
 
   markdown: {
     hooks: {
-      onBrokenMarkdownLinks: 'warn',
+      onBrokenMarkdownLinks: "warn",
     },
   },
-  onBrokenLinks: 'warn',
+  onBrokenLinks: "warn",
 
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: "en",
+    locales: ["en"],
   },
 
   // Load the Tabler icon webfont (used by the category cards).
   stylesheets: [
-    'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css',
+    "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css",
   ],
   headTags: [
     {
-      tagName: 'link',
+      tagName: "link",
       attributes: {
-        rel: 'llms',
-        href: 'https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt',
-        type: 'text/markdown',
+        rel: "llms",
+        href: "https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt",
+        type: "text/markdown",
       },
     },
     {
-      tagName: 'meta',
+      tagName: "meta",
       attributes: {
-        name: 'google-site-verification',
-        content: 'ZCsofUSc0BNyfcE2zikbCS7MqgyZ88s6062MXHzfrNs',
-      }
-    }
+        name: "google-site-verification",
+        content: "ZCsofUSc0BNyfcE2zikbCS7MqgyZ88s6062MXHzfrNs",
+      },
+    },
   ],
   presets: [
     [
-      'classic',
+      "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
-          routeBasePath: 'docs',
+          sidebarPath: require.resolve("./sidebars.js"),
+          routeBasePath: "docs",
           editUrl: undefined,
         },
         blog: false,
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve("./src/css/custom.css"),
         },
       }),
     ],
@@ -71,55 +71,61 @@ const config = {
       colorMode: {
         // Logo is white/pale-yellow, built for the dark navbar.
         // Keep light as default; navbar stays dark in both modes via CSS.
-        defaultMode: 'light',
+        defaultMode: "light",
         respectPrefersColorScheme: true,
       },
       navbar: {
         // Title empty: the logo SVG already contains the wordmark.
-        title: '',
+        title: "",
         logo: {
-          alt: 'Gnosis VPN',
-          src: 'img/gnosis_vpn.svg',
-          href: '/',
+          alt: "Gnosis VPN",
+          src: "img/gnosis_vpn.svg",
+          href: "/",
         },
         items: [
           {
-            href: 'https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt',
-            label: 'For AI assistants: llms.txt',
-            position: 'right',
+            href: "https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt",
+            label: "For AI assistants: llms.txt",
+            position: "right",
           },
           {
-            href: 'https://github.com/gnosis/gnosis_vpn',
-            label: 'GitHub',
-            position: 'right',
+            href: "https://github.com/gnosis/gnosis_vpn",
+            label: "GitHub",
+            position: "right",
           },
         ],
       },
       footer: {
-        style: 'dark',
+        style: "dark",
         links: [
           {
-            title: 'Docs',
+            title: "Docs",
             items: [
-              {label: 'Introduction', to: '/docs/introduction/overview'},
-              {label: 'Get started', to: '/docs/get-started/requirements'},
-              {label: 'Troubleshooting', to: '/docs/troubleshooting/logs'},
+              { label: "Introduction", to: "/docs/introduction/overview" },
+              { label: "Get started", to: "/docs/get-started/requirements" },
+              { label: "Troubleshooting", to: "/docs/troubleshooting/logs" },
             ],
           },
           {
-            title: 'Community',
+            title: "Community",
             items: [
               {
-                label: 'GitHub Discussions',
-                href: 'https://github.com/gnosis/gnosis_vpn/discussions',
+                label: "GitHub Discussions",
+                href: "https://github.com/gnosis/gnosis_vpn/discussions",
               },
             ],
           },
           {
-            title: 'More',
+            title: "More",
             items: [
-              {label: 'Onboarding tool', href: 'https://self-onboarding.gnosisvpn.com'},
-              {label: 'Downloads', href: 'https://downloads.vpn.gnosis.eth.limo'}
+              {
+                label: "Onboarding tool",
+                href: "https://self-onboarding.gnosisvpn.com",
+              },
+              {
+                label: "Downloads",
+                href: "https://downloads.vpn.gnosis.eth.limo",
+              },
             ],
           },
         ],

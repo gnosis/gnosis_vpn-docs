@@ -62,15 +62,16 @@
   top: 1.2rem;
   left: 18px;
   border-left-color: var(--gvpn-muted);
-  transition: transform var(--ifm-transition-fast) ease, border-color 0.25s
-    cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform var(--ifm-transition-fast) ease,
+    border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* The open issue gets a brand-colored arrow. First selector is the normal
    (JS) path; the second keeps it colored while an issue animates closed, and
    covers the no-JS case where only the `open` attribute ever changes. */
-.issue[data-collapsed='false'] > .summary::before,
-.issue[open][data-collapsed='true'] > .summary::before {
+.issue[data-collapsed="false"] > .summary::before,
+.issue[open][data-collapsed="true"] > .summary::before {
   border-left-color: var(--gvpn-indigo);
 }
 
@@ -116,10 +117,10 @@
   margin-bottom: 0;
 }
 
-[data-theme='dark'] .issue {
+[data-theme="dark"] .issue {
   border-color: #2a2d44;
   --docusaurus-details-decoration-color: #2a2d44;
 }
-[data-theme='dark'] .issue:hover {
+[data-theme="dark"] .issue:hover {
   border-color: var(--gvpn-indigo);
 }

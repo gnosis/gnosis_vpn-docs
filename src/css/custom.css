@@ -21,7 +21,8 @@
 
   /* Typography + headings */
   --ifm-heading-color: #16182e;
-  --ifm-font-family-base: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ifm-font-family-base:
+    system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --ifm-code-font-size: 90%;
   --ifm-code-border-radius: 8px;
 

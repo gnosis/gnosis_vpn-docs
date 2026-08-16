@@ -47,15 +47,15 @@ In a terminal, run:
 
 1. Refresh your system's package list so it knows about the latest Gnosis VPN release:
 
-    ```bash
-    sudo apt update
-    ```
+   ```bash
+   sudo apt update
+   ```
 
 2. Upgrade Gnosis VPN:
 
-    ```bash
-    sudo apt upgrade gnosisvpn
-    ```
+   ```bash
+   sudo apt upgrade gnosisvpn
+   ```
 
 </TabItem>
 </Tabs>
