@@ -29,10 +29,10 @@ If you are using Gnosis VPN on macOS without exporting logs from the desktop app
 
 If the issue occurred during installation, the macOS installer writes separate logs:
 
-| Path | Content |
-| --- | --- |
-| `/Library/Logs/GnosisVPN/installer/installer.log` | Main installer log. |
-| `/Library/Logs/GnosisVPN/installer/preinstall.log` | Preinstall script output. |
+| Path                                                | Content                    |
+| --------------------------------------------------- | -------------------------- |
+| `/Library/Logs/GnosisVPN/installer/installer.log`   | Main installer log.        |
+| `/Library/Logs/GnosisVPN/installer/preinstall.log`  | Preinstall script output.  |
 | `/Library/Logs/GnosisVPN/installer/postinstall.log` | Postinstall script output. |
 
 ### Linux

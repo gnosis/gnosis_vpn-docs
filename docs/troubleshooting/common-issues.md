@@ -37,6 +37,7 @@ The VPN reports a connected state, but internet access is missing or drops in an
    gnosis_vpn-ctl balance
    ```
 2. If your balance is sufficient, restart the background service to flush stuck routing tables:
+
    ```
    # Linux
    sudo systemctl restart gnosisvpn.service
@@ -113,13 +114,13 @@ The client fails to start after an update and shows **Critical error during init
 - The app shows **Critical error during initialization**, with a construction or chain error mentioning the network endpoint.
 - Syncing appears to resume on its own, then the same error returns shortly after.
 - The service log repeats the same failure every 10 seconds:
-   ```
-   INFO  hopr_lib::builder: registering safe with this node safe_addr=<safe_address>
-   ERROR hopr_lib::builder: safe registration failed safe_addr=<safe_address> error=safe registration error: safe <safe_address> does not exist
-   WARN  hopr_chain_connector::connector: chain subscription stream ended, marking chain health as degraded
-   ERROR gnosis_vpn_lib::hopr::api: error=Construction error: chain error: safe registration error: safe <safe_address> does not exist
-   ERROR gnosis_vpn_lib::core: hopr runner failed to start - trying again in 10 seconds
-   ```
+  ```
+  INFO  hopr_lib::builder: registering safe with this node safe_addr=<safe_address>
+  ERROR hopr_lib::builder: safe registration failed safe_addr=<safe_address> error=safe registration error: safe <safe_address> does not exist
+  WARN  hopr_chain_connector::connector: chain subscription stream ended, marking chain health as degraded
+  ERROR gnosis_vpn_lib::hopr::api: error=Construction error: chain error: safe registration error: safe <safe_address> does not exist
+  ERROR gnosis_vpn_lib::core: hopr runner failed to start - trying again in 10 seconds
+  ```
 
 **Resolution steps**
 

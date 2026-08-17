@@ -1,6 +1,6 @@
-import React from 'react';
-import Link from '@docusaurus/Link';
-import Layout from '@theme/Layout';
+import React from "react";
+import Link from "@docusaurus/Link";
+import Layout from "@theme/Layout";
 
 /**
  * Front page: support-center style hero + category cards.
@@ -9,28 +9,28 @@ import Layout from '@theme/Layout';
 
 const CATEGORIES = [
   {
-    icon: 'ti-book-2',
-    title: 'Introduction',
-    desc: 'What Gnosis VPN is, the El Dorado Beta, VPN architecture and how it works.',
-    to: '/docs/introduction/overview',
+    icon: "ti-book-2",
+    title: "Introduction",
+    desc: "What Gnosis VPN is, the El Dorado Beta, VPN architecture and how it works.",
+    to: "/docs/introduction/overview",
   },
   {
-    icon: 'ti-download',
-    title: 'Get started',
-    desc: 'System requirements, installation, and funding your account.',
-    to: '/docs/get-started/requirements',
+    icon: "ti-download",
+    title: "Get started",
+    desc: "System requirements, installation, and funding your account.",
+    to: "/docs/get-started/requirements",
   },
   {
-    icon: 'ti-tool',
-    title: 'Troubleshooting',
-    desc: 'Log locations and fixes for common connection issues.',
-    to: '/docs/troubleshooting/logs',
+    icon: "ti-tool",
+    title: "Troubleshooting",
+    desc: "Log locations and fixes for common connection issues.",
+    to: "/docs/troubleshooting/logs",
   },
   {
-    icon: 'ti-message-report',
-    title: 'Reporting issues',
-    desc: 'Where to report, what logs to include, and how to write a good report.',
-    to: '/docs/reporting/reporting-issues',
+    icon: "ti-message-report",
+    title: "Reporting issues",
+    desc: "Where to report, what logs to include, and how to write a good report.",
+    to: "/docs/reporting/reporting-issues",
   },
 ];
 
@@ -56,7 +56,10 @@ export default function Home() {
                 <span className="gvpnCardTitle">{c.title}</span>
                 <span className="gvpnCardDesc">{c.desc}</span>
               </span>
-              <i className="ti ti-chevron-right gvpnCardArrow" aria-hidden="true" />
+              <i
+                className="ti ti-chevron-right gvpnCardArrow"
+                aria-hidden="true"
+              />
             </Link>
           ))}
         </div>

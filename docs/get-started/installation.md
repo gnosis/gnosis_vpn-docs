@@ -29,32 +29,32 @@ This route is open to everyone but assumes some technical knowledge. You'll down
 1. Download and verify the install script, which adds the Gnosis VPN APT
    repository and installs the package (requires `curl` and `sha256sum`):
 
-    ```bash
-    curl -fsSLO https://download.gnosisvpn.io/linux/install.sh && \
-    curl -fsSLO https://download.gnosisvpn.io/linux/install.sh.sha256 && \
-    sha256sum -c install.sh.sha256
-    ```
+   ```bash
+   curl -fsSLO https://download.gnosisvpn.io/linux/install.sh && \
+   curl -fsSLO https://download.gnosisvpn.io/linux/install.sh.sha256 && \
+   sha256sum -c install.sh.sha256
+   ```
 
-    `install.sh: OK` means the checksum is correct.
+   `install.sh: OK` means the checksum is correct.
 
 2. You can optionally inspect the script to see what it does before executing it:
 
-    ```bash
-    less install.sh
-    ```
+   ```bash
+   less install.sh
+   ```
 
 3. Then execute it:
 
-    ```bash
-    sudo bash install.sh
-    ```
+   ```bash
+   sudo bash install.sh
+   ```
 
 4. Launch the Gnosis VPN app from your application menu, or from the
    terminal:
 
-    ```bash
-    gnosis_vpn-app
-    ```
+   ```bash
+   gnosis_vpn-app
+   ```
 
 **Or install the package manually** — note that you won't receive automatic
 updates and will need to repeat these steps for each new release:
@@ -63,16 +63,16 @@ updates and will need to repeat these steps for each new release:
 
 2. Install the package (adjust the path and `<arch>` to match your download):
 
-    ```bash
-    sudo apt install ~/Downloads/gnosisvpn_<arch>.deb
-    ```
+   ```bash
+   sudo apt install ~/Downloads/gnosisvpn_<arch>.deb
+   ```
 
 3. Launch the Gnosis VPN app from your application menu, or from the
    terminal:
 
-    ```bash
-    gnosis_vpn-app
-    ```
+   ```bash
+   gnosis_vpn-app
+   ```
 
 </TabItem>
 </Tabs>
