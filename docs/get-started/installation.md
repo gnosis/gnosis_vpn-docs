@@ -29,7 +29,7 @@ For a full list of files and directories the installer creates, see the [macOS r
 **Install with one command**: this adds the Gnosis VPN APT repository, installs the signing key, and installs the package, so future releases arrive via your regular `sudo apt upgrade`:
 
 ```bash
-curl -fsSL https://download.gnosisvpn.io/linux/install.sh | bash
+curl -fsSL https://download.vpn.gnosis.eth.limo/linux/install.sh | bash
 ```
 
 The script prompts for sudo access itself when it needs it. Supported on 64-bit amd64 and arm64. This installs the `stable` channel by default. For the pre-release `snapshot` channel, see [Snapshot channel installation](#snapshot-channel-installation) below.
@@ -39,8 +39,8 @@ The script prompts for sudo access itself when it needs it. Supported on 64-bit 
 1. Download and verify the install script:
 
    ```bash
-   curl -fsSLO https://download.gnosisvpn.io/linux/install.sh && \
-   curl -fsSLO https://download.gnosisvpn.io/linux/install.sh.sha256 && \
+   curl -fsSLO https://download.vpn.gnosis.eth.limo/linux/install.sh && \
+   curl -fsSLO https://download.vpn.gnosis.eth.limo/linux/install.sh.sha256 && \
    sha256sum -c install.sh.sha256
    ```
 

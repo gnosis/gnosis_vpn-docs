@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-08-25T14:56:11+02:00
+Docs-Updated: 2026-08-25T16:50:21+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -68,7 +68,7 @@ For a full list of files and directories the installer creates, see the [macOS r
 **Install with one command**: this adds the Gnosis VPN APT repository, installs the signing key, and installs the package, so future releases arrive via your regular `sudo apt upgrade`:
 
 ```bash
-curl -fsSL https://download.gnosisvpn.io/linux/install.sh | bash
+curl -fsSL https://download.vpn.gnosis.eth.limo/linux/install.sh | bash
 ```
 
 The script prompts for sudo access itself when it needs it. Supported on 64-bit amd64 and arm64. This installs the `stable` channel by default. For the pre-release `snapshot` channel, see [Snapshot channel installation](#snapshot-channel-installation) below.
@@ -78,8 +78,8 @@ The script prompts for sudo access itself when it needs it. Supported on 64-bit 
 1. Download and verify the install script:
 
    ```bash
-   curl -fsSLO https://download.gnosisvpn.io/linux/install.sh && \
-   curl -fsSLO https://download.gnosisvpn.io/linux/install.sh.sha256 && \
+   curl -fsSLO https://download.vpn.gnosis.eth.limo/linux/install.sh && \
+   curl -fsSLO https://download.vpn.gnosis.eth.limo/linux/install.sh.sha256 && \
    sha256sum -c install.sh.sha256
    ```
 
@@ -837,7 +837,7 @@ This page lists every file and directory the Debian package creates, for users w
 | `/var/log/gnosisvpn/`       | Log directory             | `gnosisvpn:gnosisvpn` | `0755`         | `gnosisvpn.log` is written here; rotated daily, 7-day retention                                                                 |
 | `/run/gnosisvpn/`           | Runtime directory         | `root:root`           | `0755`         | Created by systemd at service start, not by the installer scripts                                                               |
 | `/etc/apt/keyrings/`        | APT signing keys          | `root:root`           | `0644` (file)  | `gnosisvpn-archive-keyring.gpg` copied from bundled `/usr/share/gnosisvpn/` during postinstall                                  |
-| `/etc/apt/sources.list.d/`  | APT repository source     | `root:root`           | `0644` (file)  | `gnosisvpn.sources` written during postinstall; URI `https://download.gnosisvpn.io/linux/apt`, suite `stable`, component `main` |
+| `/etc/apt/sources.list.d/`  | APT repository source     | `root:root`           | `0644` (file)  | `gnosisvpn.sources` written during postinstall; URIs `https://download.vpn.gnosis.eth.limo/linux/apt https://download.gnosisvpn.io/linux/apt` (both mirrors), suite `stable`, component `main` |
 | `/etc/apparmor.d/local/`    | AppArmor local drop-ins   | `root:root`           | `0644` (file)  | `wg-quick` drop-in allowing wg-quick to read `/var/lib/gnosisvpn/.cache/wg0_gnosisvpn.conf`; Ubuntu-only                        |
 | `/usr/share/gnosisvpn/`     | Shared package resources  | `root:root`           | `0644` (files) | Bundles the APT keyring GPG file used during postinstall                                                                        |
 | `/usr/share/doc/gnosisvpn/` | Documentation             | `root:root`           | `0644` (files) | Copyright notice and changelog; removed on uninstall (not purge)                                                                |
