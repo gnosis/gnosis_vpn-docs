@@ -12,7 +12,7 @@ Common lifecycle operations for the Gnosis VPN client: restarting the service, u
 
 ## Restarting the client service
 
-<Tabs groupId="operating-systems">
+<Tabs groupId="operating-systems" queryString>
 <TabItem value="macos" label="macOS">
 
 In a terminal, run:
@@ -35,7 +35,7 @@ sudo systemctl restart gnosisvpn.service
 
 ## Upgrading
 
-<Tabs groupId="upgrading">
+<Tabs groupId="upgrading" queryString>
 <TabItem value="macos" label="macOS">
 
 To upgrade Gnosis VPN, download and run the latest installer, following the same steps as in the [installation guide](installation.md). The installer will replace your existing version while preserving your configuration and identity.
@@ -62,7 +62,7 @@ In a terminal, run:
 
 ## Uninstalling
 
-<Tabs groupId="operating-systems">
+<Tabs groupId="operating-systems" queryString>
 <TabItem value="macos" label="macOS">
 
 In a terminal, run:

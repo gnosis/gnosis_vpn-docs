@@ -132,7 +132,7 @@ These steps discard the identity the client is currently using. Complete the bac
 
 :::
 
-<Tabs groupId="operating-systems">
+<Tabs groupId="operating-systems" queryString>
 <TabItem value="macos" label="macOS">
 
 1. Stop the service:
