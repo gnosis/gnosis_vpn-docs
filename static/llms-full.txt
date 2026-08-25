@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-08-25T13:04:43+02:00
+Docs-Updated: 2026-08-25T14:56:11+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -104,7 +104,7 @@ The script prompts for sudo access itself when it needs it. Supported on 64-bit 
    gnosis_vpn-app
    ```
 
-#### Release channel installation
+##### Release channel installation
 
 ```bash
 sudo install -d -m 0755 /etc/apt/keyrings
@@ -128,7 +128,7 @@ sudo apt install gnosisvpn
 
 Replace `amd64` with `arm64` if that's your machine's architecture.
 
-#### Snapshot channel installation
+##### Snapshot channel installation
 
 This is experimental: `snapshot` tracks pre-release builds that haven't been promoted to `stable` yet.
 

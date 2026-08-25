@@ -65,7 +65,7 @@ The script prompts for sudo access itself when it needs it. Supported on 64-bit 
    gnosis_vpn-app
    ```
 
-## Release channel installation
+### Release channel installation
 
 ```bash
 sudo install -d -m 0755 /etc/apt/keyrings
@@ -89,7 +89,7 @@ sudo apt install gnosisvpn
 
 Replace `amd64` with `arm64` if that's your machine's architecture.
 
-## Snapshot channel installation
+### Snapshot channel installation
 
 This is experimental: `snapshot` tracks pre-release builds that haven't been promoted to `stable` yet.
 
