@@ -24,15 +24,15 @@ The VPN reports a connected state, but internet access is missing or drops in an
 - Internet routing functions intermittently or drops completely every few minutes.
 - IP verification websites (e.g. `ifconfig.me`, `icanhazip.com`) fail to load.
 
-**Resolution steps — macOS and Linux with GUI**
+**Resolution steps: macOS and Linux with GUI**
 
 1. **Switch exit nodes:** click the location dropdown and select an alternative node with the lowest available latency (ms).
 2. **Verify wallet balance:** click the wallet icon in the top-right corner. Ensure your account balance is sufficient; top up if it is depleted.
 3. **Hard restart:** completely terminate the application. Right-click the Gnosis VPN tray icon, select **Quit**, and relaunch the application.
 
-**Resolution steps — Linux without GUI**
+**Resolution steps: Linux without GUI**
 
-1. Check your node and wallet status — verify your Safe and channel balances with your active exit node:
+1. Check your node and wallet status by verifying your Safe and channel balances with your active exit node:
    ```
    gnosis_vpn-ctl balance
    ```
@@ -58,13 +58,13 @@ The client hangs indefinitely in a "Connecting" state when attempting to establi
 - Specific geographic locations fail to hand over traffic, while others connect instantly.
 - Connection eventually succeeds, but only after an unacceptable delay.
 
-**Resolution steps — macOS and Linux with GUI**
+**Resolution steps: macOS and Linux with GUI**
 
 1. Click the wallet icon to verify your account balance.
 2. Pick an alternate exit node with lower latency.
 3. Restart the app via the tray icon menu if it remains frozen.
 
-**Resolution steps — Linux without GUI**
+**Resolution steps: Linux without GUI**
 
 1. Inspect the handshake state:
    ```
@@ -95,13 +95,13 @@ On KDE, this is typically found under **Display Configuration**:
 
 On some Linux desktops, a 1-pixel fully transparent line can appear just below the window's title bar. It's easiest to notice when another window is directly behind Gnosis VPN, since whatever is behind shows through that single pixel row.
 
-This happens because the app window doesn't set a custom title bar, so it uses your desktop's native GTK client-side decorations (CSD). GTK CSD windows get rounded corners and a drop shadow drawn by the compositor as an alpha-blended mask around the window. That mask's edge sits right at the boundary between the GTK-drawn title bar and the embedded WebKitGTK content area, and its antialiasing doesn't line up exactly with where the webview starts painting — leaving a single device pixel row with no opaque paint, so the compositor blends in whatever is behind the window.
+This happens because the app window doesn't set a custom title bar, so it uses your desktop's native GTK client-side decorations (CSD). GTK CSD windows get rounded corners and a drop shadow drawn by the compositor as an alpha-blended mask around the window. That mask's edge sits right at the boundary between the GTK-drawn title bar and the embedded WebKitGTK content area, and its antialiasing doesn't line up exactly with where the webview starts painting, leaving a single device pixel row with no opaque paint, so the compositor blends in whatever is behind the window.
 
 This is a known class of rendering artifact with GTK CSD + WebKitGTK (and shows up in other Linux apps built the same way, including Electron/Chromium apps with rounded CSD corners). It's purely cosmetic and does not affect the VPN connection or app functionality.
 
 **Resolution steps**
 
-No action required — this is a cosmetic rendering artifact only. It doesn't affect the VPN connection or app functionality, and can be safely ignored.
+No action required. This is a cosmetic rendering artifact only. It doesn't affect the VPN connection or app functionality, and can be safely ignored.
 
 </Issue>
 
@@ -128,7 +128,7 @@ Resetting the client means backing up the identity, removing the original, and l
 
 :::warning
 
-These steps discard the identity the client is currently using. Complete the backup and confirm it exists before running the removal command — the backup is what lets support restore your previous identity if it is ever needed.
+These steps discard the identity the client is currently using. Complete the backup and confirm it exists before running the removal command. The backup is what lets support restore your previous identity if it is ever needed.
 
 :::
 
@@ -183,7 +183,7 @@ These steps discard the identity the client is currently using. Complete the bac
 </TabItem>
 </Tabs>
 
-The client generates a new identity on the current network at the next start. This is a fresh account, so you need to fund it before you can connect — see [Funding your account](../get-started/funding.md).
+The client generates a new identity on the current network at the next start. This is a fresh account, so you need to fund it before you can connect. See [Funding your account](../get-started/funding.md).
 
 </Issue>
 

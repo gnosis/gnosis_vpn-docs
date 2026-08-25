@@ -8,8 +8,8 @@ title: Requirements
 ## Minimum requirements
 
 - **Operating system:**
-  - **macOS** — Apple Silicon (M1 or later)
-  - **Linux** — Debian-based distributions
+  - **macOS**: Apple Silicon (M1 or later)
+  - **Linux**: Debian-based distributions
 - **CPU:** 64-bit
 - **RAM:** 4 GB
 - **Internet:** Stable internet connection

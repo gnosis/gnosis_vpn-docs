@@ -21,13 +21,22 @@ This route is open to everyone but assumes some technical knowledge. You'll down
 2. Double-click `GnosisVPN-Installer.pkg` to launch the installer. Follow the on-screen steps and click **Install**.
 3. When the installation finishes, the Gnosis VPN app starts automatically. You can also launch it anytime from the **Applications** folder.
 
+For a full list of files and directories the installer creates, see the [macOS reference page](../reference/file-locations-macos.md).
+
 </TabItem>
 <TabItem value="debian" label="Debian / Ubuntu">
 
-**Via the APT repository (recommended)** — the app then receives updates automatically the `sudo apt upgrade`:
+**Install with one command**: this adds the Gnosis VPN APT repository, installs the signing key, and installs the package, so future releases arrive via your regular `sudo apt upgrade`:
 
-1. Download and verify the install script, which adds the Gnosis VPN APT
-   repository and installs the package (requires `curl` and `sha256sum`):
+```bash
+curl -fsSL https://download.gnosisvpn.io/linux/install.sh | sudo bash
+```
+
+Supported on 64-bit amd64 and arm64. This installs the `stable` channel by default. For the pre-release `snapshot` channel, see [Snapshot channel installation](#snapshot-channel-installation) below.
+
+**Verify and run it yourself (optional)**: if you'd rather not pipe `curl` straight into `sudo bash`, download and check the script first (requires `curl` and `sha256sum`):
+
+1. Download and verify the install script:
 
    ```bash
    curl -fsSLO https://download.gnosisvpn.io/linux/install.sh && \
@@ -56,28 +65,60 @@ This route is open to everyone but assumes some technical knowledge. You'll down
    gnosis_vpn-app
    ```
 
-**Or install the package manually** — note that you won't receive automatic
-updates and will need to repeat these steps for each new release:
+## Release channel installation
 
-1. Download the latest `gnosisvpn_<arch>.deb` package from the [downloads page](https://download.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest).
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
 
-2. Install the package (adjust the path and `<arch>` to match your download):
+sudo curl -fsSLo /etc/apt/keyrings/gnosisvpn-archive-keyring.gpg \
+  https://download.vpn.gnosis.eth.limo/linux/apt/gnosisvpn-archive-keyring.gpg
 
-   ```bash
-   sudo apt install ~/Downloads/gnosisvpn_<arch>.deb
-   ```
+sudo tee /etc/apt/sources.list.d/gnosisvpn.sources > /dev/null <<'EOF'
+Types: deb
+URIs: https://download.vpn.gnosis.eth.limo/linux/apt
+Suites: stable
+Components: main
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/gnosisvpn-archive-keyring.gpg
+EOF
 
-3. Launch the Gnosis VPN app from your application menu, or from the
-   terminal:
+sudo apt update
 
-   ```bash
-   gnosis_vpn-app
-   ```
+sudo apt install gnosisvpn
+```
+
+Replace `amd64` with `arm64` if that's your machine's architecture.
+
+## Snapshot channel installation
+
+This is experimental: `snapshot` tracks pre-release builds that haven't been promoted to `stable` yet.
+
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+
+sudo curl -fsSLo /etc/apt/keyrings/gnosisvpn-archive-keyring.gpg \
+  https://download.gnosisvpn.io/linux/apt/gnosisvpn-archive-keyring.gpg
+
+sudo tee /etc/apt/sources.list.d/gnosisvpn.sources > /dev/null <<'EOF'
+Types: deb
+URIs: https://download.gnosisvpn.io/linux/apt
+Suites: snapshot
+Components: snapshot
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/gnosisvpn-archive-keyring.gpg
+EOF
+
+sudo apt update
+
+sudo apt install gnosisvpn
+```
+
+Replace `amd64` with `arm64` if that's your machine's architecture.
+
+For a full list of files and directories the installer creates, see the [Debian reference page](../reference/file-locations-debian.md).
 
 </TabItem>
 </Tabs>
-
-For a full list of files and directories the installer creates, see the reference pages for [macOS](../reference/file-locations-macos.md) and [Debian](../reference/file-locations-debian.md).
 
 ### After installing
 
