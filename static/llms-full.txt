@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-08-16T23:08:13+02:00
+Docs-Updated: 2026-08-25T21:29:38+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -25,8 +25,8 @@ Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/requirements/
 #### Minimum requirements
 
 - **Operating system:**
-  - **macOS** — Apple Silicon (M1 or later)
-  - **Linux** — Debian-based distributions
+  - **macOS**: Apple Silicon (M1 or later)
+  - **Linux**: Debian-based distributions
 - **CPU:** 64-bit
 - **RAM:** 4 GB
 - **Internet:** Stable internet connection
@@ -61,16 +61,25 @@ This route is open to everyone but assumes some technical knowledge. You'll down
 2. Double-click `GnosisVPN-Installer.pkg` to launch the installer. Follow the on-screen steps and click **Install**.
 3. When the installation finishes, the Gnosis VPN app starts automatically. You can also launch it anytime from the **Applications** folder.
 
+For a full list of files and directories the installer creates, see the [macOS reference page](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/).
+
 **Debian / Ubuntu**
 
-**Via the APT repository (recommended)** — the app then receives updates automatically the `sudo apt upgrade`:
+**Install with one command**: this adds the Gnosis VPN APT repository, installs the signing key, and installs the package, so future releases arrive via your regular `sudo apt upgrade`:
 
-1. Download and verify the install script, which adds the Gnosis VPN APT
-   repository and installs the package (requires `curl` and `sha256sum`):
+```bash
+curl -fsSL https://download.vpn.gnosis.eth.limo/linux/install.sh | bash
+```
+
+The script prompts for sudo access itself when it needs it. Supported on 64-bit amd64 and arm64. This installs the `stable` channel by default. For the pre-release `snapshot` channel, see [Snapshot channel installation](#snapshot-channel-installation) below.
+
+**Verify and run it yourself (optional)**: if you'd rather not pipe `curl` straight into `bash`, download and check the script first (requires `curl` and `sha256sum`):
+
+1. Download and verify the install script:
 
    ```bash
-   curl -fsSLO https://download.gnosisvpn.io/linux/install.sh && \
-   curl -fsSLO https://download.gnosisvpn.io/linux/install.sh.sha256 && \
+   curl -fsSLO https://download.vpn.gnosis.eth.limo/linux/install.sh && \
+   curl -fsSLO https://download.vpn.gnosis.eth.limo/linux/install.sh.sha256 && \
    sha256sum -c install.sh.sha256
    ```
 
@@ -82,10 +91,10 @@ This route is open to everyone but assumes some technical knowledge. You'll down
    less install.sh
    ```
 
-3. Then execute it:
+3. Then execute it (it will prompt for sudo access itself):
 
    ```bash
-   sudo bash install.sh
+   bash install.sh
    ```
 
 4. Launch the Gnosis VPN app from your application menu, or from the
@@ -95,26 +104,58 @@ This route is open to everyone but assumes some technical knowledge. You'll down
    gnosis_vpn-app
    ```
 
-**Or install the package manually** — note that you won't receive automatic
-updates and will need to repeat these steps for each new release:
+##### Release channel installation
 
-1. Download the latest `gnosisvpn_<arch>.deb` package from the [downloads page](https://download.vpn.gnosis.eth.limo/) or the [latest GitHub release](https://github.com/gnosis/gnosis_vpn/releases/latest).
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
 
-2. Install the package (adjust the path and `<arch>` to match your download):
+sudo curl -fsSLo /etc/apt/keyrings/gnosisvpn-archive-keyring.gpg \
+  https://download.vpn.gnosis.eth.limo/linux/apt/gnosisvpn-archive-keyring.gpg
 
-   ```bash
-   sudo apt install ~/Downloads/gnosisvpn_<arch>.deb
-   ```
+sudo tee /etc/apt/sources.list.d/gnosisvpn.sources > /dev/null <<'EOF'
+Types: deb
+URIs: https://download.vpn.gnosis.eth.limo/linux/apt
+Suites: stable
+Components: main
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/gnosisvpn-archive-keyring.gpg
+EOF
 
-3. Launch the Gnosis VPN app from your application menu, or from the
-   terminal:
+sudo apt update
 
-   ```bash
-   gnosis_vpn-app
-   ```
+sudo apt install gnosisvpn
+```
 
+Replace `amd64` with `arm64` if that's your machine's architecture.
 
-For a full list of files and directories the installer creates, see the reference pages for [macOS](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/) and [Debian](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/).
+##### Snapshot channel installation
+
+This is experimental: `snapshot` tracks pre-release builds that haven't been promoted to `stable` yet.
+
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+
+sudo curl -fsSLo /etc/apt/keyrings/gnosisvpn-archive-keyring.gpg \
+  https://download.gnosisvpn.io/linux/apt/gnosisvpn-archive-keyring.gpg
+
+sudo tee /etc/apt/sources.list.d/gnosisvpn.sources > /dev/null <<'EOF'
+Types: deb
+URIs: https://download.gnosisvpn.io/linux/apt
+Suites: snapshot
+Components: snapshot
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/gnosisvpn-archive-keyring.gpg
+EOF
+
+sudo apt update
+
+sudo apt install gnosisvpn
+```
+
+Replace `amd64` with `arm64` if that's your machine's architecture.
+
+For a full list of files and directories the installer creates, see the [Debian reference page](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/).
+
 
 ##### After installing
 
@@ -140,7 +181,7 @@ Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/
 
 After installation, your Gnosis VPN account must be funded before you can connect. To use Gnosis VPN, you need both **wxHOPR** and **xDAI** on Gnosis Chain.
 
-> Tip: Privacy consideration If you want stronger privacy, consider separating your everyday wallet from the one you use to fund your Gnosis VPN account. Because blockchain transactions are public, it's best to reduce onchain links between identities before acquiring HOPR. For example, you can use [privacypools.com](https://privacypools.com) to deposit ETH from your regular wallet into a pool on Ethereum mainnet, wait until your transaction blends with others, and then withdraw to a fresh wallet. To improve privacy, avoid withdrawing a unique amount — choose a common denomination (e.g. 0.01 ETH) that many others are likely to use. You can then use the ETH in the new wallet to acquire HOPR and fund your Gnosis VPN account while keeping identities more separate. This makes it harder to link your everyday wallet to your Gnosis VPN usage, but it does not guarantee anonymity. Your privacy level depends on factors like pool size, timing, amount selection, and your overall onchain behavior.
+> Tip: Privacy consideration If you want stronger privacy, consider separating your everyday wallet from the one you use to fund your Gnosis VPN account. Because blockchain transactions are public, it's best to reduce onchain links between identities before acquiring HOPR. For example, you can use [privacypools.com](https://privacypools.com) to deposit ETH from your regular wallet into a pool on Ethereum mainnet, wait until your transaction blends with others, and then withdraw to a fresh wallet. To improve privacy, avoid withdrawing a unique amount. Choose a common denomination (e.g. 0.01 ETH) that many others are likely to use. You can then use the ETH in the new wallet to acquire HOPR and fund your Gnosis VPN account while keeping identities more separate. This makes it harder to link your everyday wallet to your Gnosis VPN usage, but it does not guarantee anonymity. Your privacy level depends on factors like pool size, timing, amount selection, and your overall onchain behavior.
 
 #### If you already have wxHOPR and xDAI
 
@@ -191,7 +232,7 @@ Once you have wxHOPR and xDAI in your wallet:
 #### Topping up your account
 
 1. Open the Gnosis VPN app.
-2. Click the wallet icon in the top-right corner — a new window will open.
+2. Click the wallet icon in the top-right corner. A new window will open.
 3. Click **Add funds**. You'll see your EOA address to top up xDAI, and your Safe wallet address to top up wxHOPR.
 
 #### Funding via the faucet
@@ -204,7 +245,7 @@ If you have been given a secret code, you can also fund your Gnosis VPN account 
 
 Every Gnosis VPN node manages access to the tokens it needs to function via a Safe smart account powered by HOPR Safe Staking. Your identity key is what links your client to that Safe, which handles payment channels and ticket settlement on Gnosis Chain.
 
-> Warning: Warning! If the identity file is deleted or lost, the client generates a new one — meaning any funds, open payment channels, or Safe association tied to the old identity are no longer reachable from that client and can't be restored.
+> Warning: Warning! If the identity file is deleted or lost, the client generates a new one, meaning any funds, open payment channels, or Safe association tied to the old identity are no longer reachable from that client and can't be restored.
 
 Where your identity is stored:
 
@@ -344,9 +385,9 @@ Unlike a traditional VPN, where traffic usually goes through servers controlled 
 
 Gnosis VPN is composed of several main components:
 
-- **Client** — the user-facing application or CLI and local components such as Root and Worker.
-- **The HOPR network** — provides the decentralized routing layer.
-- **Exits** — exit nodes, which run the Gnosis VPN server side and forward VPN traffic to the public internet.
+- **Client**: the user-facing application or CLI and local components such as Root and Worker.
+- **The HOPR network**: provides the decentralized routing layer.
+- **Exits**: exit nodes, which run the Gnosis VPN server side and forward VPN traffic to the public internet.
 
 ![Gnosis VPN architecture: the Client (App UI/CLI, Root System Service, Worker Process) connects through the HOPR network to the Exit nodes.](https://docs.vpn.gnosis.eth.limo/img/gnosis_vpn_architecture.png)
 
@@ -362,7 +403,7 @@ The client system service (`gnosis_vpn-root`) runs with root privileges and take
 
 #### The HOPR network
 
-Gnosis VPN routes traffic through the HOPR mixnet — a decentralized network designed to protect both data and metadata. Instead of a single tunnel, traffic is relayed across multiple independent nodes, making it difficult to trace user activity or correlate network patterns. Gnosis VPN is implemented as a service layer on top of this network, rather than replacing it.
+Gnosis VPN routes traffic through the HOPR mixnet, a decentralized network designed to protect both data and metadata. Instead of a single tunnel, traffic is relayed across multiple independent nodes, making it difficult to trace user activity or correlate network patterns. Gnosis VPN is implemented as a service layer on top of this network, rather than replacing it.
 
 #### Exits
 
@@ -476,15 +517,15 @@ The VPN reports a connected state, but internet access is missing or drops in an
 - Internet routing functions intermittently or drops completely every few minutes.
 - IP verification websites (e.g. `ifconfig.me`, `icanhazip.com`) fail to load.
 
-**Resolution steps — macOS and Linux with GUI**
+**Resolution steps: macOS and Linux with GUI**
 
 1. **Switch exit nodes:** click the location dropdown and select an alternative node with the lowest available latency (ms).
 2. **Verify wallet balance:** click the wallet icon in the top-right corner. Ensure your account balance is sufficient; top up if it is depleted.
 3. **Hard restart:** completely terminate the application. Right-click the Gnosis VPN tray icon, select **Quit**, and relaunch the application.
 
-**Resolution steps — Linux without GUI**
+**Resolution steps: Linux without GUI**
 
-1. Check your node and wallet status — verify your Safe and channel balances with your active exit node:
+1. Check your node and wallet status by verifying your Safe and channel balances with your active exit node:
    ```
    gnosis_vpn-ctl balance
    ```
@@ -509,13 +550,13 @@ The client hangs indefinitely in a "Connecting" state when attempting to establi
 - Specific geographic locations fail to hand over traffic, while others connect instantly.
 - Connection eventually succeeds, but only after an unacceptable delay.
 
-**Resolution steps — macOS and Linux with GUI**
+**Resolution steps: macOS and Linux with GUI**
 
 1. Click the wallet icon to verify your account balance.
 2. Pick an alternate exit node with lower latency.
 3. Restart the app via the tray icon menu if it remains frozen.
 
-**Resolution steps — Linux without GUI**
+**Resolution steps: Linux without GUI**
 
 1. Inspect the handshake state:
    ```
@@ -544,13 +585,13 @@ On KDE, this is typically found under **Display Configuration**:
 
 On some Linux desktops, a 1-pixel fully transparent line can appear just below the window's title bar. It's easiest to notice when another window is directly behind Gnosis VPN, since whatever is behind shows through that single pixel row.
 
-This happens because the app window doesn't set a custom title bar, so it uses your desktop's native GTK client-side decorations (CSD). GTK CSD windows get rounded corners and a drop shadow drawn by the compositor as an alpha-blended mask around the window. That mask's edge sits right at the boundary between the GTK-drawn title bar and the embedded WebKitGTK content area, and its antialiasing doesn't line up exactly with where the webview starts painting — leaving a single device pixel row with no opaque paint, so the compositor blends in whatever is behind the window.
+This happens because the app window doesn't set a custom title bar, so it uses your desktop's native GTK client-side decorations (CSD). GTK CSD windows get rounded corners and a drop shadow drawn by the compositor as an alpha-blended mask around the window. That mask's edge sits right at the boundary between the GTK-drawn title bar and the embedded WebKitGTK content area, and its antialiasing doesn't line up exactly with where the webview starts painting, leaving a single device pixel row with no opaque paint, so the compositor blends in whatever is behind the window.
 
 This is a known class of rendering artifact with GTK CSD + WebKitGTK (and shows up in other Linux apps built the same way, including Electron/Chromium apps with rounded CSD corners). It's purely cosmetic and does not affect the VPN connection or app functionality.
 
 **Resolution steps**
 
-No action required — this is a cosmetic rendering artifact only. It doesn't affect the VPN connection or app functionality, and can be safely ignored.
+No action required. This is a cosmetic rendering artifact only. It doesn't affect the VPN connection or app functionality, and can be safely ignored.
 
 
 #### Critical error during initialization after updating
@@ -574,7 +615,7 @@ The client fails to start after an update and shows **Critical error during init
 
 Resetting the client means backing up the identity, removing the original, and letting the client generate a new one on the current network.
 
-> Warning: These steps discard the identity the client is currently using. Complete the backup and confirm it exists before running the removal command — the backup is what lets support restore your previous identity if it is ever needed.
+> Warning: These steps discard the identity the client is currently using. Complete the backup and confirm it exists before running the removal command. The backup is what lets support restore your previous identity if it is ever needed.
 
 **macOS**
 
@@ -623,7 +664,7 @@ Resetting the client means backing up the identity, removing the original, and l
    ```
 
 
-The client generates a new identity on the current network at the next start. This is a fresh account, so you need to fund it before you can connect — see [Funding your account](https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/).
+The client generates a new identity on the current network at the next start. This is a fresh account, so you need to fund it before you can connect. See [Funding your account](https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/).
 
 
 
@@ -789,17 +830,17 @@ This page lists every file and directory the Debian package creates, for users w
 
 #### Directories created by the installer
 
-| Folder                      | Purpose                   | Owner                 | Permissions    | Notes                                                                                                                           |
-| --------------------------- | ------------------------- | --------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `/etc/gnosisvpn/`           | Configuration directory   | `gnosisvpn:gnosisvpn` | `0755`         | Contains env file, network config files, and a `config.toml` symlink pointing to the active network                             |
-| `/var/lib/gnosisvpn/`       | State and cache directory | `gnosisvpn:gnosisvpn` | `0775`         | Service working directory; holds `.cache/wg0_gnosisvpn.conf` (WireGuard config written at runtime)                              |
-| `/var/log/gnosisvpn/`       | Log directory             | `gnosisvpn:gnosisvpn` | `0755`         | `gnosisvpn.log` is written here; rotated daily, 7-day retention                                                                 |
-| `/run/gnosisvpn/`           | Runtime directory         | `root:root`           | `0755`         | Created by systemd at service start, not by the installer scripts                                                               |
-| `/etc/apt/keyrings/`        | APT signing keys          | `root:root`           | `0644` (file)  | `gnosisvpn-archive-keyring.gpg` copied from bundled `/usr/share/gnosisvpn/` during postinstall                                  |
-| `/etc/apt/sources.list.d/`  | APT repository source     | `root:root`           | `0644` (file)  | `gnosisvpn.sources` written during postinstall; URI `https://download.gnosisvpn.io/linux/apt`, suite `stable`, component `main` |
-| `/etc/apparmor.d/local/`    | AppArmor local drop-ins   | `root:root`           | `0644` (file)  | `wg-quick` drop-in allowing wg-quick to read `/var/lib/gnosisvpn/.cache/wg0_gnosisvpn.conf`; Ubuntu-only                        |
-| `/usr/share/gnosisvpn/`     | Shared package resources  | `root:root`           | `0644` (files) | Bundles the APT keyring GPG file used during postinstall                                                                        |
-| `/usr/share/doc/gnosisvpn/` | Documentation             | `root:root`           | `0644` (files) | Copyright notice and changelog; removed on uninstall (not purge)                                                                |
+| Folder                      | Purpose                   | Owner                 | Permissions    | Notes                                                                                                                                                                                          |
+| --------------------------- | ------------------------- | --------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/etc/gnosisvpn/`           | Configuration directory   | `gnosisvpn:gnosisvpn` | `0755`         | Contains env file, network config files, and a `config.toml` symlink pointing to the active network                                                                                            |
+| `/var/lib/gnosisvpn/`       | State and cache directory | `gnosisvpn:gnosisvpn` | `0775`         | Service working directory; holds `.cache/wg0_gnosisvpn.conf` (WireGuard config written at runtime)                                                                                             |
+| `/var/log/gnosisvpn/`       | Log directory             | `gnosisvpn:gnosisvpn` | `0755`         | `gnosisvpn.log` is written here; rotated daily, 7-day retention                                                                                                                                |
+| `/run/gnosisvpn/`           | Runtime directory         | `root:root`           | `0755`         | Created by systemd at service start, not by the installer scripts                                                                                                                              |
+| `/etc/apt/keyrings/`        | APT signing keys          | `root:root`           | `0644` (file)  | `gnosisvpn-archive-keyring.gpg` copied from bundled `/usr/share/gnosisvpn/` during postinstall                                                                                                 |
+| `/etc/apt/sources.list.d/`  | APT repository source     | `root:root`           | `0644` (file)  | `gnosisvpn.sources` written during postinstall; URIs `https://download.vpn.gnosis.eth.limo/linux/apt https://download.gnosisvpn.io/linux/apt` (both mirrors), suite `stable`, component `main` |
+| `/etc/apparmor.d/local/`    | AppArmor local drop-ins   | `root:root`           | `0644` (file)  | `wg-quick` drop-in allowing wg-quick to read `/var/lib/gnosisvpn/.cache/wg0_gnosisvpn.conf`; Ubuntu-only                                                                                       |
+| `/usr/share/gnosisvpn/`     | Shared package resources  | `root:root`           | `0644` (files) | Bundles the APT keyring GPG file used during postinstall                                                                                                                                       |
+| `/usr/share/doc/gnosisvpn/` | Documentation             | `root:root`           | `0644` (files) | Copyright notice and changelog; removed on uninstall (not purge)                                                                                                                               |
 
 #### Key files placed into existing system directories
 

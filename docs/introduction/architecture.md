@@ -11,9 +11,9 @@ Unlike a traditional VPN, where traffic usually goes through servers controlled 
 
 Gnosis VPN is composed of several main components:
 
-- **Client** — the user-facing application or CLI and local components such as Root and Worker.
-- **The HOPR network** — provides the decentralized routing layer.
-- **Exits** — exit nodes, which run the Gnosis VPN server side and forward VPN traffic to the public internet.
+- **Client**: the user-facing application or CLI and local components such as Root and Worker.
+- **The HOPR network**: provides the decentralized routing layer.
+- **Exits**: exit nodes, which run the Gnosis VPN server side and forward VPN traffic to the public internet.
 
 ![Gnosis VPN architecture: the Client (App UI/CLI, Root System Service, Worker Process) connects through the HOPR network to the Exit nodes.](/img/gnosis_vpn_architecture.png)
 
@@ -29,7 +29,7 @@ The client system service (`gnosis_vpn-root`) runs with root privileges and take
 
 ## The HOPR network
 
-Gnosis VPN routes traffic through the HOPR mixnet — a decentralized network designed to protect both data and metadata. Instead of a single tunnel, traffic is relayed across multiple independent nodes, making it difficult to trace user activity or correlate network patterns. Gnosis VPN is implemented as a service layer on top of this network, rather than replacing it.
+Gnosis VPN routes traffic through the HOPR mixnet, a decentralized network designed to protect both data and metadata. Instead of a single tunnel, traffic is relayed across multiple independent nodes, making it difficult to trace user activity or correlate network patterns. Gnosis VPN is implemented as a service layer on top of this network, rather than replacing it.
 
 ## Exits
 

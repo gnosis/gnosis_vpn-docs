@@ -14,7 +14,7 @@ After installation, your Gnosis VPN account must be funded before you can connec
 
 If you want stronger privacy, consider separating your everyday wallet from the one you use to fund your Gnosis VPN account. Because blockchain transactions are public, it's best to reduce onchain links between identities before acquiring HOPR.
 
-For example, you can use [privacypools.com](https://privacypools.com) to deposit ETH from your regular wallet into a pool on Ethereum mainnet, wait until your transaction blends with others, and then withdraw to a fresh wallet. To improve privacy, avoid withdrawing a unique amount — choose a common denomination (e.g. 0.01 ETH) that many others are likely to use. You can then use the ETH in the new wallet to acquire HOPR and fund your Gnosis VPN account while keeping identities more separate.
+For example, you can use [privacypools.com](https://privacypools.com) to deposit ETH from your regular wallet into a pool on Ethereum mainnet, wait until your transaction blends with others, and then withdraw to a fresh wallet. To improve privacy, avoid withdrawing a unique amount. Choose a common denomination (e.g. 0.01 ETH) that many others are likely to use. You can then use the ETH in the new wallet to acquire HOPR and fund your Gnosis VPN account while keeping identities more separate.
 
 This makes it harder to link your everyday wallet to your Gnosis VPN usage, but it does not guarantee anonymity. Your privacy level depends on factors like pool size, timing, amount selection, and your overall onchain behavior.
 
@@ -69,7 +69,7 @@ Once you have wxHOPR and xDAI in your wallet:
 ## Topping up your account
 
 1. Open the Gnosis VPN app.
-2. Click the wallet icon in the top-right corner — a new window will open.
+2. Click the wallet icon in the top-right corner. A new window will open.
 3. Click **Add funds**. You'll see your EOA address to top up xDAI, and your Safe wallet address to top up wxHOPR.
 
 ## Funding via the faucet
@@ -83,12 +83,12 @@ If you have been given a secret code, you can also fund your Gnosis VPN account 
 Every Gnosis VPN node manages access to the tokens it needs to function via a Safe smart account powered by HOPR Safe Staking. Your identity key is what links your client to that Safe, which handles payment channels and ticket settlement on Gnosis Chain.
 
 :::warning Warning!
-If the identity file is deleted or lost, the client generates a new one — meaning any funds, open payment channels, or Safe association tied to the old identity are no longer reachable from that client and can't be restored.
+If the identity file is deleted or lost, the client generates a new one, meaning any funds, open payment channels, or Safe association tied to the old identity are no longer reachable from that client and can't be restored.
 :::
 
 Where your identity is stored:
 
-<Tabs groupId="operating-systems">
+<Tabs groupId="operating-systems" queryString>
 <TabItem value="macos" label="macOS">
 
 The identity is stored in `/Library/Application Support/GnosisVPN/.config`. To get there:
