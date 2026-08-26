@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-08-25T16:50:21+02:00
+Docs-Updated: 2026-08-25T21:29:38+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -830,17 +830,17 @@ This page lists every file and directory the Debian package creates, for users w
 
 #### Directories created by the installer
 
-| Folder                      | Purpose                   | Owner                 | Permissions    | Notes                                                                                                                           |
-| --------------------------- | ------------------------- | --------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `/etc/gnosisvpn/`           | Configuration directory   | `gnosisvpn:gnosisvpn` | `0755`         | Contains env file, network config files, and a `config.toml` symlink pointing to the active network                             |
-| `/var/lib/gnosisvpn/`       | State and cache directory | `gnosisvpn:gnosisvpn` | `0775`         | Service working directory; holds `.cache/wg0_gnosisvpn.conf` (WireGuard config written at runtime)                              |
-| `/var/log/gnosisvpn/`       | Log directory             | `gnosisvpn:gnosisvpn` | `0755`         | `gnosisvpn.log` is written here; rotated daily, 7-day retention                                                                 |
-| `/run/gnosisvpn/`           | Runtime directory         | `root:root`           | `0755`         | Created by systemd at service start, not by the installer scripts                                                               |
-| `/etc/apt/keyrings/`        | APT signing keys          | `root:root`           | `0644` (file)  | `gnosisvpn-archive-keyring.gpg` copied from bundled `/usr/share/gnosisvpn/` during postinstall                                  |
+| Folder                      | Purpose                   | Owner                 | Permissions    | Notes                                                                                                                                                                                          |
+| --------------------------- | ------------------------- | --------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/etc/gnosisvpn/`           | Configuration directory   | `gnosisvpn:gnosisvpn` | `0755`         | Contains env file, network config files, and a `config.toml` symlink pointing to the active network                                                                                            |
+| `/var/lib/gnosisvpn/`       | State and cache directory | `gnosisvpn:gnosisvpn` | `0775`         | Service working directory; holds `.cache/wg0_gnosisvpn.conf` (WireGuard config written at runtime)                                                                                             |
+| `/var/log/gnosisvpn/`       | Log directory             | `gnosisvpn:gnosisvpn` | `0755`         | `gnosisvpn.log` is written here; rotated daily, 7-day retention                                                                                                                                |
+| `/run/gnosisvpn/`           | Runtime directory         | `root:root`           | `0755`         | Created by systemd at service start, not by the installer scripts                                                                                                                              |
+| `/etc/apt/keyrings/`        | APT signing keys          | `root:root`           | `0644` (file)  | `gnosisvpn-archive-keyring.gpg` copied from bundled `/usr/share/gnosisvpn/` during postinstall                                                                                                 |
 | `/etc/apt/sources.list.d/`  | APT repository source     | `root:root`           | `0644` (file)  | `gnosisvpn.sources` written during postinstall; URIs `https://download.vpn.gnosis.eth.limo/linux/apt https://download.gnosisvpn.io/linux/apt` (both mirrors), suite `stable`, component `main` |
-| `/etc/apparmor.d/local/`    | AppArmor local drop-ins   | `root:root`           | `0644` (file)  | `wg-quick` drop-in allowing wg-quick to read `/var/lib/gnosisvpn/.cache/wg0_gnosisvpn.conf`; Ubuntu-only                        |
-| `/usr/share/gnosisvpn/`     | Shared package resources  | `root:root`           | `0644` (files) | Bundles the APT keyring GPG file used during postinstall                                                                        |
-| `/usr/share/doc/gnosisvpn/` | Documentation             | `root:root`           | `0644` (files) | Copyright notice and changelog; removed on uninstall (not purge)                                                                |
+| `/etc/apparmor.d/local/`    | AppArmor local drop-ins   | `root:root`           | `0644` (file)  | `wg-quick` drop-in allowing wg-quick to read `/var/lib/gnosisvpn/.cache/wg0_gnosisvpn.conf`; Ubuntu-only                                                                                       |
+| `/usr/share/gnosisvpn/`     | Shared package resources  | `root:root`           | `0644` (files) | Bundles the APT keyring GPG file used during postinstall                                                                                                                                       |
+| `/usr/share/doc/gnosisvpn/` | Documentation             | `root:root`           | `0644` (files) | Copyright notice and changelog; removed on uninstall (not purge)                                                                                                                               |
 
 #### Key files placed into existing system directories
 
