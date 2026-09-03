@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-08-25T21:29:38+02:00
+Docs-Updated: 2026-08-26T13:45:21+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -540,7 +540,7 @@ The VPN reports a connected state, but internet access is missing or drops in an
    ```
 
 
-#### Connection handshake takes over 60 seconds
+#### Connecting takes over a minute or never completes
 
 The client hangs indefinitely in a "Connecting" state when attempting to establish a tunnel with an exit node.
 
@@ -568,7 +568,7 @@ The client hangs indefinitely in a "Connecting" state when attempting to establi
    ```
 
 
-#### App looks too big, too small, or incorrectly scaled (Linux)
+#### The app looks blurry or the wrong size when display scaling is enabled (Linux)
 
 The Gnosis VPN app is built on GTK3, which runs through the legacy X11 compatibility layer on Wayland. This can cause incorrect scaling when display scaling is set manually.
 
@@ -581,7 +581,7 @@ On KDE, this is typically found under **Display Configuration**:
 ![KDE legacy X11 app scaling setting](https://github.com/user-attachments/assets/1fa3e541-dbb8-45aa-bad8-7877d57a9a93)
 
 
-#### Hairline transparent line below the title bar (Linux)
+#### A thin transparent line appears below the title bar on Linux
 
 On some Linux desktops, a 1-pixel fully transparent line can appear just below the window's title bar. It's easiest to notice when another window is directly behind Gnosis VPN, since whatever is behind shows through that single pixel row.
 
@@ -594,7 +594,7 @@ This is a known class of rendering artifact with GTK CSD + WebKitGTK (and shows 
 No action required. This is a cosmetic rendering artifact only. It doesn't affect the VPN connection or app functionality, and can be safely ignored.
 
 
-#### Critical error during initialization after updating
+#### Gnosis VPN doesn't start after an update
 
 The client fails to start after an update and shows **Critical error during initialization**. This happens when you have used an earlier release of Gnosis VPN: the latest release runs on a different network, but your machine still holds the identity created on the old one. The safe belonging to that identity does not exist on the new network, so startup fails and retries in a loop.
 
