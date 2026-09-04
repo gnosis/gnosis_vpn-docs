@@ -48,7 +48,7 @@ The VPN reports a connected state, but internet access is missing or drops in an
 
 </Issue>
 
-<Issue id="slow-handshake" title="Connection handshake takes over 60 seconds">
+<Issue id="slow-handshake" title="Connecting takes over a minute or never completes">
 
 The client hangs indefinitely in a "Connecting" state when attempting to establish a tunnel with an exit node.
 
@@ -77,7 +77,7 @@ The client hangs indefinitely in a "Connecting" state when attempting to establi
 
 </Issue>
 
-<Issue id="app-scaling-linux" title="App looks too big, too small, or incorrectly scaled (Linux)">
+<Issue id="app-scaling-linux" title="The app looks blurry or the wrong size when display scaling is enabled (Linux)">
 
 The Gnosis VPN app is built on GTK3, which runs through the legacy X11 compatibility layer on Wayland. This can cause incorrect scaling when display scaling is set manually.
 
@@ -91,7 +91,7 @@ On KDE, this is typically found under **Display Configuration**:
 
 </Issue>
 
-<Issue id="titlebar-hairline-linux" title="Hairline transparent line below the title bar (Linux)">
+<Issue id="titlebar-hairline-linux" title="A thin transparent line appears below the title bar on Linux">
 
 On some Linux desktops, a 1-pixel fully transparent line can appear just below the window's title bar. It's easiest to notice when another window is directly behind Gnosis VPN, since whatever is behind shows through that single pixel row.
 
@@ -105,7 +105,7 @@ No action required. This is a cosmetic rendering artifact only. It doesn't affec
 
 </Issue>
 
-<Issue id="critical-error-during-initialization" title="Critical error during initialization after updating">
+<Issue id="critical-error-during-initialization" title="Gnosis VPN doesn't start after an update">
 
 The client fails to start after an update and shows **Critical error during initialization**. This happens when you have used an earlier release of Gnosis VPN: the latest release runs on a different network, but your machine still holds the identity created on the old one. The safe belonging to that identity does not exist on the new network, so startup fails and retries in a loop.
 
