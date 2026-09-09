@@ -186,7 +186,86 @@ These steps discard the identity the client is currently using. Complete the bac
 The client generates a new identity on the current network at the next start. This is a fresh account, so you need to fund it before you can connect. See [Funding your account](../get-started/funding.md).
 
 </Issue>
+<Issue id="gnosis-vpn-configuration-cleanup" title="Installation fails on Linux due to leftover configuration">
 
+**Symptoms**
+
+This issue affects Debian-based Linux distributions only. It means a previous Gnosis VPN installation left configuration files behind that the new package can't reconcile, so the post-install script fails before it can register any network.
+
+```bash
+[GnosisVPN postinstall] INFO: Creating group 'gnosisvpn'...
+[GnosisVPN postinstall] SUCCESS: Group 'gnosisvpn' created successfully
+[GnosisVPN postinstall] INFO: Creating system user 'gnosisvpn'...
+[GnosisVPN postinstall] SUCCESS: User 'gnosisvpn' created successfully
+[GnosisVPN postinstall] ERROR: Unknown network 'jura-prod': /etc/gnosisvpn/config-jura-prod.toml not found
+[GnosisVPN postinstall] ERROR: Supported networks: none
+dpkg: error processing package gnosisvpn (--configure):
+ old gnosisvpn package postinst maintainer script subprocess failed with exit status 1
+Processing triggers for desktop-file-utils (0.28-1build1) ...
+Processing triggers for hicolor-icon-theme (0.18-2build1) ...
+Processing triggers for gnome-menus (3.38.1-1ubuntu1) ...
+Processing triggers for man-db (2.13.1-1build1) ...
+Errors were encountered while processing:
+ gnosisvpn
+E: Sub-process /usr/bin/dpkg returned an error code (1)
+```
+
+**Resolution steps**
+
+:::warning
+
+These steps remove **all** files related to Gnosis VPN, including your identity. Your identity holds the funds you use to pay for Gnosis VPN, and it cannot be recovered once deleted. If you have an existing identity, complete steps 1–3 before going any further, and store the backup somewhere you control.
+
+:::
+
+1. Stop the service so the identity isn't written to while you copy it:
+
+   ```bash
+   sudo systemctl stop gnosisvpn
+   ```
+
+2. Copy your identity to your home directory. It must be **outside** `/var/lib/gnosisvpn/`, because purging the package removes that entire directory along with anything you put inside it:
+
+   ```bash
+   sudo cp -a /var/lib/gnosisvpn/.config ~/gnosisvpn-identity-backup
+   sudo chown -R "$USER":"$USER" ~/gnosisvpn-identity-backup
+   ```
+
+3. Confirm the backup exists and is not empty before continuing:
+
+   ```bash
+   ls -la ~/gnosisvpn-identity-backup
+   ```
+
+4. Remove the installed package:
+
+   ```bash
+   sudo apt remove gnosisvpn
+   ```
+
+   If this fails because the package is in a broken state, continue to the next step anyway.
+
+5. Purge the package along with all its configuration files:
+
+   ```bash
+   sudo dpkg --purge gnosisvpn
+   ```
+
+6. Reinstall Gnosis VPN by following the [installation guide](../get-started/installation.md?operating-systems=debian#installation).
+
+7. Restore your identity. Do this **before** starting the service for the first time, otherwise you will overwrite the identity you just restored:
+
+   ```bash
+   sudo systemctl stop gnosisvpn
+   sudo rm -rf /var/lib/gnosisvpn/.config
+   sudo cp -a ~/gnosisvpn-identity-backup /var/lib/gnosisvpn/.config
+   sudo chown -R gnosisvpn:gnosisvpn /var/lib/gnosisvpn/.config
+   sudo systemctl start gnosisvpn
+   ```
+
+   The `chown` is required: purging the package deletes the `gnosisvpn` system user, and reinstalling recreates it with a UID that may differ from the one recorded in your backup.
+
+</Issue>
 </Issues>
 
 ## Still not working?
