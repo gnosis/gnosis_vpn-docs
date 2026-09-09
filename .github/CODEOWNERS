@@ -1,4 +1,4 @@
-* @gnosis/ext-hopr
+* @esterlus @Jaguaras @gnosis/ext-hopr
 
 # Tighter pool: prod secrets (ENS/Safe/Pinata) plus code that runs locally or in CI.
 /.github/       @gnosis/ext-hopr-admin
