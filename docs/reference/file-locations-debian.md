@@ -29,3 +29,4 @@ This page lists every file and directory the Debian package creates, for users w
 | `/etc/logrotate.d/gnosisvpn`                | Log rotation policy              | Daily, 7 days, gzip                                                               |
 | `/etc/gnosisvpn/config.toml`                | Symlink to active network config | Points to `config-jura.toml` (default network: `jura`)                            |
 | `/etc/gnosisvpn/gnosisvpn.env`              | Service environment variables    | `RUST_LOG=info`, log to `/var/log/gnosisvpn/gnosisvpn.log`, static routing forced |
+| `/var/lib/dpkg/info/gnosisvpn.*`            | dpkg package records    | Created by dpkg, not by the package. Records which files were installed and the scripts run during install and removal. The `gnosisvpn.postrm` script is what removes files when you run `dpkg --purge` |
