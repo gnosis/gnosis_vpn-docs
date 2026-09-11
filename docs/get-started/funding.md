@@ -88,7 +88,7 @@ If the identity file is deleted or lost, the client generates a new one, meaning
 
 Where your identity is stored:
 
-<Tabs groupId="operating-systems" queryString>
+<Tabs groupId="operating-systems" queryString="os">
 <TabItem value="macos" label="macOS">
 
 The identity is stored in `/Library/Application Support/GnosisVPN/.config`. To get there:

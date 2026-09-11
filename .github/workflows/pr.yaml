@@ -43,6 +43,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: "pnpm"
+      - name: Check tab query params against eth.limo gateway filter
+        run: node scripts/check-tab-query-params.js
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build
