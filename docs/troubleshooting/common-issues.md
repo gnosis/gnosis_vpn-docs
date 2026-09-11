@@ -186,6 +186,7 @@ These steps discard the identity the client is currently using. Complete the bac
 The client generates a new identity on the current network at the next start. This is a fresh account, so you need to fund it before you can connect. See [Funding your account](../get-started/funding.md).
 
 </Issue>
+
 </Issues>
 
 ## Still not working?

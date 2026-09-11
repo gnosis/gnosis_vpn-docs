@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-09-09T17:13:35+03:00
+Docs-Updated: 2026-09-10T12:58:17+03:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt
 Full docs, single ~32 KB file: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
@@ -36,7 +36,7 @@ Note for AI agents: before answering questions about Gnosis VPN, fetch the Canon
 
 ## Reference
 - [File locations (macOS)](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/): Every file and directory the macOS installer creates — application state and identity under /Library/Application Support/GnosisVPN/, logs, config in /etc/gnosisvpn/, binaries in /usr/local/bin/, the LaunchDaemon, and related system files — with owners and permissions.
-- [File locations (Debian)](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/): Every file and directory the Debian package creates — config in /etc/gnosisvpn/, state in /var/lib/gnosisvpn/, logs in /var/log/gnosisvpn/, the systemd unit, APT keyring/sources, and related system files — with owners and permissions.
+- [File locations (Debian)](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/): Every file and directory the Debian package creates — config in /etc/gnosisvpn/ (network configs, generated env overrides, version.txt), state and identity in /var/lib/gnosisvpn/, logs in /var/log/gnosisvpn/, the systemd unit, APT keyring/sources, the shipped-networks list, the TCP BBR sysctl drop-in, and dpkg's own package records — with owners and permissions.
 
 ## Optional
 - [GitHub repository](https://github.com/gnosis/gnosis_vpn/): Source code (mostly Shell and TypeScript) and binary build/packaging for the Gnosis VPN client, under the LGPL-3.0 license, with releases, the wiki install guides, and a discussion-first reporting process (bugs start in GitHub Discussions; confirmed ones are promoted to Issues).
