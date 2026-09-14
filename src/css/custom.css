@@ -71,6 +71,54 @@
   font-weight: 500;
 }
 
+/* Left docs sidebar only. The mobile drawer lives in .navbar-sidebar,
+   outside this container, so it keeps the styling above untouched.
+   Light palette; the dark one overrides the same tokens below. Infima
+   tints the category chevron through the icon, so keep each icon's fill
+   in sync with that mode's --gvpn-menu-category. */
+.theme-doc-sidebar-container {
+  --ifm-menu-color: #4a5070;
+  --ifm-menu-color-active: #16182e;
+  --ifm-menu-color-background-active: rgba(124, 92, 255, 0.16);
+  --ifm-menu-color-background-hover: rgba(15, 18, 45, 0.04);
+  --ifm-menu-link-sublist-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24"><path fill="rgb(108,112,136)" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg>');
+
+  /* No Infima variable for these two */
+  --gvpn-menu-accent: #5b4fe0;
+  --gvpn-menu-category: #6c7088;
+}
+
+/* Infima pins the chevron filter at html[data-theme='dark'], so the dark
+   override has to out-specify that, not just [data-theme='dark']. */
+html[data-theme="dark"] .theme-doc-sidebar-container {
+  --ifm-menu-color: #c9cfea;
+  --ifm-menu-color-active: #ffffff;
+  --ifm-menu-color-background-active: rgba(124, 92, 255, 0.16);
+  --ifm-menu-color-background-hover: rgba(255, 255, 255, 0.05);
+  --ifm-menu-link-sublist-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24"><path fill="rgb(138,147,194)" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg>');
+  --ifm-menu-link-sublist-icon-filter: none;
+
+  --gvpn-menu-accent: #7c5cff;
+  --gvpn-menu-category: #8a93c2;
+}
+
+/* Replace the pill above with a tinted fill + inset accent bar. */
+.theme-doc-sidebar-container .menu__link--active:not(.menu__link--sublist) {
+  background: var(--ifm-menu-color-background-active);
+  border-left: none;
+  box-shadow: inset 3px 0 0 var(--gvpn-menu-accent);
+  color: var(--ifm-menu-color-active);
+}
+
+/* Category labels read as section headings, not as links. */
+.theme-doc-sidebar-container .menu__link--sublist,
+.theme-doc-sidebar-container .menu__link--sublist:hover {
+  color: var(--gvpn-menu-category);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 /* ---- Info admonition → indigo callout ---------------------------------- */
 .theme-admonition-info {
   background: var(--gvpn-icon-bg);
