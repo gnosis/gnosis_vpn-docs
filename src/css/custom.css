@@ -71,8 +71,7 @@
   font-weight: 500;
 }
 
-/* Left docs sidebar only. The mobile drawer lives in .navbar-sidebar,
-   outside this container, so it keeps the styling above untouched.
+/* Docs navigation: the left sidebar and the mobile burger drawer.
    Light palette; the dark one overrides the same tokens below. Infima
    tints the category chevron through the icon, so keep each icon's fill
    in sync with that mode's --gvpn-menu-category. */
@@ -88,9 +87,12 @@
   --gvpn-menu-category: #6c7088;
 }
 
-/* Infima pins the chevron filter at html[data-theme='dark'], so the dark
-   override has to out-specify that, not just [data-theme='dark']. */
-html[data-theme="dark"] .theme-doc-sidebar-container {
+/* The drawer takes the dark palette in BOTH colour modes: it inherits the
+   navbar's surface, which this site keeps dark either way, so the light
+   palette would be unreadable on it. Infima pins the chevron filter at
+   html[data-theme='dark'], so out-specify that, not just [data-theme]. */
+html[data-theme="dark"] .theme-doc-sidebar-container,
+html .navbar-sidebar {
   --ifm-menu-color: #c9cfea;
   --ifm-menu-color-active: #ffffff;
   --ifm-menu-color-background-active: rgba(124, 92, 255, 0.16);
@@ -102,8 +104,22 @@ html[data-theme="dark"] .theme-doc-sidebar-container {
   --gvpn-menu-category: #8a93c2;
 }
 
+/* Drawer surface, matching the sidebar's dark background. Infima has no
+   --ifm-navbar-sidebar-background-color; the drawer reads the navbar's, so
+   scope it here and leave the top bar navy. */
+.navbar-sidebar {
+  --ifm-navbar-background-color: #1b1b1d;
+}
+
+/* Infima paints the "back to main menu" bar with the active-row token. Keep
+   it neutral so it does not wear the accent colour too. */
+.navbar-sidebar__back {
+  background: var(--ifm-menu-color-background-hover);
+}
+
 /* Replace the pill above with a tinted fill + inset accent bar. */
-.theme-doc-sidebar-container .menu__link--active:not(.menu__link--sublist) {
+.theme-doc-sidebar-container .menu__link--active:not(.menu__link--sublist),
+.navbar-sidebar .menu__link--active:not(.menu__link--sublist) {
   background: var(--ifm-menu-color-background-active);
   border-left: none;
   box-shadow: inset 3px 0 0 var(--gvpn-menu-accent);
@@ -112,7 +128,9 @@ html[data-theme="dark"] .theme-doc-sidebar-container {
 
 /* Category labels read as section headings, not as links. */
 .theme-doc-sidebar-container .menu__link--sublist,
-.theme-doc-sidebar-container .menu__link--sublist:hover {
+.theme-doc-sidebar-container .menu__link--sublist:hover,
+.navbar-sidebar .menu__link--sublist,
+.navbar-sidebar .menu__link--sublist:hover {
   color: var(--gvpn-menu-category);
   font-size: 0.75rem;
   letter-spacing: 0.06em;
