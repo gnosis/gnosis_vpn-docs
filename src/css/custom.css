@@ -35,20 +35,9 @@
   --gvpn-muted: #6c7088;
 }
 
-/* ---- Navbar logo + "Docs" label ---------------------------------------- */
+/* ---- Navbar logo ------------------------------------------------------- */
 /* The logo SVG already contains the GNOSIS VPN wordmark, so the navbar
-   title is left empty in the config. We append a divider + "Docs" here. */
-.navbar__brand::after {
-  content: "Docs";
-  margin-left: 12px;
-  padding-left: 12px;
-  border-left: 1px solid #3a4063;
-  color: #c3c8e6;
-  font-size: 15px;
-  font-weight: 400;
-  white-space: nowrap;
-}
-
+   title is left empty in the config. */
 .navbar__logo {
   height: 22px;
 }
@@ -60,6 +49,14 @@
 /* Right-side navbar links sit on the dark bar */
 .navbar__link {
   font-size: 14px;
+}
+
+/* Separates the docs tree from the utility group in the burger panel.
+   Matches the muted category labels rather than a white wash. */
+.gvpnMenuDivider {
+  margin: 12px 8px;
+  border: 0;
+  border-top: 1px solid var(--gvpn-menu-category);
 }
 
 /* ---- Sidebar ----------------------------------------------------------- */
