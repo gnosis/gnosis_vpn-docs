@@ -1,14 +1,4 @@
-/**
- * Ejected from @docusaurus/theme-classic 3.10.1.
- *
- * Upstream renders two sliding panels — the navbar items, and a secondary
- * panel holding the docs tree, reached through a "Back to main menu" step.
- * We render a single panel instead; PrimaryMenu composes the tree and the
- * utility group into it. Everything else (container classes, header) is
- * unchanged, so the panel keeps its styling and scrolling. Upstream's `inert`
- * handling is dropped with the second panel: it existed only to keep the
- * hidden panel out of the tab order, and there is no hidden panel now.
- */
+// Ejected from @docusaurus/theme-classic 3.10.1: one panel instead of two, so no "Back to main menu" step and no inert handling for a hidden panel.
 import React from "react";
 import clsx from "clsx";
 import { ThemeClassNames } from "@docusaurus/theme-common";

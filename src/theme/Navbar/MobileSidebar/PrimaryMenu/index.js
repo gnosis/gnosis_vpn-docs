@@ -1,12 +1,4 @@
-/**
- * Ejected from @docusaurus/theme-classic 3.10.1.
- *
- * Upstream renders only the navbar items. We put the docs tree first, then a
- * divider, then the navbar items as a utility group. The tree is teleported
- * here by DocSidebar/Mobile through the secondary-menu filler — that is the
- * only route by which it reaches the navbar, which is mounted above the docs
- * plugin's providers. It is null on routes with no sidebar.
- */
+// Ejected from @docusaurus/theme-classic 3.10.1: docs tree first, navbar items below as a utility group.
 import React from "react";
 import { useThemeConfig } from "@docusaurus/theme-common";
 import {
@@ -18,6 +10,7 @@ import NavbarItem from "@theme/NavbarItem";
 export default function NavbarMobilePrimaryMenu() {
   const mobileSidebar = useNavbarMobileSidebar();
   const items = useThemeConfig().navbar.items;
+  // Teleported by DocSidebar/Mobile via the secondary-menu filler; null on routes without a sidebar.
   const { content: docsTree } = useNavbarSecondaryMenu();
 
   return (

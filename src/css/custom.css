@@ -36,8 +36,7 @@
 }
 
 /* ---- Navbar logo ------------------------------------------------------- */
-/* The logo SVG already contains the GNOSIS VPN wordmark, so the navbar
-   title is left empty in the config. */
+/* The logo SVG already carries the wordmark, so the navbar title stays empty in config. */
 .navbar__logo {
   height: 22px;
 }
@@ -51,8 +50,7 @@
   font-size: 14px;
 }
 
-/* Separates the docs tree from the utility group in the burger panel.
-   Matches the muted category labels rather than a white wash. */
+/* Divider between docs tree and utility group; muted like the category labels. */
 .gvpnMenuDivider {
   margin: 12px 8px;
   border: 0;
@@ -68,10 +66,7 @@
   font-weight: 500;
 }
 
-/* Docs navigation: the left sidebar and the mobile burger drawer.
-   Light palette; the dark one overrides the same tokens below. Infima
-   tints the category chevron through the icon, so keep each icon's fill
-   in sync with that mode's --gvpn-menu-category. */
+/* Docs nav light palette; dark overrides below. Keep each chevron fill in sync with that mode's --gvpn-menu-category. */
 .theme-doc-sidebar-container {
   --ifm-menu-color: #4a5070;
   --ifm-menu-color-active: #16182e;
@@ -84,10 +79,7 @@
   --gvpn-menu-category: #6c7088;
 }
 
-/* The drawer takes the dark palette in BOTH colour modes: it inherits the
-   navbar's surface, which this site keeps dark either way, so the light
-   palette would be unreadable on it. Infima pins the chevron filter at
-   html[data-theme='dark'], so out-specify that, not just [data-theme]. */
+/* The drawer sits on the always-dark navbar, so it takes the dark palette in both modes; html[...] matches Infima's chevron-filter specificity. */
 html[data-theme="dark"] .theme-doc-sidebar-container,
 html .navbar-sidebar {
   --ifm-menu-color: #c9cfea;
@@ -101,20 +93,17 @@ html .navbar-sidebar {
   --gvpn-menu-category: #8a93c2;
 }
 
-/* Drawer surface, matching the sidebar's dark background. Infima has no
-   --ifm-navbar-sidebar-background-color; the drawer reads the navbar's, so
-   scope it here and leave the top bar navy. */
+/* Infima has no drawer background token and reads the navbar's, so scope it here to keep the top bar navy. */
 .navbar-sidebar {
   --ifm-navbar-background-color: #1b1b1d;
 }
 
-/* Infima paints the "back to main menu" bar with the active-row token. Keep
-   it neutral so it does not wear the accent colour too. */
+/* Keep the back bar neutral so it does not wear the accent colour. */
 .navbar-sidebar__back {
   background: var(--ifm-menu-color-background-hover);
 }
 
-/* Replace the pill above with a tinted fill + inset accent bar. */
+/* Tinted fill + inset accent bar instead of the pill above. */
 .theme-doc-sidebar-container .menu__link--active:not(.menu__link--sublist),
 .navbar-sidebar .menu__link--active:not(.menu__link--sublist) {
   background: var(--ifm-menu-color-background-active);
@@ -123,7 +112,7 @@ html .navbar-sidebar {
   color: var(--ifm-menu-color-active);
 }
 
-/* Category labels read as section headings, not as links. */
+/* Category labels read as headings, not links. */
 .theme-doc-sidebar-container .menu__link--sublist,
 .theme-doc-sidebar-container .menu__link--sublist:hover,
 .navbar-sidebar .menu__link--sublist,
