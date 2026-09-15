@@ -12,7 +12,7 @@ Common lifecycle operations for the Gnosis VPN client: restarting the service, u
 
 ## Restarting the client service
 
-<Tabs groupId="operating-systems" queryString>
+<Tabs groupId="operating-systems" queryString="os">
 <TabItem value="macos" label="macOS">
 
 In a terminal, run:
@@ -62,7 +62,7 @@ In a terminal, run:
 
 ## Uninstalling
 
-<Tabs groupId="operating-systems" queryString>
+<Tabs groupId="operating-systems" queryString="os">
 <TabItem value="macos" label="macOS">
 
 In a terminal, run:
