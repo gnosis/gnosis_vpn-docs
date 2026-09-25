@@ -52,3 +52,19 @@ jobs:
       - name: Verify llms.txt / llms-full.txt are up to date
         run: |
           git diff --exit-code -I '^Docs-Updated: ' -- static/llms.txt static/llms-full.txt
+  ci-ok:
+    name: CI OK
+    # Single required status check: stable across matrix expansion, label gating and fork guards.
+    if: always() # a skipped job counts as passing, so never let a failed dependency skip this one
+    needs: [checks, build, fail-probe]
+    runs-on: depot-ubuntu-22.04-4
+    permissions: {}
+    steps:
+      - name: Fail if any CI job failed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
+  fail-probe:
+    name: Fail probe
+    runs-on: depot-ubuntu-22.04-4
+    steps:
+      - run: exit 1
