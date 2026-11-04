@@ -9,32 +9,37 @@ This page lists every file and directory the macOS installer creates, for users 
 
 ## Directories created by the installer
 
-| Folder                                    | Purpose                   | Owner        | Permissions | Notes                                                                                                                                                                                                                                                                             |
-| ----------------------------------------- | ------------------------- | ------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/Library/Application Support/GnosisVPN/` | Service working directory | `root:wheel` | `0755`      | Holds the uninstall and helper scripts, the installer's network choice (`installer/`) and updater state. After an upgrade from a single-user release it keeps the previous identity as `.config.migrated-<timestamp>` (or `.config.<timestamp>.bak` after a reset), `root` `0700` |
-| `/Library/Logs/GnosisVPN/`                | Service log directory     | `root:wheel` | `0755`      | `gnosisvpn.log` (service log) and `updates.log` (updater); rotated via newsyslog                                                                                                                                                                                                  |
-| `/Library/Logs/GnosisVPN/installer/`      | Installer log directory   | `root:wheel` | `0755`      | `installer.log`, `preinstall.log`, `postinstall.log` and `migrate.log` (identity migration on upgrade)                                                                                                                                                                            |
-| `/etc/gnosisvpn/`                         | Configuration directory   | `root:wheel` | `0755`      | Network configs and the `config.toml` symlink; `/etc` is a symlink to `/private/etc` on macOS                                                                                                                                                                                     |
-| `/etc/gnosisvpn/templates/`               | Network config templates  | `root:wheel` | `0755`      | One `<network>.toml.template` per shipped network                                                                                                                                                                                                                                 |
+| Folder                                    | Purpose                   | Owner        | Permissions | Notes                                                                            |
+| ----------------------------------------- | ------------------------- | ------------ | ----------- | -------------------------------------------------------------------------------- |
+| `/Library/Application Support/GnosisVPN/` | Service working directory | `root:wheel` | `0755`      | Helper scripts, `installer/` network choice, updater state                       |
+| `/Library/Logs/GnosisVPN/`                | Service log directory     | `root:wheel` | `0755`      | `gnosisvpn.log` (service log) and `updates.log` (updater); rotated via newsyslog |
+| `/Library/Logs/GnosisVPN/installer/`      | Installer log directory   | `root:wheel` | `0755`      | `installer.log`, `preinstall.log`, `postinstall.log`, `migrate.log`              |
+| `/etc/gnosisvpn/`                         | Configuration directory   | `root:wheel` | `0755`      | Network configs and the `config.toml` symlink                                    |
+| `/etc/gnosisvpn/templates/`               | Network config templates  | `root:wheel` | `0755`      | One `<network>.toml.template` per shipped network                                |
+
+- After an upgrade from a single-user release, `/Library/Application Support/GnosisVPN/` keeps the previous identity as `.config.migrated-<timestamp>` (or `.config.<timestamp>.bak` after a reset), `root` `0700`.
+- `/etc` is a symlink to `/private/etc` on macOS.
 
 ## Key files placed into existing system directories
 
-| Path                                                         | Purpose                             | Notes                                                                                                                                                                                |
-| ------------------------------------------------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `/usr/local/bin/gnosis_vpn-root`                             | Main VPN daemon binary              | `root:wheel`, `0750`                                                                                                                                                                 |
-| `/usr/local/bin/gnosis_vpn-worker`                           | Worker process binary               | `root:wheel`, `0755`                                                                                                                                                                 |
-| `/usr/local/bin/gnosis_vpn-ctl`                              | CLI control tool                    | `root:wheel`, `0755`                                                                                                                                                                 |
-| `/usr/local/bin/gnosis_vpn-update`                           | Updater                             | `root:wheel`, `0755`                                                                                                                                                                 |
-| `/usr/local/bin/gnosis_vpn-migrate`                          | Identity migration tool             | `root:wheel`, `0755`; moves the previous single-user identity into a user's home on upgrade and resets identities                                                                    |
-| `/usr/local/bin/gnosis_vpn-manager`                          | Management utility script           | `root:wheel`, `0755`                                                                                                                                                                 |
-| `/Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist` | LaunchDaemon service definition     | Loaded and enabled at boot, runs as root                                                                                                                                             |
-| `/etc/newsyslog.d/gnosisvpn.conf`                            | Log rotation policy                 | `gnosisvpn.log` at 1 GB, 12 rotations                                                                                                                                                |
-| `/etc/sudoers.d/gnosis-vpn`                                  | Sudoers drop-in for service control | Allows the `gnosisvpn` group to run specific `launchctl` and `gnosis_vpn-update` commands without a password; `root:wheel`, `0440`. The installer adds the console user to the group |
-| `/etc/gnosisvpn/config.toml`                                 | Symlink to active network config    | Points to `<network>.toml` for the network chosen at install                                                                                                                         |
-| `/Applications/Gnosis VPN.app`                               | GUI application bundle              | Extracted from archive during postinstall; `root:admin`, `0755`                                                                                                                      |
-| `/var/run/gnosisvpn.sock`                                    | Control socket                      | Created by the daemon at startup                                                                                                                                                     |
-| `/var/run/gnosisvpn.pid`                                     | Daemon PID file                     | Written by the daemon at startup                                                                                                                                                     |
-| `/var/run/gnosisvpn/`                                        | Runtime directory                   | `daemon.lock` and `teardown-state.json`                                                                                                                                              |
+| Path                                                         | Purpose                             | Notes                                                           |
+| ------------------------------------------------------------ | ----------------------------------- | --------------------------------------------------------------- |
+| `/usr/local/bin/gnosis_vpn-root`                             | Main VPN daemon binary              | `root:wheel`, `0750`                                            |
+| `/usr/local/bin/gnosis_vpn-worker`                           | Worker process binary               | `root:wheel`, `0755`                                            |
+| `/usr/local/bin/gnosis_vpn-ctl`                              | CLI control tool                    | `root:wheel`, `0755`                                            |
+| `/usr/local/bin/gnosis_vpn-update`                           | Updater                             | `root:wheel`, `0755`                                            |
+| `/usr/local/bin/gnosis_vpn-migrate`                          | Identity migration tool             | `root:wheel`, `0755`; migrates and resets identities            |
+| `/usr/local/bin/gnosis_vpn-manager`                          | Management utility script           | `root:wheel`, `0755`                                            |
+| `/Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist` | LaunchDaemon service definition     | Loaded and enabled at boot, runs as root                        |
+| `/etc/newsyslog.d/gnosisvpn.conf`                            | Log rotation policy                 | `gnosisvpn.log` at 1 GB, 12 rotations                           |
+| `/etc/sudoers.d/gnosis-vpn`                                  | Sudoers drop-in for service control | Passwordless service control for the `gnosisvpn` group; `0440`  |
+| `/etc/gnosisvpn/config.toml`                                 | Symlink to active network config    | Points to `<network>.toml` for the network chosen at install    |
+| `/Applications/Gnosis VPN.app`                               | GUI application bundle              | Extracted from archive during postinstall; `root:admin`, `0755` |
+| `/var/run/gnosisvpn.sock`                                    | Control socket                      | Created by the daemon at startup                                |
+| `/var/run/gnosisvpn.pid`                                     | Daemon PID file                     | Written by the daemon at startup                                |
+| `/var/run/gnosisvpn/`                                        | Runtime directory                   | `daemon.lock` and `teardown-state.json`                         |
+
+- The sudoers drop-in lets the `gnosisvpn` group run specific `launchctl` and `gnosis_vpn-update` commands without a password. The installer adds the console user to the group.
 
 ## Per-user files
 

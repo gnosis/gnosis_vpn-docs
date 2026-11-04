@@ -9,33 +9,40 @@ This page lists every file and directory the Debian package creates, for users w
 
 ## Directories created by the installer
 
-| Folder                      | Purpose                   | Owner       | Permissions    | Notes                                                                                                                                                                                                                                                                                                          |
-| --------------------------- | ------------------------- | ----------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/etc/gnosisvpn/`           | Configuration directory   | `root:root` | `0755`         | Contains the env files, the network config files, `version.txt` and a `config.toml` symlink pointing to the active network; the `config-*.toml` files inside are `root:root` `0644`                                                                                                                            |
-| `/var/lib/gnosisvpn/`       | Service working directory | `root:root` | `0755`         | Holds no identity. After an upgrade from a single-user release it keeps the previous identity as `.config.migrated-<timestamp>` (or `.config.<timestamp>.bak` after a reset), `root` `0700`                                                                                                                    |
-| `/var/log/gnosisvpn/`       | Log directory             | `root:root` | `0755`         | `gnosisvpn.log` (service log) and `migrate.log` (identity migration on upgrade)                                                                                                                                                                                                                                |
-| `/run/gnosisvpn/`           | Runtime directory         | `root:root` | `0755`         | Created by systemd at service start, not by the installer scripts. Holds the control socket `gnosisvpn.sock`, `daemon.lock` and `teardown-state.json`                                                                                                                                                          |
-| `/etc/apt/keyrings/`        | APT signing keys          | `root:root` | `0644` (file)  | `gnosisvpn-archive-keyring.gpg` copied from bundled `/usr/share/gnosisvpn/` during postinstall                                                                                                                                                                                                                 |
-| `/etc/apt/sources.list.d/`  | APT repository source     | `root:root` | `0644` (file)  | `gnosisvpn.sources` written during postinstall; the channel comes from `/etc/gnosisvpn/version.txt`. `stable` uses both mirrors (`https://download.vpn.gnosis.eth.limo/linux/apt` and `https://download.gnosisvpn.io/linux/apt`), `snapshot` and `experimental` only `https://download.gnosisvpn.io/linux/apt` |
-| `/usr/share/gnosisvpn/`     | Shared package resources  | `root:root` | `0644` (files) | Bundles the APT keyring GPG file and the `networks` list used during postinstall                                                                                                                                                                                                                               |
-| `/usr/share/doc/gnosisvpn/` | Documentation             | `root:root` | `0644` (files) | Copyright notice and changelog; removed on uninstall (not purge)                                                                                                                                                                                                                                               |
+| Folder                      | Purpose                   | Owner       | Permissions    | Notes                                                                      |
+| --------------------------- | ------------------------- | ----------- | -------------- | -------------------------------------------------------------------------- |
+| `/etc/gnosisvpn/`           | Configuration directory   | `root:root` | `0755`         | Env files, network configs, `version.txt` and the `config.toml` symlink    |
+| `/var/lib/gnosisvpn/`       | Service working directory | `root:root` | `0755`         | Holds no identity, see the notes below                                     |
+| `/var/log/gnosisvpn/`       | Log directory             | `root:root` | `0755`         | `gnosisvpn.log` (service log) and `migrate.log` (identity migration)       |
+| `/run/gnosisvpn/`           | Runtime directory         | `root:root` | `0755`         | Created by systemd: `gnosisvpn.sock`, `daemon.lock`, `teardown-state.json` |
+| `/etc/apt/keyrings/`        | APT signing keys          | `root:root` | `0644` (file)  | `gnosisvpn-archive-keyring.gpg`, copied during postinstall                 |
+| `/etc/apt/sources.list.d/`  | APT repository source     | `root:root` | `0644` (file)  | `gnosisvpn.sources`, written during postinstall                            |
+| `/usr/share/gnosisvpn/`     | Shared package resources  | `root:root` | `0644` (files) | The APT keyring and the `networks` list                                    |
+| `/usr/share/doc/gnosisvpn/` | Documentation             | `root:root` | `0644` (files) | Copyright and changelog; removed on uninstall                              |
+
+- The `config-*.toml` files in `/etc/gnosisvpn/` are `root:root` `0644`.
+- After an upgrade from a single-user release, `/var/lib/gnosisvpn/` keeps the previous identity as `.config.migrated-<timestamp>` (or `.config.<timestamp>.bak` after a reset), `root` `0700`.
+- The APT channel comes from `/etc/gnosisvpn/version.txt`. `stable` uses both mirrors, `https://download.vpn.gnosis.eth.limo/linux/apt` and `https://download.gnosisvpn.io/linux/apt`. `snapshot` and `experimental` use only `https://download.gnosisvpn.io/linux/apt`.
 
 ## Key files placed into existing system directories
 
-| Path                                                | Purpose                          | Notes                                                                                                                                                                  |
-| --------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/usr/lib/systemd/system/gnosisvpn.service`         | Systemd unit                     | Runs `gnosis_vpn-root` as `root`; enabled and started post-install                                                                                                     |
-| `/usr/lib/systemd/system/gnosisvpn-logrotate.timer` | Log rotation timer               | Checks the service log size every minute                                                                                                                               |
-| `/etc/logrotate.d/gnosisvpn`                        | Log rotation policy              | Rotates `gnosisvpn.log` hourly or at 1 GB, keeps 12, gzip                                                                                                              |
-| `/etc/gnosisvpn/config.toml`                        | Symlink to active network config | Points to `config-<network>.toml` for the network chosen at install                                                                                                    |
-| `/etc/gnosisvpn/gnosisvpn.env`                      | Service environment variables    | `RUST_LOG=info`, log to `/var/log/gnosisvpn/gnosisvpn.log`, static routing forced                                                                                      |
-| `/etc/gnosisvpn/gnosisvpn-dynamic.env`              | Generated environment overrides  | Written during postinstall, `root:root` `0644`. Holds the network endpoint and takes precedence over `gnosisvpn.env`, which is left untouched so upgrades don't prompt |
-| `/etc/gnosisvpn/version.txt`                        | Installed version                | Read during postinstall to pick the APT channel (`stable`, `snapshot` or `experimental`)                                                                               |
-| `/usr/share/gnosisvpn/networks`                     | Networks the package ships       | Space-separated list, first entry is the default network; replaced on every upgrade                                                                                    |
-| `/etc/sysctl.d/99-gnosisvpn-bbr.conf`               | TCP congestion control           | Enables BBR and the `fq` queueing discipline system-wide; applied during postinstall                                                                                   |
-| `/var/lib/dpkg/info/gnosisvpn.*`                    | dpkg package records             | Created by dpkg, not by the package: the list of installed files and the maintainer scripts dpkg runs on install, upgrade and removal                                  |
-| `/usr/bin/gnosis_vpn-migrate`                       | Identity migration tool          | `root:root`; moves the previous single-user identity into a user's home on upgrade and resets identities                                                               |
-| `/usr/bin/gnosis_vpn-update`                        | Updater                          | `root:root`                                                                                                                                                            |
+| Path                                                | Purpose                          | Notes                                                               |
+| --------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------- |
+| `/usr/lib/systemd/system/gnosisvpn.service`         | Systemd unit                     | Runs `gnosis_vpn-root` as `root`; enabled at install                |
+| `/usr/lib/systemd/system/gnosisvpn-logrotate.timer` | Log rotation timer               | Checks the service log size every minute                            |
+| `/etc/logrotate.d/gnosisvpn`                        | Log rotation policy              | Rotates `gnosisvpn.log` hourly or at 1 GB, keeps 12, gzip           |
+| `/etc/gnosisvpn/config.toml`                        | Symlink to active network config | Points to `config-<network>.toml` for the network chosen at install |
+| `/etc/gnosisvpn/gnosisvpn.env`                      | Service environment variables    | `RUST_LOG=info`, logs to `gnosisvpn.log`, static routing forced     |
+| `/etc/gnosisvpn/gnosisvpn-dynamic.env`              | Generated environment overrides  | Network endpoint; overrides `gnosisvpn.env`, `0644`                 |
+| `/etc/gnosisvpn/version.txt`                        | Installed version                | Picks the APT channel during postinstall                            |
+| `/usr/share/gnosisvpn/networks`                     | Networks the package ships       | Space-separated, first is the default; replaced on upgrade          |
+| `/etc/sysctl.d/99-gnosisvpn-bbr.conf`               | TCP congestion control           | Enables BBR and `fq` system-wide                                    |
+| `/var/lib/dpkg/info/gnosisvpn.*`                    | dpkg package records             | dpkg's installed-file list and maintainer scripts                   |
+| `/usr/bin/gnosis_vpn-migrate`                       | Identity migration tool          | `root:root`; migrates and resets identities                         |
+| `/usr/bin/gnosis_vpn-update`                        | Updater                          | `root:root`                                                         |
+
+- `gnosisvpn-dynamic.env` is written during postinstall. It takes precedence over `gnosisvpn.env`, which is left untouched so upgrades don't prompt.
+- `/var/lib/dpkg/info/gnosisvpn.*` is created by dpkg, not by the package. dpkg runs these maintainer scripts on install, upgrade and removal.
 
 ## Per-user files
 
