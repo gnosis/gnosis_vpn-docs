@@ -88,20 +88,19 @@ If the identity file is deleted or lost, the client generates a new one, meaning
 
 Where your identity is stored:
 
+Each user on the computer has their own identity, one per network. `<network>` is the network folder the client creates.
+
 <Tabs groupId="operating-systems" queryString="os">
 <TabItem value="macos" label="macOS">
 
-The identity is stored in `/Library/Application Support/GnosisVPN/.config`. To get there:
-
-```bash
-sudo su -
-cd /Library/Application\ Support/GnosisVPN/
-```
+- Identity (`hopr.id` and `hopr.pass`): `~/Library/Application Support/GnosisVPN/networks/<network>/`
+- Safe (`hopr.safe`): `~/Library/Caches/GnosisVPN/networks/<network>/`
 
 </TabItem>
 <TabItem value="debian" label="Debian / Ubuntu">
 
-Application state lives in `/var/lib/gnosisvpn/`.
+- Identity (`hopr.id` and `hopr.pass`): `~/.local/share/gnosisvpn/networks/<network>/`
+- Safe (`hopr.safe`): `~/.cache/gnosisvpn/networks/<network>/`
 
 </TabItem>
 </Tabs>

@@ -25,7 +25,7 @@ The client runs on your device and is responsible for managing the VPN connectio
 - `gnosis_vpn-worker`
 - `gnosis_vpn-ctl` (CLI)
 
-The client system service (`gnosis_vpn-root`) runs with root privileges and takes care of routing setup. It spawns the worker process (`gnosis_vpn-worker`), which is responsible for the application logic. The control application (`gnosis_vpn-ctl`) is used to manage the client and its connections.
+The client system service (`gnosis_vpn-root`) runs with root privileges and takes care of routing setup. It spawns the worker process (`gnosis_vpn-worker`), which is responsible for the application logic and runs as the user who started the client. The control application (`gnosis_vpn-ctl`) is used to manage the client and its connections.
 
 ## The HOPR network
 

@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-09-14T14:07:50+03:00
+Docs-Updated: 2026-09-25T11:24:28+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -249,18 +249,17 @@ Every Gnosis VPN node manages access to the tokens it needs to function via a Sa
 
 Where your identity is stored:
 
+Each user on the computer has their own identity, one per network. `<network>` is the network folder the client creates.
+
 **macOS**
 
-The identity is stored in `/Library/Application Support/GnosisVPN/.config`. To get there:
-
-```bash
-sudo su -
-cd /Library/Application\ Support/GnosisVPN/
-```
+- Identity (`hopr.id` and `hopr.pass`): `~/Library/Application Support/GnosisVPN/networks/<network>/`
+- Safe (`hopr.safe`): `~/Library/Caches/GnosisVPN/networks/<network>/`
 
 **Debian / Ubuntu**
 
-Application state lives in `/var/lib/gnosisvpn/`.
+- Identity (`hopr.id` and `hopr.pass`): `~/.local/share/gnosisvpn/networks/<network>/`
+- Safe (`hopr.safe`): `~/.cache/gnosisvpn/networks/<network>/`
 
 
 For a complete list of files and directories used by Gnosis VPN, see the reference pages for [macOS](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/) and [Debian](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/).
@@ -296,7 +295,7 @@ sudo systemctl restart gnosisvpn.service
 
 **macOS**
 
-To upgrade Gnosis VPN, download and run the latest installer, following the same steps as in the [installation guide](https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/). The installer will replace your existing version while preserving your configuration and identity.
+To upgrade Gnosis VPN, download and run the latest installer, following the same steps as in the [installation guide](https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/). The installer will replace your existing version while preserving your configuration and identity. When upgrading from a release that kept one identity for the whole computer, the installer moves that identity to the user logged in at the screen. If nobody was logged in, see [My account is missing after upgrading from an earlier release](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/common-issues/#identity-not-migrated).
 
 **Debian / Ubuntu**
 
@@ -313,6 +312,8 @@ In a terminal, run:
    ```bash
    sudo apt upgrade gnosisvpn
    ```
+
+When upgrading from a release that kept one identity for the whole computer, the upgrade moves that identity to the user logged in at the desktop. If nobody was logged in, see [My account is missing after upgrading from an earlier release](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/common-issues/#identity-not-migrated).
 
 
 #### Uninstalling
@@ -332,6 +333,9 @@ In a terminal, run:
 ```bash
 sudo apt remove gnosisvpn
 ```
+
+
+Uninstalling does not remove the identities stored in each user's home directory. See the file locations for [macOS](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/) and [Debian](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/).
 
 ---
 
@@ -399,7 +403,7 @@ The client runs on your device and is responsible for managing the VPN connectio
 - `gnosis_vpn-worker`
 - `gnosis_vpn-ctl` (CLI)
 
-The client system service (`gnosis_vpn-root`) runs with root privileges and takes care of routing setup. It spawns the worker process (`gnosis_vpn-worker`), which is responsible for the application logic. The control application (`gnosis_vpn-ctl`) is used to manage the client and its connections.
+The client system service (`gnosis_vpn-root`) runs with root privileges and takes care of routing setup. It spawns the worker process (`gnosis_vpn-worker`), which is responsible for the application logic and runs as the user who started the client. The control application (`gnosis_vpn-ctl`) is used to manage the client and its connections.
 
 #### The HOPR network
 
@@ -435,7 +439,7 @@ Gnosis VPN operates by replacing the traditional, centralized VPN model with a d
 
 #### Establishing a connection
 
-1. **Connection initiation and local setup.** When you start a connection via the app or CLI (`gnosis_vpn-ctl`), your device's root system service (`gnosis_vpn-root`) takes charge. To keep your system secure, it spawns an unprivileged worker process (`gnosis_vpn-worker`) that handles the actual application logic and network communication.
+1. **Connection initiation and local setup.** When you start a connection via the app or CLI (`gnosis_vpn-ctl`), your device's root system service (`gnosis_vpn-root`) takes charge. To keep your system secure, it spawns an unprivileged worker process (`gnosis_vpn-worker`) that handles the actual application logic and network communication. The worker runs as the user who requested the connection.
 
 2. **Secure handshake via the mixnet.** Instead of connecting directly to a VPN server, the worker process routes its initial communication through the HOPR mixnet. It uses this decentralized network of independent nodes to securely reach your selected exit node. Over this secure HOPR path, the worker registers your client's WireGuard public key and opens the necessary TCP and UDP sessions.
 
@@ -466,37 +470,47 @@ If you are using the Gnosis VPN desktop app, logs can be exported directly from 
 
 1. Open the Gnosis VPN app.
 2. Click the **Settings** button with the gear icon.
-3. Open the **Logs** tab.
-4. Click **Export service logs**.
-5. Attach the exported log file when reporting the issue.
+3. In the **Troubleshooting** section, click **Export logs…**.
+4. Attach the exported log file when reporting the issue.
+
+The export is one compressed file with system information, the app logs, the service log and the worker logs. Worker logs are only included when you are the user running the client.
 
 #### Terminal
+
+The service runs as root and writes to a system log. The worker runs as the user who started the client and writes to that user's home directory.
 
 ##### macOS
 
 If you are using Gnosis VPN on macOS without exporting logs from the desktop app, log files can be found in:
 
-```
-/Library/Logs/GnosisVPN/gnosisvpn.log
-```
+| Path                                                                     | Content                                        |
+| ------------------------------------------------------------------------ | ---------------------------------------------- |
+| `/Library/Logs/GnosisVPN/gnosisvpn.log`                                  | Service log.                                   |
+| `~/Library/Logs/GnosisVPN/worker.log.YYYY-MM-DD`                         | Worker log, one file per day, the last 7 kept. |
+| `~/Library/Logs/com.gnosisvpn.gnosisvpnclient/gnosis_vpn-app.<date>.log` | App log.                                       |
+| `/Library/Logs/GnosisVPN/updates.log`                                    | Updater log.                                   |
 
 ###### Installer logs
 
 If the issue occurred during installation, the macOS installer writes separate logs:
 
-| Path                                                | Content                    |
-| --------------------------------------------------- | -------------------------- |
-| `/Library/Logs/GnosisVPN/installer/installer.log`   | Main installer log.        |
-| `/Library/Logs/GnosisVPN/installer/preinstall.log`  | Preinstall script output.  |
-| `/Library/Logs/GnosisVPN/installer/postinstall.log` | Postinstall script output. |
+| Path                                                | Content                        |
+| --------------------------------------------------- | ------------------------------ |
+| `/Library/Logs/GnosisVPN/installer/installer.log`   | Main installer log.            |
+| `/Library/Logs/GnosisVPN/installer/preinstall.log`  | Preinstall script output.      |
+| `/Library/Logs/GnosisVPN/installer/postinstall.log` | Postinstall script output.     |
+| `/Library/Logs/GnosisVPN/installer/migrate.log`     | Identity migration on upgrade. |
 
 ##### Linux
 
-If you are running Gnosis VPN on Linux without the desktop app, service logs are stored on the system at:
+If you are running Gnosis VPN on Linux without the desktop app, log files can be found in:
 
-```
-/var/log/gnosisvpn/gnosisvpn.log
-```
+| Path                                                                     | Content                                               |
+| ------------------------------------------------------------------------ | ----------------------------------------------------- |
+| `/var/log/gnosisvpn/gnosisvpn.log`                                       | Service log, also shown by `journalctl -u gnosisvpn`. |
+| `~/.local/state/gnosisvpn/worker.log.YYYY-MM-DD`                         | Worker log, one file per day, the last 7 kept.        |
+| `~/.local/state/com.gnosisvpn.gnosisvpnclient/gnosis_vpn-app.<date>.log` | App log.                                              |
+| `/var/log/gnosisvpn/migrate.log`                                         | Identity migration on upgrade.                        |
 
 ---
 
@@ -613,9 +627,9 @@ The client fails to start after an update and shows **Critical error during init
 
 **Resolution steps**
 
-Resetting the client means backing up the identity, removing the original, and letting the client generate a new one on the current network.
+Resetting the client means moving your identity aside, which keeps it as a backup, and letting the client generate a new one on the current network. `<name>` is your account name on this computer and `<network>` is the network folder the client created.
 
-> Warning: These steps discard the identity the client is currently using. Complete the backup and confirm it exists before running the removal command. The backup is what lets support restore your previous identity if it is ever needed.
+> Warning: These steps set aside the identity the client is currently using. The renamed `<network>.reset-<timestamp>` folder is your backup: confirm it exists before starting the service again. The backup is what lets support restore your previous identity if it is ever needed.
 
 **macOS**
 
@@ -623,19 +637,22 @@ Resetting the client means backing up the identity, removing the original, and l
    ```bash
    sudo launchctl bootout system/com.gnosisvpn.gnosisvpnclient
    ```
-2. Back up your current identity. The backup is written next to the identity, not inside it, so the next step cannot delete it:
+2. Move your identity aside. This renames `networks/<network>` to `networks/<network>.reset-<timestamp>` in both your identity and safe folders, and moves any identity left over from a previous release aside as well:
    ```bash
-   sudo cp -a /Library/Application\ Support/GnosisVPN/.config /Library/Application\ Support/GnosisVPN/.config.backup
+   sudo gnosis_vpn-migrate start-clean --user <name>
    ```
-3. Confirm the backup exists before continuing:
+3. Confirm the backup exists before continuing. The list should show `<network>.reset-<timestamp>` and no `<network>` folder:
    ```bash
-   sudo ls -la /Library/Application\ Support/GnosisVPN/.config.backup
+   ls -la ~/Library/Application\ Support/GnosisVPN/networks/
    ```
-4. Remove the current identity:
+   If `<network>` is still listed, rename it yourself, in both folders:
    ```bash
-   sudo rm -rf /Library/Application\ Support/GnosisVPN/.config
+   mv ~/Library/Application\ Support/GnosisVPN/networks/<network> ~/Library/Application\ Support/GnosisVPN/networks/<network>.reset-<timestamp>
    ```
-5. Start the service again:
+   ```bash
+   mv ~/Library/Caches/GnosisVPN/networks/<network> ~/Library/Caches/GnosisVPN/networks/<network>.reset-<timestamp>
+   ```
+4. Start the service again:
    ```bash
    sudo launchctl bootstrap system /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
    ```
@@ -646,25 +663,102 @@ Resetting the client means backing up the identity, removing the original, and l
    ```bash
    sudo systemctl stop gnosisvpn.service
    ```
-2. Back up your current identity. The backup is written next to the identity, not inside it, so the next step cannot delete it:
+2. Move your identity aside. This renames `networks/<network>` to `networks/<network>.reset-<timestamp>` in both your identity and safe folders, and moves any identity left over from a previous release aside as well:
    ```bash
-   sudo cp -a /var/lib/gnosisvpn/.config /var/lib/gnosisvpn/.config.backup
+   sudo gnosis_vpn-migrate start-clean --user <name>
    ```
-3. Confirm the backup exists before continuing:
+3. Confirm the backup exists before continuing. The list should show `<network>.reset-<timestamp>` and no `<network>` folder:
    ```bash
-   sudo ls -la /var/lib/gnosisvpn/.config.backup
+   ls -la ~/.local/share/gnosisvpn/networks/
    ```
-4. Remove the current identity:
+   If `<network>` is still listed, rename it yourself, in both folders:
    ```bash
-   sudo rm -rf /var/lib/gnosisvpn/.config
+   mv ~/.local/share/gnosisvpn/networks/<network> ~/.local/share/gnosisvpn/networks/<network>.reset-<timestamp>
    ```
-5. Start the service again:
+   ```bash
+   mv ~/.cache/gnosisvpn/networks/<network> ~/.cache/gnosisvpn/networks/<network>.reset-<timestamp>
+   ```
+4. Start the service again:
    ```bash
    sudo systemctl start gnosisvpn.service
    ```
 
 
 The client generates a new identity on the current network at the next start. This is a fresh account, so you need to fund it before you can connect. See [Funding your account](https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/).
+
+
+#### My account is missing after upgrading from an earlier release
+
+Earlier releases kept one identity for the whole computer. On upgrade, the installer moves it to the user logged in at the screen (on Linux the desktop session, on macOS the console user). If nobody was logged in, the move is deferred: the previous identity stays in its old location, locked to root.
+
+**Symptoms**
+
+- After the upgrade, the client shows a new, unfunded account instead of your previous one.
+- The app shows **Gnosis VPN service is not running** and lists `gnosis_vpn-migrate` commands instead of a Start button.
+- The installer output says `Migrate it later with: sudo gnosis_vpn-migrate identity --user <name> --replace`.
+
+**Resolution steps**
+
+`<name>` is the account on this computer that should own the previous identity. `--replace` moves any identity that account already has to `networks/<network>.replaced-<timestamp>`, so nothing is deleted. Without it, the command stops with exit code 75 when the account already has a different identity.
+
+**macOS**
+
+1. Stop the service:
+   ```bash
+   sudo launchctl bootout system/com.gnosisvpn.gnosisvpnclient
+   ```
+2. Move the previous identity to your account:
+   ```bash
+   sudo gnosis_vpn-migrate identity --user <name> --replace
+   ```
+3. Start the service again. The first command re-enables it in case the installer left it disabled:
+   ```bash
+   sudo launchctl enable system/com.gnosisvpn.gnosisvpnclient
+   ```
+   ```bash
+   sudo launchctl bootstrap system /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
+   ```
+
+The migration log is `/Library/Logs/GnosisVPN/installer/migrate.log`.
+
+**Debian / Ubuntu**
+
+1. Stop the service:
+   ```bash
+   sudo systemctl stop gnosisvpn.service
+   ```
+2. Move the previous identity to your account:
+   ```bash
+   sudo gnosis_vpn-migrate identity --user <name> --replace
+   ```
+3. Enable and start the service again, in case the installer left it disabled:
+   ```bash
+   sudo systemctl enable --now gnosisvpn
+   ```
+
+The migration log is `/var/log/gnosisvpn/migrate.log`.
+
+
+
+#### The VPN is in use by another user
+
+Only one user at a time can run the VPN on a computer. While another user has the client running, you can't start or control it.
+
+**Symptoms**
+
+- The app shows **The VPN is in use by another user on this computer**.
+- `gnosis_vpn-ctl` prints `Worker client is in use by another user of this machine - wait until they stop it`.
+- `gnosis_vpn-ctl ping` and `gnosis_vpn-ctl info` still work.
+
+**Resolution steps**
+
+Wait until the other user stops the client, then start it from your own account. Start it as yourself, not with `sudo`: the client always runs as the user who starts it, and root can't own it.
+
+To start it from a terminal, `<keep-alive>` is how long the client keeps running without receiving a command:
+
+```bash
+gnosis_vpn-ctl start-client <keep-alive>
+```
 
 
 #### Still not working?
@@ -706,14 +800,23 @@ Include logs from the affected environment.
 
 1. Open the Gnosis VPN app.
 2. Click the **Settings** button with the gear icon.
-3. Open the **Logs** tab.
-4. Click **Export service logs**.
-5. Attach the exported log file when reporting the issue.
+3. In the **Troubleshooting** section, click **Export logs…**.
+4. Attach the exported log file when reporting the issue.
 
-**Or find the log file based on your environment:**
+The export contains system information, the app logs, the service log and the worker logs. Worker logs are only included when you are the user running the client.
 
-- macOS: `/Library/Logs/GnosisVPN/gnosisvpn.log`
-- Linux without GUI: `/var/log/gnosisvpn/gnosisvpn.log`
+**Or find the log files based on your environment:**
+
+| Log                | macOS                                            | Linux                                            |
+| ------------------ | ------------------------------------------------ | ------------------------------------------------ |
+| Service            | `/Library/Logs/GnosisVPN/gnosisvpn.log`          | `/var/log/gnosisvpn/gnosisvpn.log`               |
+| Worker             | `~/Library/Logs/GnosisVPN/worker.log.YYYY-MM-DD` | `~/.local/state/gnosisvpn/worker.log.YYYY-MM-DD` |
+| App                | `~/Library/Logs/com.gnosisvpn.gnosisvpnclient/`  | `~/.local/state/com.gnosisvpn.gnosisvpnclient/`  |
+| Identity migration | `/Library/Logs/GnosisVPN/installer/migrate.log`  | `/var/log/gnosisvpn/migrate.log`                 |
+| Updater            | `/Library/Logs/GnosisVPN/updates.log`            | —                                                |
+| Installer          | `/Library/Logs/GnosisVPN/installer/`             | —                                                |
+
+See [Finding your logs](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/logs/) for details.
 
 **Uploading log files:**
 
@@ -795,29 +898,50 @@ This page lists every file and directory the macOS installer creates, for users 
 
 #### Directories created by the installer
 
-| Folder                                    | Purpose                              | Owner                 | Permissions | Notes                                                                                                                            |
-| ----------------------------------------- | ------------------------------------ | --------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `/Library/Application Support/GnosisVPN/` | Application state and home directory | `gnosisvpn:gnosisvpn` | `0750`      | Service working directory; also set as `TMPDIR` and `HOME` for the daemon. The identity is stored in the `.config` subdirectory. |
-| `/Library/Logs/GnosisVPN/`                | Service log directory                | `gnosisvpn:gnosisvpn` | `0755`      | `gnosisvpn.log` written here; rotated via newsyslog at 100 MB, 10 copies                                                         |
-| `/Library/Logs/GnosisVPN/installer/`      | Installer log directory              | `root:wheel`          | `0755`      | `installer.log` written during install/uninstall steps                                                                           |
-| `/etc/gnosisvpn/`                         | Configuration directory              | `root:gnosisvpn`      | —           | Network config templates and `config.toml` symlink; `/etc` is a symlink to `/private/etc` on macOS                               |
-| `/etc/gnosisvpn/templates/`               | Network config templates             | `root:gnosisvpn`      | —           | `jura.toml.template`, `rotsee.toml.template`, `dufour.toml.template`                                                             |
+| Folder                                    | Purpose                   | Owner        | Permissions | Notes                                                                                                                                                                                                                                                                             |
+| ----------------------------------------- | ------------------------- | ------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/Library/Application Support/GnosisVPN/` | Service working directory | `root:wheel` | `0755`      | Holds the uninstall and helper scripts, the installer's network choice (`installer/`) and updater state. After an upgrade from a single-user release it keeps the previous identity as `.config.migrated-<timestamp>` (or `.config.<timestamp>.bak` after a reset), `root` `0700` |
+| `/Library/Logs/GnosisVPN/`                | Service log directory     | `root:wheel` | `0755`      | `gnosisvpn.log` (service log) and `updates.log` (updater); rotated via newsyslog                                                                                                                                                                                                  |
+| `/Library/Logs/GnosisVPN/installer/`      | Installer log directory   | `root:wheel` | `0755`      | `installer.log`, `preinstall.log`, `postinstall.log` and `migrate.log` (identity migration on upgrade)                                                                                                                                                                            |
+| `/etc/gnosisvpn/`                         | Configuration directory   | `root:wheel` | `0755`      | Network configs and the `config.toml` symlink; `/etc` is a symlink to `/private/etc` on macOS                                                                                                                                                                                     |
+| `/etc/gnosisvpn/templates/`               | Network config templates  | `root:wheel` | `0755`      | One `<network>.toml.template` per shipped network                                                                                                                                                                                                                                 |
 
 #### Key files placed into existing system directories
 
-| Path                                                         | Purpose                                  | Notes                                                                                                         |
-| ------------------------------------------------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `/usr/local/bin/gnosis_vpn-root`                             | Main VPN daemon binary                   | `root:wheel`, `0750`                                                                                          |
-| `/usr/local/bin/gnosis_vpn-worker`                           | Worker process binary                    | `root:gnosisvpn`, `0750`                                                                                      |
-| `/usr/local/bin/gnosis_vpn-ctl`                              | CLI control tool                         | `gnosisvpn:gnosisvpn`, `0755`                                                                                 |
-| `/usr/local/bin/gnosis_vpn-manager`                          | Management utility script                | `root:gnosisvpn`, `0755`                                                                                      |
-| `/usr/local/bin/{wg,wg-quick,wireguard-go}`                  | Bundled WireGuard tools                  | `root:wheel`, `0755`; bundled so no separate WireGuard install is needed                                      |
-| `/Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist` | LaunchDaemon service definition          | Loaded and enabled at boot, runs as root                                                                      |
-| `/etc/newsyslog.d/gnosisvpn.conf`                            | Log rotation policy                      | 100 MB threshold, 10 rotations                                                                                |
-| `/etc/sudoers.d/gnosis-vpn`                                  | Sudoers drop-in for launchctl operations | Allows the `gnosisvpn` group to run specific `launchctl` subcommands without a password; `root:wheel`, `0440` |
-| `/etc/gnosisvpn/config.toml`                                 | Symlink to active network config         | Points to `templates/jura.toml.template` (default network: `jura`)                                            |
-| `/Applications/Gnosis VPN.app`                               | GUI application bundle                   | Extracted from archive during postinstall; `root:admin`, `0755`                                               |
-| `/var/run/gnosisvpn.pid`                                     | Daemon PID file                          | Written by the daemon at startup                                                                              |
+| Path                                                         | Purpose                             | Notes                                                                                                                                                                                |
+| ------------------------------------------------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/usr/local/bin/gnosis_vpn-root`                             | Main VPN daemon binary              | `root:wheel`, `0750`                                                                                                                                                                 |
+| `/usr/local/bin/gnosis_vpn-worker`                           | Worker process binary               | `root:wheel`, `0755`                                                                                                                                                                 |
+| `/usr/local/bin/gnosis_vpn-ctl`                              | CLI control tool                    | `root:wheel`, `0755`                                                                                                                                                                 |
+| `/usr/local/bin/gnosis_vpn-update`                           | Updater                             | `root:wheel`, `0755`                                                                                                                                                                 |
+| `/usr/local/bin/gnosis_vpn-migrate`                          | Identity migration tool             | `root:wheel`, `0755`; moves the previous single-user identity into a user's home on upgrade and resets identities                                                                    |
+| `/usr/local/bin/gnosis_vpn-manager`                          | Management utility script           | `root:wheel`, `0755`                                                                                                                                                                 |
+| `/Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist` | LaunchDaemon service definition     | Loaded and enabled at boot, runs as root                                                                                                                                             |
+| `/etc/newsyslog.d/gnosisvpn.conf`                            | Log rotation policy                 | `gnosisvpn.log` at 1 GB, 12 rotations                                                                                                                                                |
+| `/etc/sudoers.d/gnosis-vpn`                                  | Sudoers drop-in for service control | Allows the `gnosisvpn` group to run specific `launchctl` and `gnosis_vpn-update` commands without a password; `root:wheel`, `0440`. The installer adds the console user to the group |
+| `/etc/gnosisvpn/config.toml`                                 | Symlink to active network config    | Points to `<network>.toml` for the network chosen at install                                                                                                                         |
+| `/Applications/Gnosis VPN.app`                               | GUI application bundle              | Extracted from archive during postinstall; `root:admin`, `0755`                                                                                                                      |
+| `/var/run/gnosisvpn.sock`                                    | Control socket                      | Created by the daemon at startup                                                                                                                                                     |
+| `/var/run/gnosisvpn.pid`                                     | Daemon PID file                     | Written by the daemon at startup                                                                                                                                                     |
+| `/var/run/gnosisvpn/`                                        | Runtime directory                   | `daemon.lock` and `teardown-state.json`                                                                                                                                              |
+
+#### Per-user files
+
+The worker runs as the user who starts the client, so each user has their own identity, one per network. `<network>` is the network folder the client creates.
+
+| Path                                                           | Content                                             | Permissions                      |
+| -------------------------------------------------------------- | --------------------------------------------------- | -------------------------------- |
+| `~/Library/Application Support/GnosisVPN/networks/<network>/`  | Identity: `hopr.id` and `hopr.pass`                 | Directories `0700`, files `0600` |
+| `~/Library/Caches/GnosisVPN/networks/<network>/`               | Safe: `hopr.safe`                                   | Directories `0700`, files `0600` |
+| `~/Library/Logs/GnosisVPN/`                                    | Worker log `worker.log.YYYY-MM-DD`, the last 7 kept | `0700`                           |
+| `~/Library/Application Support/com.gnosisvpn.gnosisvpnclient/` | App settings, `settings.json`                       |                                  |
+| `~/Library/Logs/com.gnosisvpn.gnosisvpnclient/`                | App logs, `gnosis_vpn-app.<date>.log`               |                                  |
+
+#### Uninstalling
+
+The uninstall script removes the binaries, the launchd plists, `/etc/gnosisvpn` (backed up to `~/gnosis-vpn-config-backup-<timestamp>` first), `/Library/Logs/GnosisVPN`, the sudoers file, the `gnosisvpn` group and the app bundle.
+
+It keeps `/Library/Application Support/GnosisVPN` and every user's files under `~/Library`.
 
 ---
 
@@ -829,28 +953,50 @@ This page lists every file and directory the Debian package creates, for users w
 
 #### Directories created by the installer
 
-| Folder                      | Purpose                   | Owner                 | Permissions    | Notes                                                                                                                                                                                                                                                                                                          |
-| --------------------------- | ------------------------- | --------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/etc/gnosisvpn/`           | Configuration directory   | `root:gnosisvpn`      | `0755`         | Contains the env files, the network config files, and a `config.toml` symlink pointing to the active network; the `config-*.toml` files inside are `gnosisvpn:gnosisvpn` `0644`                                                                                                                                |
-| `/var/lib/gnosisvpn/`       | State and cache directory | `gnosisvpn:gnosisvpn` | `0775`         | Service working directory; holds `.config` (your identity, safe and node database, `0700`) and `.cache/wg0_gnosisvpn.conf` (WireGuard config written at runtime)                                                                                                                                               |
-| `/var/log/gnosisvpn/`       | Log directory             | `gnosisvpn:gnosisvpn` | `0755`         | `gnosisvpn.log` is written here; rotated daily, 7-day retention                                                                                                                                                                                                                                                |
-| `/run/gnosisvpn/`           | Runtime directory         | `root:root`           | `0755`         | Created by systemd at service start, not by the installer scripts                                                                                                                                                                                                                                              |
-| `/etc/apt/keyrings/`        | APT signing keys          | `root:root`           | `0644` (file)  | `gnosisvpn-archive-keyring.gpg` copied from bundled `/usr/share/gnosisvpn/` during postinstall                                                                                                                                                                                                                 |
-| `/etc/apt/sources.list.d/`  | APT repository source     | `root:root`           | `0644` (file)  | `gnosisvpn.sources` written during postinstall; the channel comes from `/etc/gnosisvpn/version.txt`. `stable` uses both mirrors (`https://download.vpn.gnosis.eth.limo/linux/apt` and `https://download.gnosisvpn.io/linux/apt`), `snapshot` and `experimental` only `https://download.gnosisvpn.io/linux/apt` |
-| `/etc/apparmor.d/local/`    | AppArmor local drop-ins   | `root:root`           | `0644` (file)  | `wg-quick` drop-in allowing wg-quick to read `/var/lib/gnosisvpn/.cache/wg0_gnosisvpn.conf`; Ubuntu-only                                                                                                                                                                                                       |
-| `/usr/share/gnosisvpn/`     | Shared package resources  | `root:root`           | `0644` (files) | Bundles the APT keyring GPG file and the `networks` list used during postinstall                                                                                                                                                                                                                               |
-| `/usr/share/doc/gnosisvpn/` | Documentation             | `root:root`           | `0644` (files) | Copyright notice and changelog; removed on uninstall (not purge)                                                                                                                                                                                                                                               |
+| Folder                      | Purpose                   | Owner       | Permissions    | Notes                                                                                                                                                                                                                                                                                                          |
+| --------------------------- | ------------------------- | ----------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/etc/gnosisvpn/`           | Configuration directory   | `root:root` | `0755`         | Contains the env files, the network config files, `version.txt` and a `config.toml` symlink pointing to the active network; the `config-*.toml` files inside are `root:root` `0644`                                                                                                                            |
+| `/var/lib/gnosisvpn/`       | Service working directory | `root:root` | `0755`         | Holds no identity. After an upgrade from a single-user release it keeps the previous identity as `.config.migrated-<timestamp>` (or `.config.<timestamp>.bak` after a reset), `root` `0700`                                                                                                                    |
+| `/var/log/gnosisvpn/`       | Log directory             | `root:root` | `0755`         | `gnosisvpn.log` (service log, also shown by `journalctl -u gnosisvpn`) and `migrate.log` (identity migration on upgrade)                                                                                                                                                                                       |
+| `/run/gnosisvpn/`           | Runtime directory         | `root:root` | `0755`         | Created by systemd at service start, not by the installer scripts. Holds the control socket `gnosisvpn.sock`, `daemon.lock` and `teardown-state.json`                                                                                                                                                          |
+| `/etc/apt/keyrings/`        | APT signing keys          | `root:root` | `0644` (file)  | `gnosisvpn-archive-keyring.gpg` copied from bundled `/usr/share/gnosisvpn/` during postinstall                                                                                                                                                                                                                 |
+| `/etc/apt/sources.list.d/`  | APT repository source     | `root:root` | `0644` (file)  | `gnosisvpn.sources` written during postinstall; the channel comes from `/etc/gnosisvpn/version.txt`. `stable` uses both mirrors (`https://download.vpn.gnosis.eth.limo/linux/apt` and `https://download.gnosisvpn.io/linux/apt`), `snapshot` and `experimental` only `https://download.gnosisvpn.io/linux/apt` |
+| `/usr/share/gnosisvpn/`     | Shared package resources  | `root:root` | `0644` (files) | Bundles the APT keyring GPG file and the `networks` list used during postinstall                                                                                                                                                                                                                               |
+| `/usr/share/doc/gnosisvpn/` | Documentation             | `root:root` | `0644` (files) | Copyright notice and changelog; removed on uninstall (not purge)                                                                                                                                                                                                                                               |
 
 #### Key files placed into existing system directories
 
-| Path                                        | Purpose                          | Notes                                                                                                                                                                  |
-| ------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/usr/lib/systemd/system/gnosisvpn.service` | Systemd unit                     | Enabled and started post-install                                                                                                                                       |
-| `/etc/logrotate.d/gnosisvpn`                | Log rotation policy              | Daily, 7 days, gzip                                                                                                                                                    |
-| `/etc/gnosisvpn/config.toml`                | Symlink to active network config | Points to `config-jura-prod.toml` (default network: `jura-prod`; packages ship `jura-prod` and `jura-dev`)                                                             |
-| `/etc/gnosisvpn/gnosisvpn.env`              | Service environment variables    | `RUST_LOG=info`, log to `/var/log/gnosisvpn/gnosisvpn.log`, static routing forced                                                                                      |
-| `/etc/gnosisvpn/gnosisvpn-dynamic.env`      | Generated environment overrides  | Written during postinstall, `root:root` `0644`. Holds the network endpoint and takes precedence over `gnosisvpn.env`, which is left untouched so upgrades don't prompt |
-| `/etc/gnosisvpn/version.txt`                | Installed version                | Read during postinstall to pick the APT channel (`stable`, `snapshot` or `experimental`)                                                                               |
-| `/usr/share/gnosisvpn/networks`             | Networks the package ships       | Space-separated list, first entry is the default network; replaced on every upgrade                                                                                    |
-| `/etc/sysctl.d/99-gnosisvpn-bbr.conf`       | TCP congestion control           | Enables BBR and the `fq` queueing discipline system-wide; applied during postinstall                                                                                   |
-| `/var/lib/dpkg/info/gnosisvpn.*`            | dpkg package records             | Created by dpkg, not by the package: the list of installed files and the maintainer scripts dpkg runs on install, upgrade and removal                                  |
+| Path                                                | Purpose                          | Notes                                                                                                                                                                  |
+| --------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/usr/lib/systemd/system/gnosisvpn.service`         | Systemd unit                     | Runs `gnosis_vpn-root` as `root`; enabled and started post-install                                                                                                     |
+| `/usr/lib/systemd/system/gnosisvpn-logrotate.timer` | Log rotation timer               | Checks the service log size every minute                                                                                                                               |
+| `/etc/logrotate.d/gnosisvpn`                        | Log rotation policy              | Rotates `gnosisvpn.log` hourly or at 1 GB, keeps 12, gzip                                                                                                              |
+| `/etc/gnosisvpn/config.toml`                        | Symlink to active network config | Points to `config-<network>.toml` for the network chosen at install                                                                                                    |
+| `/etc/gnosisvpn/gnosisvpn.env`                      | Service environment variables    | `RUST_LOG=info`, log to `/var/log/gnosisvpn/gnosisvpn.log`, static routing forced                                                                                      |
+| `/etc/gnosisvpn/gnosisvpn-dynamic.env`              | Generated environment overrides  | Written during postinstall, `root:root` `0644`. Holds the network endpoint and takes precedence over `gnosisvpn.env`, which is left untouched so upgrades don't prompt |
+| `/etc/gnosisvpn/version.txt`                        | Installed version                | Read during postinstall to pick the APT channel (`stable`, `snapshot` or `experimental`)                                                                               |
+| `/usr/share/gnosisvpn/networks`                     | Networks the package ships       | Space-separated list, first entry is the default network; replaced on every upgrade                                                                                    |
+| `/etc/sysctl.d/99-gnosisvpn-bbr.conf`               | TCP congestion control           | Enables BBR and the `fq` queueing discipline system-wide; applied during postinstall                                                                                   |
+| `/var/lib/dpkg/info/gnosisvpn.*`                    | dpkg package records             | Created by dpkg, not by the package: the list of installed files and the maintainer scripts dpkg runs on install, upgrade and removal                                  |
+| `/usr/bin/gnosis_vpn-migrate`                       | Identity migration tool          | `root:root`; moves the previous single-user identity into a user's home on upgrade and resets identities                                                               |
+| `/usr/bin/gnosis_vpn-update`                        | Updater                          | `root:root`                                                                                                                                                            |
+
+#### Per-user files
+
+The worker runs as the user who starts the client, so each user has their own identity, one per network. `<network>` is the network folder the client creates.
+
+| Path                                            | Content                                             | Permissions                      |
+| ----------------------------------------------- | --------------------------------------------------- | -------------------------------- |
+| `~/.local/share/gnosisvpn/networks/<network>/`  | Identity: `hopr.id` and `hopr.pass`                 | Directories `0700`, files `0600` |
+| `~/.cache/gnosisvpn/networks/<network>/`        | Safe: `hopr.safe`                                   | Directories `0700`, files `0600` |
+| `~/.local/state/gnosisvpn/`                     | Worker log `worker.log.YYYY-MM-DD`, the last 7 kept | `0700`                           |
+| `~/.config/com.gnosisvpn.gnosisvpnclient/`      | App settings, `settings.json`                       |                                  |
+| `~/.local/state/com.gnosisvpn.gnosisvpnclient/` | App logs, `gnosis_vpn-app.<date>.log`               |                                  |
+
+The service can only write under `/home` and `/var/home`. A home directory elsewhere is not supported.
+
+#### Removing and purging
+
+- `apt remove` keeps `/etc/gnosisvpn`, `/var/lib/gnosisvpn` and `/var/log/gnosisvpn`.
+- `apt purge` deletes `/etc/gnosisvpn` and `/var/log/gnosisvpn`, and moves any previous identity (`/var/lib/gnosisvpn/.config*`) to `/var/backups/gnosisvpn/<timestamp>/`, `root` `0700`. `/var/lib/gnosisvpn` itself is removed only if nothing else is left in it.
+- Neither touches the per-user files above.
