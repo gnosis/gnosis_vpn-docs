@@ -38,7 +38,7 @@ sudo systemctl restart gnosisvpn.service
 <Tabs groupId="upgrading" queryString>
 <TabItem value="macos" label="macOS">
 
-To upgrade Gnosis VPN, download and run the latest installer, following the same steps as in the [installation guide](installation.md). The installer will replace your existing version while preserving your configuration and identity.
+To upgrade Gnosis VPN, download and run the latest installer, following the same steps as in the [installation guide](installation.md). The installer will replace your existing version while preserving your configuration and identity. When upgrading from a release that kept one identity for the whole computer, the installer moves that identity to the user logged in at the screen. If nobody was logged in, see [My account is missing after upgrading from an earlier release](../troubleshooting/common-issues.md#identity-not-migrated).
 
 </TabItem>
 <TabItem value="debian" label="Debian / Ubuntu">
@@ -56,6 +56,8 @@ In a terminal, run:
    ```bash
    sudo apt upgrade gnosisvpn
    ```
+
+When upgrading from a release that kept one identity for the whole computer, the upgrade moves that identity to the user logged in at the desktop. If nobody was logged in, see [My account is missing after upgrading from an earlier release](../troubleshooting/common-issues.md#identity-not-migrated).
 
 </TabItem>
 </Tabs>
@@ -82,3 +84,5 @@ sudo apt remove gnosisvpn
 
 </TabItem>
 </Tabs>
+
+Uninstalling does not remove the identities stored in each user's home directory. See the file locations for [macOS](../reference/file-locations-macos.md) and [Debian](../reference/file-locations-debian.md).

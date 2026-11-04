@@ -32,14 +32,23 @@ Include logs from the affected environment.
 
 1. Open the Gnosis VPN app.
 2. Click the **Settings** button with the gear icon.
-3. Open the **Logs** tab.
-4. Click **Export service logs**.
-5. Attach the exported log file when reporting the issue.
+3. In the **Troubleshooting** section, click **Export logs…**.
+4. Attach the exported log file when reporting the issue.
 
-**Or find the log file based on your environment:**
+The export contains system information, the app logs, the service log and the worker logs. Worker logs are only included when you are the user running the client.
 
-- macOS: `/Library/Logs/GnosisVPN/gnosisvpn.log`
-- Linux without GUI: `/var/log/gnosisvpn/gnosisvpn.log`
+**Or find the log files based on your environment:**
+
+| Log                | macOS                                            | Linux                                            |
+| ------------------ | ------------------------------------------------ | ------------------------------------------------ |
+| Service            | `/Library/Logs/GnosisVPN/gnosisvpn.log`          | `/var/log/gnosisvpn/gnosisvpn.log`               |
+| Worker             | `~/Library/Logs/GnosisVPN/worker.log.YYYY-MM-DD` | `~/.local/state/gnosisvpn/worker.log.YYYY-MM-DD` |
+| App                | `~/Library/Logs/com.gnosisvpn.gnosisvpnclient/`  | `~/.local/state/com.gnosisvpn.gnosisvpnclient/`  |
+| Identity migration | `/Library/Logs/GnosisVPN/installer/migrate.log`  | `/var/log/gnosisvpn/migrate.log`                 |
+| Updater            | `/Library/Logs/GnosisVPN/updates.log`            | —                                                |
+| Installer          | `/Library/Logs/GnosisVPN/installer/`             | —                                                |
+
+See [Finding your logs](../troubleshooting/logs.md) for details.
 
 **Uploading log files:**
 

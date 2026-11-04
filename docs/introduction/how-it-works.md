@@ -9,7 +9,7 @@ Gnosis VPN operates by replacing the traditional, centralized VPN model with a d
 
 ## Establishing a connection
 
-1. **Connection initiation and local setup.** When you start a connection via the app or CLI (`gnosis_vpn-ctl`), your device's root system service (`gnosis_vpn-root`) takes charge. To keep your system secure, it spawns an unprivileged worker process (`gnosis_vpn-worker`) that handles the actual application logic and network communication.
+1. **Connection initiation and local setup.** When you start a connection via the app or CLI (`gnosis_vpn-ctl`), your device's root system service (`gnosis_vpn-root`) takes charge. To keep your system secure, it spawns an unprivileged worker process (`gnosis_vpn-worker`) that handles the actual application logic and network communication. The worker runs as the user who requested the connection.
 
 2. **Secure handshake via the mixnet.** Instead of connecting directly to a VPN server, the worker process routes its initial communication through the HOPR mixnet. It uses this decentralized network of independent nodes to securely reach your selected exit node. Over this secure HOPR path, the worker registers your client's WireGuard public key and opens the necessary TCP and UDP sessions.
 

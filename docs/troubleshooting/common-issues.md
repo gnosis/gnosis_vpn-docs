@@ -124,11 +124,11 @@ The client fails to start after an update and shows **Critical error during init
 
 **Resolution steps**
 
-Resetting the client means backing up the identity, removing the original, and letting the client generate a new one on the current network.
+Resetting the client means moving your identity aside, which keeps it as a backup, and letting the client generate a new one on the current network. `<name>` is your account name on this computer and `<network>` is the network folder the client created.
 
 :::warning
 
-These steps discard the identity the client is currently using. Complete the backup and confirm it exists before running the removal command. The backup is what lets support restore your previous identity if it is ever needed.
+These steps set aside the identity the client is currently using. The renamed `<network>.reset-<timestamp>` folder is your backup: confirm it exists before starting the service again. The backup is what lets support restore your previous identity if it is ever needed.
 
 :::
 
@@ -139,19 +139,22 @@ These steps discard the identity the client is currently using. Complete the bac
    ```bash
    sudo launchctl bootout system/com.gnosisvpn.gnosisvpnclient
    ```
-2. Back up your current identity. The backup is written next to the identity, not inside it, so the next step cannot delete it:
+2. Move your identity aside. This renames `networks/<network>` to `networks/<network>.reset-<timestamp>` in both your identity and safe folders, and moves any identity left over from a previous release aside as well:
    ```bash
-   sudo cp -a /Library/Application\ Support/GnosisVPN/.config /Library/Application\ Support/GnosisVPN/.config.backup
+   sudo gnosis_vpn-migrate start-clean --user <name>
    ```
-3. Confirm the backup exists before continuing:
+3. Confirm the backup exists before continuing. The list should show `<network>.reset-<timestamp>` and no `<network>` folder:
    ```bash
-   sudo ls -la /Library/Application\ Support/GnosisVPN/.config.backup
+   ls -la ~/Library/Application\ Support/GnosisVPN/networks/
    ```
-4. Remove the current identity:
+   If `<network>` is still listed, rename it yourself, in both folders:
    ```bash
-   sudo rm -rf /Library/Application\ Support/GnosisVPN/.config
+   mv ~/Library/Application\ Support/GnosisVPN/networks/<network> ~/Library/Application\ Support/GnosisVPN/networks/<network>.reset-<timestamp>
    ```
-5. Start the service again:
+   ```bash
+   mv ~/Library/Caches/GnosisVPN/networks/<network> ~/Library/Caches/GnosisVPN/networks/<network>.reset-<timestamp>
+   ```
+4. Start the service again:
    ```bash
    sudo launchctl bootstrap system /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
    ```
@@ -163,19 +166,22 @@ These steps discard the identity the client is currently using. Complete the bac
    ```bash
    sudo systemctl stop gnosisvpn.service
    ```
-2. Back up your current identity. The backup is written next to the identity, not inside it, so the next step cannot delete it:
+2. Move your identity aside. This renames `networks/<network>` to `networks/<network>.reset-<timestamp>` in both your identity and safe folders, and moves any identity left over from a previous release aside as well:
    ```bash
-   sudo cp -a /var/lib/gnosisvpn/.config /var/lib/gnosisvpn/.config.backup
+   sudo gnosis_vpn-migrate start-clean --user <name>
    ```
-3. Confirm the backup exists before continuing:
+3. Confirm the backup exists before continuing. The list should show `<network>.reset-<timestamp>` and no `<network>` folder:
    ```bash
-   sudo ls -la /var/lib/gnosisvpn/.config.backup
+   ls -la ~/.local/share/gnosisvpn/networks/
    ```
-4. Remove the current identity:
+   If `<network>` is still listed, rename it yourself, in both folders:
    ```bash
-   sudo rm -rf /var/lib/gnosisvpn/.config
+   mv ~/.local/share/gnosisvpn/networks/<network> ~/.local/share/gnosisvpn/networks/<network>.reset-<timestamp>
    ```
-5. Start the service again:
+   ```bash
+   mv ~/.cache/gnosisvpn/networks/<network> ~/.cache/gnosisvpn/networks/<network>.reset-<timestamp>
+   ```
+4. Start the service again:
    ```bash
    sudo systemctl start gnosisvpn.service
    ```
@@ -184,6 +190,86 @@ These steps discard the identity the client is currently using. Complete the bac
 </Tabs>
 
 The client generates a new identity on the current network at the next start. This is a fresh account, so you need to fund it before you can connect. See [Funding your account](../get-started/funding.md).
+
+</Issue>
+
+<Issue id="identity-not-migrated" title="My account is missing after upgrading from an earlier release">
+
+Earlier releases kept one identity for the whole computer. On upgrade, the installer moves it to the user logged in at the screen (on Linux the desktop session, on macOS the console user). If nobody was logged in, the move is deferred: the previous identity stays in its old location, locked to root.
+
+**Symptoms**
+
+- After the upgrade, the client shows a new, unfunded account instead of your previous one.
+- The app shows **Gnosis VPN service is not running** and lists `gnosis_vpn-migrate` commands instead of a Start button.
+- The installer output says `Migrate it later with: sudo gnosis_vpn-migrate identity --user <name> --replace`.
+
+**Resolution steps**
+
+`<name>` is the account on this computer that should own the previous identity. `--replace` moves any identity that account already has to `networks/<network>.replaced-<timestamp>`, so nothing is deleted. Without it, the command stops with exit code 75 when the account already has a different identity.
+
+<Tabs groupId="operating-systems" queryString="os">
+<TabItem value="macos" label="macOS">
+
+1. Stop the service:
+   ```bash
+   sudo launchctl bootout system/com.gnosisvpn.gnosisvpnclient
+   ```
+2. Move the previous identity to your account:
+   ```bash
+   sudo gnosis_vpn-migrate identity --user <name> --replace
+   ```
+3. Start the service again. The first command re-enables it in case the installer left it disabled:
+   ```bash
+   sudo launchctl enable system/com.gnosisvpn.gnosisvpnclient
+   ```
+   ```bash
+   sudo launchctl bootstrap system /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
+   ```
+
+The migration log is `/Library/Logs/GnosisVPN/installer/migrate.log`.
+
+</TabItem>
+<TabItem value="debian" label="Debian / Ubuntu">
+
+1. Stop the service:
+   ```bash
+   sudo systemctl stop gnosisvpn.service
+   ```
+2. Move the previous identity to your account:
+   ```bash
+   sudo gnosis_vpn-migrate identity --user <name> --replace
+   ```
+3. Enable and start the service again, in case the installer left it disabled:
+   ```bash
+   sudo systemctl enable --now gnosisvpn
+   ```
+
+The migration log is `/var/log/gnosisvpn/migrate.log`.
+
+</TabItem>
+</Tabs>
+
+</Issue>
+
+<Issue id="in-use-by-another-user" title="The VPN is in use by another user">
+
+Only one user at a time can run the VPN on a computer. While another user has the client running, you can't start or control it.
+
+**Symptoms**
+
+- The app shows **The VPN is in use by another user on this computer**.
+- `gnosis_vpn-ctl` prints `Worker client is in use by another user of this machine - wait until they stop it`.
+- `gnosis_vpn-ctl ping` and `gnosis_vpn-ctl info` still work.
+
+**Resolution steps**
+
+Wait until the other user stops the client, then start it from your own account. Start it as yourself, not with `sudo`: the client always runs as the user who starts it, and root can't own it.
+
+To start it from a terminal, `<keep-alive>` is how long the client keeps running without receiving a command:
+
+```bash
+gnosis_vpn-ctl start-client <keep-alive>
+```
 
 </Issue>
 </Issues>
