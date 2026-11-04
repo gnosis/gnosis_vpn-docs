@@ -46,9 +46,9 @@ If the issue occurred during installation, the macOS installer writes separate l
 
 If you are running Gnosis VPN on Linux without the desktop app, log files can be found in:
 
-| Path                                                                     | Content                                               |
-| ------------------------------------------------------------------------ | ----------------------------------------------------- |
-| `/var/log/gnosisvpn/gnosisvpn.log`                                       | Service log, also shown by `journalctl -u gnosisvpn`. |
-| `~/.local/state/gnosisvpn/worker.log.YYYY-MM-DD`                         | Worker log, one file per day, the last 7 kept.        |
-| `~/.local/state/com.gnosisvpn.gnosisvpnclient/gnosis_vpn-app.<date>.log` | App log.                                              |
-| `/var/log/gnosisvpn/migrate.log`                                         | Identity migration on upgrade.                        |
+| Path                                                                     | Content                                        |
+| ------------------------------------------------------------------------ | ---------------------------------------------- |
+| `/var/log/gnosisvpn/gnosisvpn.log`                                       | Service log.                                   |
+| `~/.local/state/gnosisvpn/worker.log.YYYY-MM-DD`                         | Worker log, one file per day, the last 7 kept. |
+| `~/.local/state/com.gnosisvpn.gnosisvpnclient/gnosis_vpn-app.<date>.log` | App log.                                       |
+| `/var/log/gnosisvpn/migrate.log`                                         | Identity migration on upgrade.                 |
