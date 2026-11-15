@@ -47,6 +47,8 @@ const config = {
       },
     },
   ],
+  plugins: [require.resolve("./src/plugins/docs-sidebar-global-data.js")],
+
   presets: [
     [
       "classic",
