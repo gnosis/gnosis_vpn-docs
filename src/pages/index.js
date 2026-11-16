@@ -11,7 +11,7 @@ const CATEGORIES = [
   {
     icon: "ti-book-2",
     title: "Introduction",
-    desc: "What Gnosis VPN is, the El Dorado Beta, VPN architecture and how it works.",
+    desc: "What Gnosis VPN is, Shangri La v1, VPN architecture and how it works.",
     to: "/docs/introduction/overview",
   },
   {
@@ -36,14 +36,11 @@ const CATEGORIES = [
 
 export default function Home() {
   return (
-    <Layout
-      title="Documentation"
-      description="Set up and run Gnosis VPN El Dorado."
-    >
+    <Layout title="Documentation" description="Set up and run Gnosis VPN.">
       <main>
         <div className="gvpnHero">
           <h1>Gnosis VPN documentation</h1>
-          <p>Everything you need to set up and run El Dorado.</p>
+          <p>Everything you need to set up and run Gnosis VPN.</p>
         </div>
 
         <div className="gvpnCards">

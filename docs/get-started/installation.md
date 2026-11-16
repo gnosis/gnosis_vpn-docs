@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 
 # Installation
 
-There are currently two ways to install and set up Gnosis VPN El Dorado.
+There are currently two ways to install and set up Gnosis VPN.
 
 ## Manual installation
 

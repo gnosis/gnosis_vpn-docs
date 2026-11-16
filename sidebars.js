@@ -9,7 +9,7 @@ const sidebars = {
       collapsed: false,
       items: [
         "introduction/overview",
-        "introduction/el-dorado-beta",
+        "introduction/shangri-la-v1",
         "introduction/architecture",
         "introduction/how-it-works",
       ],

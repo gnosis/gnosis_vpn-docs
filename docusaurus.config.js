@@ -129,7 +129,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Gnosis VPN — El Dorado.`,
+        copyright: `Gnosis VPN`,
       },
       prism: {
         theme: themes.github,

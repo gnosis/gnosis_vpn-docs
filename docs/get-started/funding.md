@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 
 # Funding your account
 
-After installation, your Gnosis VPN account must be funded before you can connect. To use Gnosis VPN, you need both **wxHOPR** and **xDAI** on Gnosis Chain.
+After installation, your Gnosis VPN account must be funded before you can connect. Gnosis VPN runs on Gnosis Chain and needs two tokens there: **wxHOPR**, which pays the nodes that carry your traffic, and **xDAI**, which pays network fees.
 
 :::tip Privacy consideration
 
@@ -20,13 +20,25 @@ This makes it harder to link your everyday wallet to your Gnosis VPN usage, but 
 
 :::
 
-## If you already have wxHOPR and xDAI
+## Funding your account for the first time
 
-1. Make sure your wallet is connected to Gnosis Chain.
-2. Send wxHOPR and xDAI to the funding address shown in the Gnosis VPN app.
-3. You can use the QR code or the **Copy Address** button to fund your account from any wallet.
+When you first open the app, it shows **Fund your VPN** with two ways to fund:
 
-## If you don't have wxHOPR and/or xDAI yet
+- **Open funding site** opens the [funding site](https://funding.vpn.gnosis.eth.limo/) with your VPN address filled in. Pay with a token you already hold, on Gnosis Chain, Ethereum, Arbitrum, Base, Optimism, Polygon, BNB Chain or Linea. The site converts it and delivers wxHOPR, plus a little xDAI for fees, to your VPN address.
+- **Send funds directly** shows your VPN address as text and QR code, your current wxHOPR and xDAI balances, and how much of each to send at least. Send both tokens to that one address, on Gnosis Chain only: tokens sent on another network won't arrive.
+
+Funds usually arrive within about 2 minutes. The app then finds your best route.
+
+## Topping up your account
+
+1. Open the Gnosis VPN app and go to **Settings → Usage**.
+2. Under **Funding**, choose **Open funding site** or **Add funds directly**. They work as described above.
+
+The Usage tab also warns when xDAI for fees runs low.
+
+## Getting wxHOPR and xDAI yourself
+
+Only needed if you send funds directly and don't hold these tokens yet.
 
 ### Step 1: Buy HOPR and DAI
 
@@ -58,19 +70,6 @@ You can bridge your tokens using one of the following options.
 1. Open [https://wrapper.hoprnet.org/](https://wrapper.hoprnet.org/)
 2. Connect your wallet on Gnosis Chain.
 3. Convert xHOPR → wxHOPR.
-
-## Funding your account for the first time
-
-Once you have wxHOPR and xDAI in your wallet:
-
-1. Open the Gnosis VPN app.
-2. Use the QR code or **Copy Address** button to send both tokens to your funding address.
-
-## Topping up your account
-
-1. Open the Gnosis VPN app.
-2. Click the wallet icon in the top-right corner. A new window will open.
-3. Click **Add funds**. You'll see your EOA address to top up xDAI, and your Safe wallet address to top up wxHOPR.
 
 ## Funding via the faucet
 
