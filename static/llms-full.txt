@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-11-10T17:49:27+02:00
+Docs-Updated: 2026-11-16T16:11:55+01:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -353,13 +353,13 @@ Gnosis VPN takes a different approach by using HOPR as the routing layer underne
 
 ---
 
-### Gnosis VPN 1.0
+### Shangri La v1
 
-Source: https://docs.vpn.gnosis.eth.limo/docs/introduction/release-1-0/
+Source: https://docs.vpn.gnosis.eth.limo/docs/introduction/shangri-la-v1/
 
-Gnosis VPN 1.0 is the current release. It runs a decentralized VPN architecture on the HOPR mixnet and replaces all earlier releases.
+The current release of Gnosis VPN is **Shangri La**, version 1.0. It runs a decentralized VPN architecture on the HOPR mixnet and replaces all earlier releases.
 
-#### What Gnosis VPN 1.0 supports
+#### What Shangri La supports
 
 - A functional VPN client
 - HOPR-based routing
@@ -369,13 +369,13 @@ Gnosis VPN 1.0 is the current release. It runs a decentralized VPN architecture 
 - macOS
 - Linux (Debian, Ubuntu)
 
-#### What Gnosis VPN 1.0 does not support yet
+#### What Shangri La does not support yet
 
-> Info: Gnosis VPN 1.0 does not yet support Windows, Linux distributions other than Debian and Ubuntu, or mobile.
+> Info: Shangri La does not yet support Windows, Linux distributions other than Debian and Ubuntu, or mobile.
 
 #### Earlier releases
 
-Releases up to 0.97.1 run on networks that shut down on **21 November 2026**, and stop working then. Upgrade to 1.0 before that date, as described in [Managing the client](https://docs.vpn.gnosis.eth.limo/docs/get-started/managing-the-client/).
+Releases up to 0.97.1 run on networks that shut down on **21 November 2026**, and stop working then. Upgrade to Shangri La before that date, as described in [Managing the client](https://docs.vpn.gnosis.eth.limo/docs/get-started/managing-the-client/).
 
 ---
 

@@ -11,7 +11,7 @@ const CATEGORIES = [
   {
     icon: "ti-book-2",
     title: "Introduction",
-    desc: "What Gnosis VPN is, what 1.0 supports, VPN architecture and how it works.",
+    desc: "What Gnosis VPN is, Shangri La v1, VPN architecture and how it works.",
     to: "/docs/introduction/overview",
   },
   {
