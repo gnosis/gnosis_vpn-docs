@@ -8,7 +8,7 @@ title: Requirements
 ## Minimum requirements
 
 - **Operating system:**
-  - **macOS**: 15 or later, Apple Silicon (M1 or later)
+  - **macOS**: Apple Silicon (M1 or later) with macOS 15 or later
   - **Linux**: Debian or Ubuntu, amd64 or arm64
 - **CPU:** 64-bit
 - **RAM:** 4 GB

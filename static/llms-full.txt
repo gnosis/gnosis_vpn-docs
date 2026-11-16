@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-11-16T16:11:55+01:00
+Docs-Updated: 2026-11-16T16:24:24+01:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -25,7 +25,7 @@ Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/requirements/
 #### Minimum requirements
 
 - **Operating system:**
-  - **macOS**: 15 or later, Apple Silicon (M1 or later)
+  - **macOS**: Apple Silicon (M1 or later) with macOS 15 or later
   - **Linux**: Debian or Ubuntu, amd64 or arm64
 - **CPU:** 64-bit
 - **RAM:** 4 GB
