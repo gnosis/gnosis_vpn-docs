@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-11-04T20:10:14+01:00
+Docs-Updated: 2026-11-10T17:49:27+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -25,13 +25,12 @@ Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/requirements/
 #### Minimum requirements
 
 - **Operating system:**
-  - **macOS**: Apple Silicon (M1 or later)
-  - **Linux**: Debian-based distributions
+  - **macOS**: 15 or later, Apple Silicon (M1 or later)
+  - **Linux**: Debian or Ubuntu, amd64 or arm64
 - **CPU:** 64-bit
 - **RAM:** 4 GB
 - **Internet:** Stable internet connection
 - **Permissions:** Administrator (root/sudo) rights to install and run VPN/networking software
-- **Access:** Early-access credentials or access to the onboarding flow
 
 > **Note:** Windows, iOS, Android, and other Linux distributions are not supported in this release.
 
@@ -49,7 +48,7 @@ Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/requirements/
 
 Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/
 
-There are currently two ways to install and set up Gnosis VPN El Dorado.
+There are currently two ways to install and set up Gnosis VPN.
 
 #### Manual installation
 
@@ -179,17 +178,29 @@ To join the tester pool, please visit [https://vpn.gnosis.eth.limo](https://vpn.
 
 Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/
 
-After installation, your Gnosis VPN account must be funded before you can connect. To use Gnosis VPN, you need both **wxHOPR** and **xDAI** on Gnosis Chain.
+After installation, your Gnosis VPN account must be funded before you can connect. Gnosis VPN runs on Gnosis Chain and needs two tokens there: **wxHOPR**, which pays the nodes that carry your traffic, and **xDAI**, which pays network fees.
 
 > Tip: Privacy consideration If you want stronger privacy, consider separating your everyday wallet from the one you use to fund your Gnosis VPN account. Because blockchain transactions are public, it's best to reduce onchain links between identities before acquiring HOPR. For example, you can use [privacypools.com](https://privacypools.com) to deposit ETH from your regular wallet into a pool on Ethereum mainnet, wait until your transaction blends with others, and then withdraw to a fresh wallet. To improve privacy, avoid withdrawing a unique amount. Choose a common denomination (e.g. 0.01 ETH) that many others are likely to use. You can then use the ETH in the new wallet to acquire HOPR and fund your Gnosis VPN account while keeping identities more separate. This makes it harder to link your everyday wallet to your Gnosis VPN usage, but it does not guarantee anonymity. Your privacy level depends on factors like pool size, timing, amount selection, and your overall onchain behavior.
 
-#### If you already have wxHOPR and xDAI
+#### Funding your account for the first time
 
-1. Make sure your wallet is connected to Gnosis Chain.
-2. Send wxHOPR and xDAI to the funding address shown in the Gnosis VPN app.
-3. You can use the QR code or the **Copy Address** button to fund your account from any wallet.
+When you first open the app, it shows **Fund your VPN** with two ways to fund:
 
-#### If you don't have wxHOPR and/or xDAI yet
+- **Open funding site** opens the [funding site](https://funding.vpn.gnosis.eth.limo/) with your VPN address filled in. Pay with a token you already hold, on Gnosis Chain, Ethereum, Arbitrum, Base, Optimism, Polygon, BNB Chain or Linea. The site converts it and delivers wxHOPR, plus a little xDAI for fees, to your VPN address.
+- **Send funds directly** shows your VPN address as text and QR code, your current wxHOPR and xDAI balances, and how much of each to send at least. Send both tokens to that one address, on Gnosis Chain only: tokens sent on another network won't arrive.
+
+Funds usually arrive within about 2 minutes. The app then finds your best route.
+
+#### Topping up your account
+
+1. Open the Gnosis VPN app and go to **Settings → Usage**.
+2. Under **Funding**, choose **Open funding site** or **Add funds directly**. They work as described above.
+
+The Usage tab also warns when xDAI for fees runs low.
+
+#### Getting wxHOPR and xDAI yourself
+
+Only needed if you send funds directly and don't hold these tokens yet.
 
 ##### Step 1: Buy HOPR and DAI
 
@@ -221,19 +232,6 @@ You can bridge your tokens using one of the following options.
 1. Open [https://wrapper.hoprnet.org/](https://wrapper.hoprnet.org/)
 2. Connect your wallet on Gnosis Chain.
 3. Convert xHOPR → wxHOPR.
-
-#### Funding your account for the first time
-
-Once you have wxHOPR and xDAI in your wallet:
-
-1. Open the Gnosis VPN app.
-2. Use the QR code or **Copy Address** button to send both tokens to your funding address.
-
-#### Topping up your account
-
-1. Open the Gnosis VPN app.
-2. Click the wallet icon in the top-right corner. A new window will open.
-3. Click **Add funds**. You'll see your EOA address to top up xDAI, and your Safe wallet address to top up wxHOPR.
 
 #### Funding via the faucet
 
@@ -355,27 +353,29 @@ Gnosis VPN takes a different approach by using HOPR as the routing layer underne
 
 ---
 
-### The El Dorado Beta
+### Gnosis VPN 1.0
 
-Source: https://docs.vpn.gnosis.eth.limo/docs/introduction/el-dorado-beta/
+Source: https://docs.vpn.gnosis.eth.limo/docs/introduction/release-1-0/
 
-The current Beta release of Gnosis VPN is called **El Dorado**. It replaces the previous MVP, Atlantis.
+Gnosis VPN 1.0 is the current release. It runs a decentralized VPN architecture on the HOPR mixnet and replaces all earlier releases.
 
-El Dorado is a working implementation of a decentralized VPN architecture. It runs on early infrastructure and is intended for real usage by a limited group of testers and contributors. It is for users who understand that the product is still in development and are willing to test the client, routing behavior, reliability, and performance under real conditions.
-
-#### What El Dorado supports
+#### What Gnosis VPN 1.0 supports
 
 - A functional VPN client
 - HOPR-based routing
 - End-to-end encrypted tunnelling
-- Multiple exit node locations
+- Exit nodes discovered at runtime, with multiple locations
 - On-chain metered payments
 - macOS
-- Linux (Debian)
+- Linux (Debian, Ubuntu)
 
-#### What El Dorado does not support yet
+#### What Gnosis VPN 1.0 does not support yet
 
-> Info: El Dorado does not yet support Windows, any Linux distribution other than Debian, or mobile. It is not a finished product, not fully optimized, and not intended to provide the same stability or polish as a consumer-ready VPN service.
+> Info: Gnosis VPN 1.0 does not yet support Windows, Linux distributions other than Debian and Ubuntu, or mobile.
+
+#### Earlier releases
+
+Releases up to 0.97.1 run on networks that shut down on **21 November 2026**, and stop working then. Upgrade to 1.0 before that date, as described in [Managing the client](https://docs.vpn.gnosis.eth.limo/docs/get-started/managing-the-client/).
 
 ---
 
@@ -534,7 +534,7 @@ The VPN reports a connected state, but internet access is missing or drops in an
 **Resolution steps: macOS and Linux with GUI**
 
 1. **Switch exit nodes:** click the location dropdown and select an alternative node with the lowest available latency (ms).
-2. **Verify wallet balance:** click the wallet icon in the top-right corner. Ensure your account balance is sufficient; top up if it is depleted.
+2. **Verify your balance:** open **Settings → Usage**. Ensure your balance is sufficient; top up if it is depleted, as described in [Funding your account](https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/#topping-up-your-account).
 3. **Hard restart:** completely terminate the application. Right-click the Gnosis VPN tray icon, select **Quit**, and relaunch the application.
 
 **Resolution steps: Linux without GUI**
@@ -566,7 +566,7 @@ The client hangs indefinitely in a "Connecting" state when attempting to establi
 
 **Resolution steps: macOS and Linux with GUI**
 
-1. Click the wallet icon to verify your account balance.
+1. Open **Settings → Usage** to verify your balance.
 2. Pick an alternate exit node with lower latency.
 3. Restart the app via the tray icon menu if it remains frozen.
 

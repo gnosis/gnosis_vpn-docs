@@ -8,13 +8,12 @@ title: Requirements
 ## Minimum requirements
 
 - **Operating system:**
-  - **macOS**: Apple Silicon (M1 or later)
-  - **Linux**: Debian-based distributions
+  - **macOS**: 15 or later, Apple Silicon (M1 or later)
+  - **Linux**: Debian or Ubuntu, amd64 or arm64
 - **CPU:** 64-bit
 - **RAM:** 4 GB
 - **Internet:** Stable internet connection
 - **Permissions:** Administrator (root/sudo) rights to install and run VPN/networking software
-- **Access:** Early-access credentials or access to the onboarding flow
 
 > **Note:** Windows, iOS, Android, and other Linux distributions are not supported in this release.
 

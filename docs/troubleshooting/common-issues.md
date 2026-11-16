@@ -27,7 +27,7 @@ The VPN reports a connected state, but internet access is missing or drops in an
 **Resolution steps: macOS and Linux with GUI**
 
 1. **Switch exit nodes:** click the location dropdown and select an alternative node with the lowest available latency (ms).
-2. **Verify wallet balance:** click the wallet icon in the top-right corner. Ensure your account balance is sufficient; top up if it is depleted.
+2. **Verify your balance:** open **Settings → Usage**. Ensure your balance is sufficient; top up if it is depleted, as described in [Funding your account](../get-started/funding.md#topping-up-your-account).
 3. **Hard restart:** completely terminate the application. Right-click the Gnosis VPN tray icon, select **Quit**, and relaunch the application.
 
 **Resolution steps: Linux without GUI**
@@ -60,7 +60,7 @@ The client hangs indefinitely in a "Connecting" state when attempting to establi
 
 **Resolution steps: macOS and Linux with GUI**
 
-1. Click the wallet icon to verify your account balance.
+1. Open **Settings → Usage** to verify your balance.
 2. Pick an alternate exit node with lower latency.
 3. Restart the app via the tray icon menu if it remains frozen.
 
