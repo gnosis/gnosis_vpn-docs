@@ -6,7 +6,7 @@
 > distributions are not supported. Design and commands may change during beta.
 
 Status: Beta ("El Dorado")
-Docs-Updated: 2026-11-16T16:24:24+01:00
+Docs-Updated: 2026-11-16T16:41:14+01:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -761,6 +761,28 @@ gnosis_vpn-ctl start-client <keep-alive>
 ```
 
 
+#### Connecting fails with “refusing to connect without DNS diversion”
+
+The client could not point your system's DNS at the tunnel. It refuses to connect instead of sending your DNS queries outside the VPN.
+
+**Symptoms**
+
+- Connecting fails right after the tunnel is set up, for every exit node.
+- The service log has an error line `refusing to connect without DNS diversion`, followed by `DNS not diverted:` and the reason each method failed.
+
+**Resolution steps: Linux**
+
+1. Find the reason in the service log:
+   ```bash
+   sudo grep "refusing to connect without DNS diversion" /var/log/gnosisvpn/gnosisvpn.log | tail -n 1
+   ```
+2. If it mentions `Read-only file system`, a drop-in may have narrowed the service's writable paths. The service needs `/etc` and `/run/resolvconf` writable. Check with:
+   ```bash
+   systemctl show gnosisvpn -p ReadWritePaths
+   ```
+3. If `/etc/resolv.conf` is managed by a tool other than systemd-resolved, resolvconf or NetworkManager, report it as described below, with the log attached.
+
+
 #### Still not working?
 
 If the steps above don't resolve it, attach your client logs to your support ticket. See [Finding your logs](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/logs/) and [Reporting issues](https://docs.vpn.gnosis.eth.limo/docs/reporting/reporting-issues/).
@@ -1006,6 +1028,16 @@ The worker runs as the user who starts the client, so each user has their own id
 | `~/.local/state/com.gnosisvpn.gnosisvpnclient/` | App logs, `gnosis_vpn-app.<date>.log`               |                                  |
 
 The service can only write under `/home` and `/var/home`. A home directory elsewhere is not supported.
+
+#### Files changed while connected
+
+Where systemd-resolved does not manage DNS, the service points the system resolver at the tunnel while connected. For this it can also write to `/etc` and `/run/resolvconf`.
+
+| Path                                | Content                                                | Notes                                                                  |
+| ----------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------- |
+| `/etc/resolv.conf`                  | Nameservers replaced by the tunnel's; other lines kept | Only when neither systemd-resolved nor resolvconf manages it           |
+| `/etc/resolv.conf.gnosisvpn-backup` | The original `/etc/resolv.conf`                        | Restored and removed on disconnect, or at the next start after a crash |
+| `/run/resolvconf/`                  | The tunnel's nameservers, registered with resolvconf   | Only when resolvconf manages `/etc/resolv.conf`; removed on disconnect |
 
 #### Removing and purging
 
