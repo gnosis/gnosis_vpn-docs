@@ -284,13 +284,18 @@ The client could not point your system's DNS at the tunnel. It refuses to connec
 
 **Resolution steps: Linux**
 
-1. Find the reason in the service log:
+1. Find the reason in the service log. The error line only summarizes each failure; the warnings just before it carry the system error:
    ```bash
-   sudo grep "refusing to connect without DNS diversion" /var/log/gnosisvpn/gnosisvpn.log | tail -n 1
+   sudo grep -B 10 "refusing to connect without DNS diversion" /var/log/gnosisvpn/gnosisvpn.log | tail -n 11
    ```
-2. If it mentions `Read-only file system`, a drop-in may have narrowed the service's writable paths. The service needs `/etc` and `/run/resolvconf` writable. Check with:
+2. If those warnings mention `Read-only file system`, a drop-in may have narrowed the service's writable paths. The service needs `/etc` and `/run/resolvconf` writable. Check with:
    ```bash
    systemctl show gnosisvpn -p ReadWritePaths
+   ```
+   If either is missing, find the drop-in that sets `ReadWritePaths`, `ReadOnlyPaths` or `ProtectSystem` with `systemctl cat gnosisvpn`, remove that setting or the whole drop-in, then reload and restart:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl restart gnosisvpn
    ```
 3. If `/etc/resolv.conf` is managed by a tool other than systemd-resolved, resolvconf or NetworkManager, report it as described below, with the log attached.
 
