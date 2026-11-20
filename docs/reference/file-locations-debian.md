@@ -58,6 +58,16 @@ The worker runs as the user who starts the client, so each user has their own id
 
 The service can only write under `/home` and `/var/home`. A home directory elsewhere is not supported.
 
+## Files changed while connected
+
+Where systemd-resolved does not manage DNS, the service points the system resolver at the tunnel while connected. For this it can also write to `/etc` and `/run/resolvconf`.
+
+| Path                                | Content                                                | Notes                                                                                                                                                                             |
+| ----------------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/etc/resolv.conf`                  | Nameservers replaced by the tunnel's; other lines kept | Only when neither systemd-resolved nor resolvconf manages it                                                                                                                      |
+| `/etc/resolv.conf.gnosisvpn-backup` | The original `/etc/resolv.conf`                        | Restored and removed on disconnect, or at the next start after a crash. If restoring fails, it stays and the service log warns `cannot restore resolv.conf`; copy it back by hand |
+| `/run/resolvconf/`                  | The tunnel's nameservers, registered with resolvconf   | Only when resolvconf manages `/etc/resolv.conf`; removed on disconnect                                                                                                            |
+
 ## Removing and purging
 
 - `apt remove` keeps `/etc/gnosisvpn`, `/var/lib/gnosisvpn` and `/var/log/gnosisvpn`.

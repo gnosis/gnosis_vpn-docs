@@ -272,6 +272,34 @@ gnosis_vpn-ctl start-client <keep-alive>
 ```
 
 </Issue>
+
+<Issue id="dns-not-diverted" title="Connecting fails with “refusing to connect without DNS diversion”">
+
+The client could not point your system's DNS at the tunnel. It refuses to connect instead of sending your DNS queries outside the VPN.
+
+**Symptoms**
+
+- Connecting fails right after the tunnel is set up, for every exit node.
+- The service log has an error line `refusing to connect without DNS diversion`, followed by `DNS not diverted:` and the reason each method failed.
+
+**Resolution steps: Linux**
+
+1. Find the reason in the service log. The error line only summarizes each failure; the warnings just before it carry the system error:
+   ```bash
+   sudo grep -B 10 "refusing to connect without DNS diversion" /var/log/gnosisvpn/gnosisvpn.log | tail -n 11
+   ```
+2. If those warnings mention `Read-only file system`, a drop-in may have narrowed the service's writable paths. The service needs `/etc` and `/run/resolvconf` writable. Check with:
+   ```bash
+   systemctl show gnosisvpn -p ReadWritePaths
+   ```
+   If either is missing, find the drop-in that sets `ReadWritePaths`, `ReadOnlyPaths` or `ProtectSystem` with `systemctl cat gnosisvpn`, remove that setting or the whole drop-in, then reload and restart:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl restart gnosisvpn
+   ```
+3. If `/etc/resolv.conf` is managed by a tool other than systemd-resolved, resolvconf or NetworkManager, report it as described below, with the log attached.
+
+</Issue>
 </Issues>
 
 ## Still not working?
