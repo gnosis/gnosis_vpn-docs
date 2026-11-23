@@ -74,6 +74,13 @@ const config = {
         defaultMode: "light",
         respectPrefersColorScheme: true,
       },
+      // Algolia DocSearch. The search-only API key is public by design (it ships to every
+      // browser), so it lives here rather than in a CI secret.
+      algolia: {
+        appId: "P6P7ITP8LN",
+        apiKey: "402da7223865ab5d503583ae144f8c18",
+        indexName: "Main",
+      },
       navbar: {
         // Title empty: the logo SVG already contains the wordmark.
         title: "",
