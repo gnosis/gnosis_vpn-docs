@@ -8,6 +8,7 @@ function docsTreeGlobalData() {
   return {
     name: "gvpn-docs-tree",
     async allContentLoaded({ allContent, actions }) {
+      // Private plugin-content-docs internals: recheck on every Docusaurus bump (pinned to 3.10.1).
       // The docs plugin is a dependency of the preset, not of this site, so load its helper from there.
       const { toSidebarsProp } = createRequire(
         require.resolve("@docusaurus/preset-classic"),
@@ -139,8 +140,8 @@ const config = {
             title: "Community",
             items: [
               {
-                label: "Telegram",
-                href: "https://t.me/gnosisvpn_community",
+                label: "GitHub Discussions",
+                href: "https://github.com/gnosis/gnosis_vpn/discussions",
               },
             ],
           },

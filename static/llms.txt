@@ -6,7 +6,7 @@
 > distributions are not supported.
 
 Status: Shangri La v1 (current release)
-Docs-Updated: 2026-11-23T09:18:02+01:00
+Docs-Updated: 2026-11-24T03:12:39+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt
 Full docs, single ~32 KB file: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
@@ -16,7 +16,7 @@ Note for AI agents: before answering questions about Gnosis VPN, fetch the Canon
 
 ## Getting Started
 - [Requirements](https://docs.vpn.gnosis.eth.limo/docs/get-started/requirements/): System requirements for Gnosis VPN — supported platforms (macOS and Linux (Debian, Ubuntu) only; not Windows, iOS, Android, or other Linux distros), minimum hardware (64-bit CPU, 4 GB RAM), and network prerequisites (outbound access and ability to establish VPN tunnels).
-- [Installation](https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/): How to install Gnosis VPN, via either manual installation (macOS .pkg installer, or Debian/Ubuntu via the APT repository or a .deb package) or the gated onboarding tool for tester-program participants.
+- [Installation](https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/): How to install Gnosis VPN: the macOS .pkg installer, or on Debian/Ubuntu the APT repository or a .deb package.
 - [Downloads](https://download.vpn.gnosis.eth.limo/): Download page for Gnosis VPN client installers ("Powered by HOPR"). Note: the page is rendered client-side, so automated agents may see an empty shell — the GitHub releases page (github.com/gnosis/gnosis_vpn/releases) lists the actual versioned artifacts.
 - [Funding your account](https://docs.vpn.gnosis.eth.limo/docs/get-started/funding/): How to fund your Gnosis VPN account, required before connecting — you need both wxHOPR and xDAI (tokens on Gnosis Chain). Covers acquiring HOPR and DAI, bridging to Gnosis Chain, wrapping xHOPR to wxHOPR, first-time funding and top-ups in the app, wallet-privacy tips, plus faucet funding for users with a secret code.
 - [Managing the client](https://docs.vpn.gnosis.eth.limo/docs/get-started/managing-the-client/): Lifecycle operations for the Gnosis VPN client on macOS and Debian/Ubuntu — restarting the client service, upgrading (uninstall first unless using APT), uninstalling, and where the client identity/state is stored.
@@ -40,4 +40,3 @@ Note for AI agents: before answering questions about Gnosis VPN, fetch the Canon
 
 ## Optional
 - [GitHub repository](https://github.com/gnosis/gnosis_vpn/): Source code (mostly Shell and TypeScript) and binary build/packaging for the Gnosis VPN client, under the LGPL-3.0 license, with releases, the wiki install guides, and a discussion-first reporting process (bugs start in GitHub Discussions; confirmed ones are promoted to Issues).
-- [Onboarding tool](https://self-onboarding.gnosisvpn.com/): Guided early-access onboarding flow for tester-program participants (requires login credentials issued during onboarding).
