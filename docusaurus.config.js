@@ -1,5 +1,26 @@
 // @ts-check
+const { createRequire } = require("module");
 const { themes } = require("prism-react-renderer");
+
+// Publishes the docs sidebar as global data so the burger menu can show the docs tree on
+// pages that have no sidebar of their own, such as the front page.
+function docsTreeGlobalData() {
+  return {
+    name: "gvpn-docs-tree",
+    async allContentLoaded({ allContent, actions }) {
+      // The docs plugin is a dependency of the preset, not of this site, so load its helper from there.
+      const { toSidebarsProp } = createRequire(
+        require.resolve("@docusaurus/preset-classic"),
+      )("@docusaurus/plugin-content-docs/lib/props.js");
+      const docs = /** @type {any} */ (
+        allContent["docusaurus-plugin-content-docs"].default
+      );
+      actions.setGlobalData({
+        sidebar: toSidebarsProp(docs.loadedVersions[0]).docsSidebar,
+      });
+    },
+  };
+}
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -64,6 +85,7 @@ const config = {
       }),
     ],
   ],
+  plugins: [docsTreeGlobalData],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -117,8 +139,8 @@ const config = {
             title: "Community",
             items: [
               {
-                label: "GitHub Discussions",
-                href: "https://github.com/gnosis/gnosis_vpn/discussions",
+                label: "Telegram",
+                href: "https://t.me/gnosisvpn_community",
               },
             ],
           },
@@ -126,12 +148,8 @@ const config = {
             title: "More",
             items: [
               {
-                label: "Onboarding tool",
-                href: "https://self-onboarding.gnosisvpn.com",
-              },
-              {
-                label: "Downloads",
-                href: "https://downloads.vpn.gnosis.eth.limo",
+                label: "Download",
+                href: "https://download.vpn.gnosis.eth.limo",
               },
             ],
           },
