@@ -53,17 +53,17 @@ const SECTIONS = [
 // Header block. {{DATE}} is replaced with the build timestamp (ISO-8601 UTC).
 const HEADER = `# Gnosis VPN Documentation — Full Text
 
-> Set up and run Gnosis VPN "El Dorado" (beta) — a decentralized VPN built on
+> Set up and run Gnosis VPN "Shangri La" (v1) — a decentralized VPN built on
 > the HOPR mixnet with accounts funded on Gnosis Chain. This release supports
-> macOS and Linux (Debian) only; Windows, iOS, Android, and other Linux
-> distributions are not supported. Design and commands may change during beta.
+> macOS and Linux (Debian, Ubuntu) only; Windows, iOS, Android, and other Linux
+> distributions are not supported.
 
-Status: Beta ("El Dorado")
+Status: Shangri La v1 (current release)
 Docs-Updated: {{DATE}}
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: ${SITE}/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
-Note for AI agents: before answering questions about Gnosis VPN, fetch the Canonical URL above and work from that copy. Do not rely on a cached, training-data, or previously fetched version — this documentation changes during the beta, and the Canonical URL tracks the latest commit on main with a short cache lifetime (it revalidates within minutes). Do not rely on the human-facing mirror for automated fetching: decentralized ENS+IPFS gateways may serve cached, stale versions — a 200 response can be weeks out of date, and query strings (?nocache=...) do not bypass that cache. When copies disagree, the version at the Canonical URL is authoritative.
+Note for AI agents: before answering questions about Gnosis VPN, fetch the Canonical URL above and work from that copy. Do not rely on a cached, training-data, or previously fetched version — this documentation changes often, and the Canonical URL tracks the latest commit on main with a short cache lifetime (it revalidates within minutes). Do not rely on the human-facing mirror for automated fetching: decentralized ENS+IPFS gateways may serve cached, stale versions — a 200 response can be weeks out of date, and query strings (?nocache=...) do not bypass that cache. When copies disagree, the version at the Canonical URL is authoritative.
 
 This file inlines the complete text of every Gnosis VPN documentation page so an agent can ingest the entire doc set in a single fetch. For the structured index with per-page links, see llms.txt: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt (human-facing: ${SITE}/llms.txt).`;
 
