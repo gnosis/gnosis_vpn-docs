@@ -1,5 +1,11 @@
 * @esterlus @mjadach-iv @Jaguaras @gnosis/ext-hopr
 
+# Content: pages, navigation and published assets.
+/docs/        @esterlus @mjadach-iv @Jaguaras
+/src/pages/   @esterlus @mjadach-iv @Jaguaras
+/static/      @esterlus @mjadach-iv @Jaguaras
+/sidebars.js  @esterlus @mjadach-iv @Jaguaras
+
 # Tighter pool: prod secrets (ENS/Safe/Pinata) plus code that runs locally or in CI.
 /.github/       @esterlus @mjadach-iv @gnosis/ext-hopr-admin
 /flake.nix      @esterlus @mjadach-iv @gnosis/ext-hopr-admin
