@@ -1,11 +1,17 @@
-* @esterlus @Jaguaras @gnosis/ext-hopr
+* @esterlus @mjadach-iv @Jaguaras @gnosis/ext-hopr
+
+# Content: pages, navigation and published assets.
+/docs/        @esterlus @mjadach-iv @Jaguaras
+/src/pages/   @esterlus @mjadach-iv @Jaguaras
+/static/      @esterlus @mjadach-iv @Jaguaras
+/sidebars.js  @esterlus @mjadach-iv @Jaguaras
 
 # Tighter pool: prod secrets (ENS/Safe/Pinata) plus code that runs locally or in CI.
-/.github/       @gnosis/ext-hopr-admin
-/flake.nix      @gnosis/ext-hopr-admin
-/flake.lock     @gnosis/ext-hopr-admin
-/treefmt.nix    @gnosis/ext-hopr-admin
-/package.json   @gnosis/ext-hopr-admin
-/pnpm-lock.yaml @gnosis/ext-hopr-admin
-/scripts/       @gnosis/ext-hopr-admin
-/.husky/        @gnosis/ext-hopr-admin
+/.github/       @esterlus @mjadach-iv @gnosis/ext-hopr-admin
+/flake.nix      @esterlus @mjadach-iv @gnosis/ext-hopr-admin
+/flake.lock     @esterlus @mjadach-iv @gnosis/ext-hopr-admin
+/treefmt.nix    @esterlus @mjadach-iv @gnosis/ext-hopr-admin
+/package.json   @esterlus @mjadach-iv @gnosis/ext-hopr-admin
+/pnpm-lock.yaml @esterlus @mjadach-iv @gnosis/ext-hopr-admin
+/scripts/       @esterlus @mjadach-iv @gnosis/ext-hopr-admin
+/.husky/        @esterlus @mjadach-iv @gnosis/ext-hopr-admin
