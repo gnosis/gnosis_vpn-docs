@@ -6,7 +6,7 @@
 > distributions are not supported.
 
 Status: Shangri La v1 (current release)
-Docs-Updated: 2026-11-24T03:12:39+02:00
+Docs-Updated: 2026-11-25T11:02:46+01:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -244,6 +244,8 @@ Each user on the computer has their own identity, one per network. `<network>` i
 - Safe (`hopr.safe`): `~/.cache/gnosisvpn/networks/<network>/`
 
 
+To use your account on another device, see [How do I move my identity to another device?](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/faq/#move-identity-to-another-device)
+
 For a complete list of files and directories used by Gnosis VPN, see the reference pages for [macOS](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/) and [Debian](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/).
 
 ---
@@ -318,6 +320,153 @@ sudo apt remove gnosisvpn
 
 
 Uninstalling does not remove the identities stored in each user's home directory. See the file locations for [macOS](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-macos/) and [Debian](https://docs.vpn.gnosis.eth.limo/docs/reference/file-locations-debian/).
+
+---
+
+## Advanced
+
+### Using your own Blokli
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/advanced/custom-blokli/
+
+Gnosis VPN reads everything it needs from Gnosis Chain, such as your Safe, your balances, your payment channels and the exit nodes registered on-chain, through **Blokli**, the HOPR on-chain indexer and GraphQL API. By default, the client uses the hosted Blokli for its network, `https://blokli.piz-palu.gnosisvpn.io` for `piz-palu-prod`.
+
+You can run your own Blokli and point the client at it instead. The client then sends its on-chain queries to your Blokli and no longer depends on the hosted one.
+
+If you run a Gnosis VPN exit node, its Blokli needs two extra settings. See [Run Blokli for an exit node](#run-blokli-for-an-exit-node).
+
+#### Before you start
+
+1. **Run Blokli and wait for its first sync.** Follow the HOPR guide [Run Blokli locally](https://docs.hoprnet.org/node/run-blokli-locally) up to and including [Wait for the first sync](https://docs.hoprnet.org/node/run-blokli-locally#wait-for-the-first-sync). Skip its [Connect your node to Blokli](https://docs.hoprnet.org/node/run-blokli-locally#connect-your-node-to-blokli) section: it is for HOPRd nodes, and this page replaces it for Gnosis VPN.
+
+2. **Index the network your client uses.** The current release runs on `piz-palu-prod`, the network the HOPR guide sets up. The client names your identity folder after the network Blokli reports, so a Blokli that indexes another network gives you a new, unfunded identity instead of your funded one.
+
+3. **Check that Blokli is ready.** On the machine running Blokli, run:
+
+   ```bash
+   curl http://localhost:8080/readyz
+   ```
+
+   Continue when the response shows `"status":"ready"`. Until then, the client can't start and keeps retrying.
+
+#### Choose your Blokli URL
+
+The client needs Blokli's base URL, without `/graphql`:
+
+| Where Blokli runs                          | Blokli URL                                                                  |
+| ------------------------------------------ | --------------------------------------------------------------------------- |
+| On the same computer as Gnosis VPN         | `http://localhost:8080`                                                     |
+| On another machine in your network         | `http://<BLOKLI_IP>:8080`, where `<BLOKLI_IP>` is that machine's IP address |
+| Behind your own HTTPS proxy or on a domain | `https://<your-blokli-domain>`                                              |
+
+- If you [changed Blokli's port](https://docs.hoprnet.org/node/run-blokli-locally#change-the-default-ports), use that port instead of `8080`.
+- If Blokli runs on another machine, allow its port in that machine's firewall. The connection is plain HTTP, so use it only on a network you trust.
+- The host name must resolve to an IPv4 address. The client doesn't connect to Blokli over IPv6.
+
+#### Point the client at your Blokli
+
+The Blokli URL is a setting of the client service, so it applies to every user on the computer. Changing it restarts the service, which drops an active VPN connection.
+
+**macOS**
+
+The URL is set in the service definition, `/Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist`.
+
+1. Replace the URL, using your Blokli URL in place of `http://localhost:8080`:
+
+   ```bash
+   sudo plutil -replace EnvironmentVariables.GNOSISVPN_HOPR_BLOKLI_URL -string "http://localhost:8080" /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
+   ```
+
+2. Check the new value:
+
+   ```bash
+   plutil -extract EnvironmentVariables.GNOSISVPN_HOPR_BLOKLI_URL raw /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
+   ```
+
+3. Reload the service so it reads the changed file. A restart with `launchctl kickstart` keeps the old URL.
+
+   ```bash
+   sudo launchctl bootout system /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
+   ```
+
+   ```bash
+   sudo launchctl bootstrap system /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
+   ```
+
+   If `bootstrap` fails with `Input/output error`, the service hasn't finished stopping yet. Wait a few seconds and run it again.
+
+> Caution: Installing a new version of Gnosis VPN replaces this file and sets the hosted Blokli again. Repeat these steps after every upgrade.
+
+**Debian / Ubuntu**
+
+The URL is set in `/etc/gnosisvpn/gnosisvpn-dynamic.env`, which the package writes during installation. To change it, reinstall the package with your URL, using your Blokli URL in place of `http://localhost:8080`:
+
+1. Refresh the package list:
+
+   ```bash
+   sudo apt update
+   ```
+
+2. Reinstall Gnosis VPN with your Blokli URL:
+
+   ```bash
+   sudo env GNOSISVPN_HOPR_BLOKLI_URL=http://localhost:8080 apt-get install --reinstall gnosisvpn
+   ```
+
+   The package checks the URL, writes it and starts the service again.
+
+3. Check the new value:
+
+   ```bash
+   cat /etc/gnosisvpn/gnosisvpn-dynamic.env
+   ```
+
+   The file should contain `GNOSISVPN_HOPR_BLOKLI_URL=` followed by your URL.
+
+Upgrades with `apt upgrade` keep your URL. Re-running the [install script](https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/) with `--network` replaces it with the hosted Blokli of that network.
+
+
+#### Check that the client uses your Blokli
+
+Start the client from the app or with `gnosis_vpn-ctl`, then open your [worker log](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/logs/).
+
+- A line with `blokli network` and `piz-palu-prod` means the client reached your Blokli and runs on the right network.
+- `blokli network not queryable - retrying`, followed by your URL, means the client can't query your Blokli yet. Check that Blokli is running, that `/readyz` reports `ready`, and that the URL and port are right. The client keeps retrying, so it starts on its own once Blokli answers.
+
+#### Switch back to the hosted Blokli
+
+Repeat the steps in [Point the client at your Blokli](#point-the-client-at-your-blokli) with the hosted URL, `https://blokli.piz-palu.gnosisvpn.io`.
+
+On macOS, installing Gnosis VPN again also restores it.
+
+#### Run Blokli for an exit node
+
+Exit nodes are paid through PIX payments, which settle through the Curvy contracts on Gnosis Chain. Blokli indexes these contracts only when you turn this on, so a Blokli for an exit node needs two extra settings.
+
+Follow the HOPR guide [Run Blokli locally](https://docs.hoprnet.org/node/run-blokli-locally), with these changes:
+
+1. **Turn on Curvy indexing before the first start.** After the guide's [Set up Blokli](https://docs.hoprnet.org/node/run-blokli-locally#set-up-blokli) steps, and before you start Blokli, open `docker-compose.yml` in the `docker` folder of the Blokli repository. Under the `bloklid` service, add two lines to its `environment` section and keep the line already there:
+
+   ```yaml title="docker-compose.yml" {4-5}
+   bloklid:
+     environment:
+       RUST_LOG: info,blokli_chain_indexer=debug
+       BLOKLI_CURVY_AGGREGATOR: "0x3f2B578C6844b8D65b67dba4107db61D51b9020C"
+       BLOKLI_INDEXER_ENABLE_CURVY_INDEXING: "true"
+   ```
+
+   - `BLOKLI_CURVY_AGGREGATOR` is the Curvy Aggregator contract. Blokli finds the other Curvy contracts from it when it starts.
+   - `BLOKLI_INDEXER_ENABLE_CURVY_INDEXING` makes Blokli index the Curvy notes and nullifiers that PIX payments create, along with the HOPR data.
+
+2. **Start Blokli and check the setting.** Continue with the guide's [Start Blokli](https://docs.hoprnet.org/node/run-blokli-locally#start-blokli) and [Wait for the first sync](https://docs.hoprnet.org/node/run-blokli-locally#wait-for-the-first-sync). In the configuration Blokli prints at startup, next to `network: piz-palu-prod`, check for:
+
+   ```text
+   indexer.enable_curvy_indexing: true
+   ```
+
+3. **Connect your exit node.** Your exit node runs HOPRd, so follow the guide's [Connect your node to Blokli](https://docs.hoprnet.org/node/run-blokli-locally#connect-your-node-to-blokli) to set its `blokli_url`. With the DAppNode exit node package, enter the URL in the setup wizard's **Blokli provider URL (advanced)** field instead.
+
+> Caution: Blokli can't add Curvy indexing to data it has already indexed without it. If you add the settings to a Blokli that has synced before, it refuses to index, and its log shows `Missing address/topic info in log topic info table`. To fix this, delete the indexed data and sync again from the start. This repeats the whole first sync. ```bash docker compose down -v ``` ```bash docker compose up -d ```
 
 ---
 
@@ -442,61 +591,7 @@ When websites respond, the data travels back through the exit node, back across 
 
 ---
 
-## Troubleshooting
-
-### Log location
-
-Source: https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/logs/
-
-#### Gnosis VPN app
-
-If you are using the Gnosis VPN desktop app, logs can be exported directly from the application:
-
-1. Open the Gnosis VPN app.
-2. Click the **Settings** button with the gear icon.
-3. In the **Troubleshooting** section, click **Export logs…**.
-4. Attach the exported log file when reporting the issue.
-
-The export is one compressed file with system information, the app logs, the service log and the worker logs. Worker logs are only included when you are the user running the client.
-
-#### Terminal
-
-The service runs as root and writes to a system log. The worker runs as the user who started the client and writes to that user's home directory.
-
-##### macOS
-
-If you are using Gnosis VPN on macOS without exporting logs from the desktop app, log files can be found in:
-
-| Path                                                                     | Content                                        |
-| ------------------------------------------------------------------------ | ---------------------------------------------- |
-| `/Library/Logs/GnosisVPN/gnosisvpn.log`                                  | Service log.                                   |
-| `~/Library/Logs/GnosisVPN/worker.log.YYYY-MM-DD`                         | Worker log, one file per day, the last 7 kept. |
-| `~/Library/Logs/com.gnosisvpn.gnosisvpnclient/gnosis_vpn-app.<date>.log` | App log.                                       |
-| `/Library/Logs/GnosisVPN/updates.log`                                    | Updater log.                                   |
-
-###### Installer logs
-
-If the issue occurred during installation, the macOS installer writes separate logs:
-
-| Path                                                | Content                        |
-| --------------------------------------------------- | ------------------------------ |
-| `/Library/Logs/GnosisVPN/installer/installer.log`   | Main installer log.            |
-| `/Library/Logs/GnosisVPN/installer/preinstall.log`  | Preinstall script output.      |
-| `/Library/Logs/GnosisVPN/installer/postinstall.log` | Postinstall script output.     |
-| `/Library/Logs/GnosisVPN/installer/migrate.log`     | Identity migration on upgrade. |
-
-##### Linux
-
-If you are running Gnosis VPN on Linux without the desktop app, log files can be found in:
-
-| Path                                                                     | Content                                        |
-| ------------------------------------------------------------------------ | ---------------------------------------------- |
-| `/var/log/gnosisvpn/gnosisvpn.log`                                       | Service log.                                   |
-| `~/.local/state/gnosisvpn/worker.log.YYYY-MM-DD`                         | Worker log, one file per day, the last 7 kept. |
-| `~/.local/state/com.gnosisvpn.gnosisvpnclient/gnosis_vpn-app.<date>.log` | App log.                                       |
-| `/var/log/gnosisvpn/migrate.log`                                         | Identity migration on upgrade.                 |
-
----
+## FAQ & troubleshooting
 
 ### Common issues
 
@@ -775,6 +870,174 @@ The client could not point your system's DNS at the tunnel. It refuses to connec
 #### Still not working?
 
 If the steps above don't resolve it, attach your client logs to your support ticket. See [Finding your logs](https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/logs/) and [Reporting issues](https://docs.vpn.gnosis.eth.limo/docs/reporting/reporting-issues/).
+
+---
+
+### Frequently asked questions
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/faq/
+
+Open a question to see the answer.
+
+
+#### How do I move my identity to another device?
+
+Your identity links the client to your Safe and the funds in it. A new device creates its own identity, which is a new, unfunded account. To keep using your account, copy your identity folder from the old device to the new one.
+
+The folder is named after the network. For the current release that is `piz-palu-prod`:
+
+- macOS: `~/Library/Application Support/GnosisVPN/networks/piz-palu-prod/`
+- Debian / Ubuntu: `~/.local/share/gnosisvpn/networks/piz-palu-prod/`
+
+Copy the whole folder, not just the files in it. Other folders next to it, such as `piz-palu-prod.reset-<timestamp>`, are older identities set aside. You don't need them. The two devices can run different operating systems.
+
+> Warning: Anyone with a copy of this folder can use your account and its funds. Keep the copy private. Use your identity on one device at a time: after the move, don't start the client on the old device again.
+
+`<backup>` below is where you keep the copy, such as a USB drive. Run the commands as the user who runs Gnosis VPN. Only the service commands need `sudo`.
+
+**On the old device**
+
+**macOS**
+
+1. Stop the service:
+   ```bash
+   sudo launchctl bootout system/com.gnosisvpn.gnosisvpnclient
+   ```
+2. Copy your identity folder to `<backup>`:
+   ```bash
+   cp -R ~/Library/Application\ Support/GnosisVPN/networks/piz-palu-prod <backup>/
+   ```
+
+**Debian / Ubuntu**
+
+1. Stop the service:
+   ```bash
+   sudo systemctl stop gnosisvpn.service
+   ```
+2. Copy your identity folder to `<backup>`:
+   ```bash
+   cp -R ~/.local/share/gnosisvpn/networks/piz-palu-prod <backup>/
+   ```
+
+
+**On the new device**
+
+Install Gnosis VPN first, as described in the [installation guide](https://docs.vpn.gnosis.eth.limo/docs/get-started/installation/). If the app shows a new account, don't fund it: your copied identity replaces it. Then:
+
+**macOS**
+
+1. Stop the service:
+   ```bash
+   sudo launchctl bootout system/com.gnosisvpn.gnosisvpnclient
+   ```
+2. Move aside the identity the new device created, and its safe folder. This keeps them as a backup. If `mv` reports `No such file or directory`, there is nothing to move:
+   ```bash
+   mv ~/Library/Application\ Support/GnosisVPN/networks/piz-palu-prod ~/Library/Application\ Support/GnosisVPN/networks/piz-palu-prod.replaced-$(date +%Y%m%d%H%M%S)
+   ```
+   ```bash
+   mv ~/Library/Caches/GnosisVPN/networks/piz-palu-prod ~/Library/Caches/GnosisVPN/networks/piz-palu-prod.replaced-$(date +%Y%m%d%H%M%S)
+   ```
+   The safe folder holds the Safe of the new identity. With it moved aside, the client looks up the Safe of your copied identity on-chain.
+3. Copy your identity folder into place and make it private to your account:
+   ```bash
+   mkdir -p ~/Library/Application\ Support/GnosisVPN/networks
+   ```
+   ```bash
+   cp -R <backup>/piz-palu-prod ~/Library/Application\ Support/GnosisVPN/networks/
+   ```
+   ```bash
+   chmod -R go-rwx ~/Library/Application\ Support/GnosisVPN
+   ```
+4. Start the service again:
+   ```bash
+   sudo launchctl bootstrap system /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
+   ```
+
+**Debian / Ubuntu**
+
+1. Stop the service:
+   ```bash
+   sudo systemctl stop gnosisvpn.service
+   ```
+2. Move aside the identity the new device created, and its safe folder. This keeps them as a backup. If `mv` reports `No such file or directory`, there is nothing to move:
+   ```bash
+   mv ~/.local/share/gnosisvpn/networks/piz-palu-prod ~/.local/share/gnosisvpn/networks/piz-palu-prod.replaced-$(date +%Y%m%d%H%M%S)
+   ```
+   ```bash
+   mv ~/.cache/gnosisvpn/networks/piz-palu-prod ~/.cache/gnosisvpn/networks/piz-palu-prod.replaced-$(date +%Y%m%d%H%M%S)
+   ```
+   The safe folder holds the Safe of the new identity. With it moved aside, the client looks up the Safe of your copied identity on-chain.
+3. Copy your identity folder into place and make it private to your account:
+   ```bash
+   mkdir -p ~/.local/share/gnosisvpn/networks
+   ```
+   ```bash
+   cp -R <backup>/piz-palu-prod ~/.local/share/gnosisvpn/networks/
+   ```
+   ```bash
+   chmod -R go-rwx ~/.local/share/gnosisvpn
+   ```
+4. Start the service again:
+   ```bash
+   sudo systemctl start gnosisvpn.service
+   ```
+
+
+Open the app and check **Settings → Usage**. It should show your account's balance, not a new, empty account.
+
+---
+
+### Log location
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/troubleshooting/logs/
+
+#### Gnosis VPN app
+
+If you are using the Gnosis VPN desktop app, logs can be exported directly from the application:
+
+1. Open the Gnosis VPN app.
+2. Click the **Settings** button with the gear icon.
+3. In the **Troubleshooting** section, click **Export logs…**.
+4. Attach the exported log file when reporting the issue.
+
+The export is one compressed file with system information, the app logs, the service log and the worker logs. Worker logs are only included when you are the user running the client.
+
+#### Terminal
+
+The service runs as root and writes to a system log. The worker runs as the user who started the client and writes to that user's home directory.
+
+##### macOS
+
+If you are using Gnosis VPN on macOS without exporting logs from the desktop app, log files can be found in:
+
+| Path                                                                     | Content                                        |
+| ------------------------------------------------------------------------ | ---------------------------------------------- |
+| `/Library/Logs/GnosisVPN/gnosisvpn.log`                                  | Service log.                                   |
+| `~/Library/Logs/GnosisVPN/worker.log.YYYY-MM-DD`                         | Worker log, one file per day, the last 7 kept. |
+| `~/Library/Logs/com.gnosisvpn.gnosisvpnclient/gnosis_vpn-app.<date>.log` | App log.                                       |
+| `/Library/Logs/GnosisVPN/updates.log`                                    | Updater log.                                   |
+
+###### Installer logs
+
+If the issue occurred during installation, the macOS installer writes separate logs:
+
+| Path                                                | Content                        |
+| --------------------------------------------------- | ------------------------------ |
+| `/Library/Logs/GnosisVPN/installer/installer.log`   | Main installer log.            |
+| `/Library/Logs/GnosisVPN/installer/preinstall.log`  | Preinstall script output.      |
+| `/Library/Logs/GnosisVPN/installer/postinstall.log` | Postinstall script output.     |
+| `/Library/Logs/GnosisVPN/installer/migrate.log`     | Identity migration on upgrade. |
+
+##### Linux
+
+If you are running Gnosis VPN on Linux without the desktop app, log files can be found in:
+
+| Path                                                                     | Content                                        |
+| ------------------------------------------------------------------------ | ---------------------------------------------- |
+| `/var/log/gnosisvpn/gnosisvpn.log`                                       | Service log.                                   |
+| `~/.local/state/gnosisvpn/worker.log.YYYY-MM-DD`                         | Worker log, one file per day, the last 7 kept. |
+| `~/.local/state/com.gnosisvpn.gnosisvpnclient/gnosis_vpn-app.<date>.log` | App log.                                       |
+| `/var/log/gnosisvpn/migrate.log`                                         | Identity migration on upgrade.                 |
 
 ---
 

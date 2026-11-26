@@ -22,9 +22,9 @@ const CATEGORIES = [
   },
   {
     icon: "ti-tool",
-    title: "Troubleshooting",
-    desc: "Log locations and fixes for common connection issues.",
-    to: "/docs/troubleshooting/logs",
+    title: "FAQ & troubleshooting",
+    desc: "Fixes for common issues, answers to common questions, and log locations.",
+    to: "/docs/troubleshooting/common-issues",
   },
   {
     icon: "ti-message-report",

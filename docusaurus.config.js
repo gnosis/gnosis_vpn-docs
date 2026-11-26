@@ -133,7 +133,10 @@ const config = {
             items: [
               { label: "Introduction", to: "/docs/introduction/overview" },
               { label: "Get started", to: "/docs/get-started/requirements" },
-              { label: "Troubleshooting", to: "/docs/troubleshooting/logs" },
+              {
+                label: "FAQ & troubleshooting",
+                to: "/docs/troubleshooting/common-issues",
+              },
             ],
           },
           {

@@ -104,4 +104,6 @@ Each user on the computer has their own identity, one per network. `<network>` i
 </TabItem>
 </Tabs>
 
+To use your account on another device, see [How do I move my identity to another device?](../troubleshooting/faq.md#move-identity-to-another-device)
+
 For a complete list of files and directories used by Gnosis VPN, see the reference pages for [macOS](../reference/file-locations-macos.md) and [Debian](../reference/file-locations-debian.md).
