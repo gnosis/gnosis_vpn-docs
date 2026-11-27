@@ -44,8 +44,9 @@ const SITE = "https://docs.vpn.gnosis.eth.limo";
 // ordered by their `sidebar_position` frontmatter (ties broken by filename).
 const SECTIONS = [
   { label: "Getting Started", dir: "get-started" },
+  { label: "Advanced", dir: "advanced" },
   { label: "Concepts", dir: "introduction" },
-  { label: "Troubleshooting", dir: "troubleshooting" },
+  { label: "FAQ & troubleshooting", dir: "troubleshooting" },
   { label: "Reporting", dir: "reporting" },
   { label: "Reference", dir: "reference" },
 ];

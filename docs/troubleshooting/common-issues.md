@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 1
 title: Common issues
 hide_table_of_contents: true
 ---

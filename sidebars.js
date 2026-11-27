@@ -12,6 +12,7 @@ const sidebars = {
         "introduction/shangri-la-v1",
         "introduction/architecture",
         "introduction/how-it-works",
+        "introduction/privacy-model",
       ],
     },
     {
@@ -23,13 +24,24 @@ const sidebars = {
         "get-started/installation",
         "get-started/funding",
         "get-started/managing-the-client",
+        "get-started/hardening",
       ],
     },
     {
       type: "category",
-      label: "Troubleshooting",
+      label: "Advanced",
       collapsed: false,
-      items: ["troubleshooting/logs", "troubleshooting/common-issues"],
+      items: ["advanced/custom-blokli"],
+    },
+    {
+      type: "category",
+      label: "FAQ & troubleshooting",
+      collapsed: false,
+      items: [
+        "troubleshooting/common-issues",
+        "troubleshooting/faq",
+        "troubleshooting/logs",
+      ],
     },
     {
       type: "category",
