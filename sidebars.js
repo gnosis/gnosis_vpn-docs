@@ -12,6 +12,7 @@ const sidebars = {
         "introduction/shangri-la-v1",
         "introduction/architecture",
         "introduction/how-it-works",
+        "introduction/privacy-model",
       ],
     },
     {
@@ -23,6 +24,7 @@ const sidebars = {
         "get-started/installation",
         "get-started/funding",
         "get-started/managing-the-client",
+        "get-started/hardening",
       ],
     },
     {

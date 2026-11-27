@@ -6,7 +6,7 @@
 > distributions are not supported.
 
 Status: Shangri La v1 (current release)
-Docs-Updated: 2026-11-25T11:02:46+01:00
+Docs-Updated: 2026-11-26T15:29:47+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -323,25 +323,88 @@ Uninstalling does not remove the identities stored in each user's home directory
 
 ---
 
+### Hardening your setup
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/get-started/hardening/
+
+This page lists what you can do to reduce how much any one party learns about you when you use Gnosis VPN. Some of it is configuration and some of it is how you use the app. The Privacy model explains the reasoning behind each item. Where an item names a setting, the setting lives in `/etc/gnosisvpn/config.toml` unless the item says otherwise.
+
+#### Funding
+
+- Fund the account from a wallet that isn't tied to you. The funding page describes one way to move ETH into a fresh wallet through Privacy Pools. A fresh funding wallet removes the link between your everyday wallet and the VPN account, although the account's own activity stays visible on chain.
+- If you want to start again with a new account, spend or move the balance first. The account lasts as long as its identity file, and deleting that file makes the funds unreachable from that client.
+
+#### Sessions
+
+The exit sees everything in one session under a single pseudonym, so how you use sessions affects how much of your activity one exit can connect.
+
+- Keep activities you don't want connected in separate sessions. To the exit, one session is one visitor.
+- Start a new session yourself when you want a clean break. Disconnecting and connecting again, or choosing another exit, gives the new session a new pseudonym and a new WireGuard key.
+- Don't count on a dropped connection to separate two activities. When the client reconnects by itself, it keeps the same WireGuard key and tries to continue the same session.
+- Choose a different exit when the separation matters. A new pseudonym hides little from an exit operator who has already carried your earlier session and can see client IP addresses, whereas a different exit operator has carried none of that session.
+- Don't sign in to an account that identifies you during a session you want kept apart from your name. The exit sees which sites a session visits, and the site knows who signed in.
+
+#### Network
+
+- Run your own Blokli server and point the client at it with `GNOSISVPN_HOPR_BLOKLI_URL`. The hosted server then no longer sees your IP address or tells your client which keys belong to an exit. Your Blokli server needs a Gnosis Chain RPC endpoint, and that endpoint's provider sees its queries unless the endpoint is your own node. Running your own Blokli server does not change what relay and exit operators can see, or what the chain shows.
+- Pin an exit you have reason to trust by adding a `[destinations.<name>]` entry with the exit's address. Values in your config take priority over what the exit publishes about itself.
+- Add a second relay by giving a destination `path = { hops = 2 }` and starting the service with `--allow-experimental`. Expect lower speed and a higher price per GB.
+- Avoid `hops = 0` for anything private, since it connects you straight to the exit. The client refuses `hops = 0` unless it was started with `--allow-insecure`.
+- Set your own DNS resolvers under `[wireguard]` with `dns = { overwrite = true, servers = "..." }`, or turn on encrypted DNS in your browser. Otherwise exits send lookups to Cloudflare (1.1.1.1) and Google (8.8.8.8).
+- Use HTTPS. The exit can read anything sent over plain http, and with HTTPS the exit sees only which site you connect to.
+- Set `lan_lockdown = true` under `[connection]` on networks you don't trust. By default, devices on your local network stay reachable outside the tunnel.
+- Leave bootstrap mode off for anything private once it exists, because Gnosis would then run both your relay and your exit.
+
+#### Software
+
+- Verify the release signature before installing, or build from source: [gnosis_vpn-client](https://github.com/gnosis/gnosis_vpn-client), [hoprnet](https://github.com/hoprnet/hoprnet).
+
+---
+
 ## Advanced
 
 ### Using your own Blokli
 
 Source: https://docs.vpn.gnosis.eth.limo/docs/advanced/custom-blokli/
 
-Gnosis VPN reads everything it needs from Gnosis Chain, such as your Safe, your balances, your payment channels and the exit nodes registered on-chain, through **Blokli**, the HOPR on-chain indexer and GraphQL API. By default, the client uses the hosted Blokli for its network, `https://blokli.piz-palu.gnosisvpn.io` for `piz-palu-prod`.
+Gnosis VPN reads everything it needs from Gnosis Chain, such as your Safe, your balances, your payment channels, your PIX payments and the exit nodes registered on-chain, through **Blokli**, the HOPR on-chain indexer and GraphQL API. By default, the client uses the hosted Blokli for its network, `https://blokli.piz-palu.gnosisvpn.io` for `piz-palu-prod`.
 
 You can run your own Blokli and point the client at it instead. The client then sends its on-chain queries to your Blokli and no longer depends on the hosted one.
 
-If you run a Gnosis VPN exit node, its Blokli needs two extra settings. See [Run Blokli for an exit node](#run-blokli-for-an-exit-node).
+#### Where to run Blokli
 
-#### Before you start
+Run Blokli on a separate machine that your computer reaches through its router, such as a server or a VPS.
 
-1. **Run Blokli and wait for its first sync.** Follow the HOPR guide [Run Blokli locally](https://docs.hoprnet.org/node/run-blokli-locally) up to and including [Wait for the first sync](https://docs.hoprnet.org/node/run-blokli-locally#wait-for-the-first-sync). Skip its [Connect your node to Blokli](https://docs.hoprnet.org/node/run-blokli-locally#connect-your-node-to-blokli) section: it is for HOPRd nodes, and this page replaces it for Gnosis VPN.
+> Caution: Gnosis VPN can't use a Blokli on the same computer or on the same local network yet. When you connect, it routes Blokli traffic outside the tunnel through your router, which cuts off `localhost` on macOS and makes the connection fail on Linux.
 
-2. **Index the network your client uses.** The current release runs on `piz-palu-prod`, the network the HOPR guide sets up. The client names your identity folder after the network Blokli reports, so a Blokli that indexes another network gives you a new, unfunded identity instead of your funded one.
+#### Set up Blokli
 
-3. **Check that Blokli is ready.** On the machine running Blokli, run:
+1. **Follow the HOPR guide's setup.** On the machine that will run Blokli, follow [Set up Blokli](https://docs.hoprnet.org/node/run-blokli-locally#set-up-blokli) in the HOPR guide [Run Blokli locally](https://docs.hoprnet.org/node/run-blokli-locally). Keep `network = "piz-palu-prod"` in the configuration: it is the network the current release runs on. The client names your identity folder after the network Blokli reports, so a Blokli that indexes another network gives you a new, unfunded identity instead of your funded one.
+
+2. **Turn on Curvy indexing before the first start.** Gnosis VPN pays for traffic with PIX payments, which settle through the Curvy contracts on Gnosis Chain. The client reads its PIX payment notes from Blokli, so without Curvy indexing, payments fail. Blokli indexes these contracts only when you turn this on.
+
+   Open `docker-compose.yml` in the `docker` folder of the Blokli repository. Under the `bloklid` service, add two lines to its `environment` section and keep the line already there:
+
+   ```yaml title="docker-compose.yml" {4-5}
+   bloklid:
+     environment:
+       RUST_LOG: info,blokli_chain_indexer=debug
+       BLOKLI_CURVY_AGGREGATOR: "0x3f2B578C6844b8D65b67dba4107db61D51b9020C"
+       BLOKLI_INDEXER_ENABLE_CURVY_INDEXING: "true"
+   ```
+
+   - `BLOKLI_CURVY_AGGREGATOR` is the Curvy Aggregator contract. Blokli finds the other Curvy contracts from it when it starts.
+   - `BLOKLI_INDEXER_ENABLE_CURVY_INDEXING` makes Blokli index the Curvy notes and nullifiers that PIX payments create, along with the HOPR data.
+
+3. **Start Blokli and wait for the first sync.** Follow the guide's [Start Blokli](https://docs.hoprnet.org/node/run-blokli-locally#start-blokli) and [Wait for the first sync](https://docs.hoprnet.org/node/run-blokli-locally#wait-for-the-first-sync). In the configuration Blokli prints at startup, next to `network: piz-palu-prod`, check for:
+
+   ```text
+   indexer.enable_curvy_indexing: true
+   ```
+
+   Skip the guide's [Connect your node to Blokli](https://docs.hoprnet.org/node/run-blokli-locally#connect-your-node-to-blokli) section: it is for HOPRd nodes, and this page replaces it for Gnosis VPN.
+
+4. **Check that Blokli is ready.** On the machine running Blokli, run:
 
    ```bash
    curl http://localhost:8080/readyz
@@ -349,19 +412,27 @@ If you run a Gnosis VPN exit node, its Blokli needs two extra settings. See [Run
 
    Continue when the response shows `"status":"ready"`. Until then, the client can't start and keeps retrying.
 
+> Caution: Blokli can't add Curvy indexing to data it has already indexed without it. If you add the settings to a Blokli that has synced before, it refuses to index, and its log shows `Missing address/topic info in log topic info table`. To fix this, delete the indexed data and sync again from the start. This repeats the whole first sync. ```bash docker compose down -v ``` ```bash docker compose up -d ```
+
 #### Choose your Blokli URL
 
-The client needs Blokli's base URL, without `/graphql`:
+Reach Blokli through a public IP address or a domain. The client needs Blokli's base URL, without `/graphql`:
 
-| Where Blokli runs                          | Blokli URL                                                                  |
-| ------------------------------------------ | --------------------------------------------------------------------------- |
-| On the same computer as Gnosis VPN         | `http://localhost:8080`                                                     |
-| On another machine in your network         | `http://<BLOKLI_IP>:8080`, where `<BLOKLI_IP>` is that machine's IP address |
-| Behind your own HTTPS proxy or on a domain | `https://<your-blokli-domain>`                                              |
+| Address                           | Blokli URL                     |
+| --------------------------------- | ------------------------------ |
+| A public IP address | `http://<PUBLIC_IP>:8080`      |
+| A domain, behind an HTTPS proxy   | `https://<your-blokli-domain>` |
 
-- If you [changed Blokli's port](https://docs.hoprnet.org/node/run-blokli-locally#change-the-default-ports), use that port instead of `8080`.
-- If Blokli runs on another machine, allow its port in that machine's firewall. The connection is plain HTTP, so use it only on a network you trust.
-- The host name must resolve to an IPv4 address. The client doesn't connect to Blokli over IPv6.
+`<PUBLIC_IP>` is the public IPv4 address of the machine running Blokli, or of the router in front of it. A domain must point at that same address.
+
+Before you use the URL, make sure that:
+
+- **The port is forwarded.** If the machine running Blokli is behind a router, for example at home or in an office, forward Blokli's port on that router to the machine: `8080` for a public IP, or your HTTPS proxy's port, usually `443`, for a domain. A VPS with its own public IP needs no forwarding.
+- **The firewall allows the port** on the machine running Blokli.
+- **The URL has the right port.** If you [changed Blokli's port](https://docs.hoprnet.org/node/run-blokli-locally#change-the-default-ports) or forward a different one, use that port instead of `8080`.
+- **The address is IPv4.** The client doesn't connect to Blokli over IPv6, so a domain needs an IPv4 (`A`) record.
+
+> Note: The HOPR guide serves Blokli over plain HTTP. With a public IP, anyone on the way can read and change your on-chain queries. A domain with an HTTPS proxy avoids this. If Blokli runs behind the same router as the computer running Gnosis VPN, the router must support NAT loopback, also called hairpin NAT, to reach its own public address.
 
 #### Point the client at your Blokli
 
@@ -371,10 +442,10 @@ The Blokli URL is a setting of the client service, so it applies to every user o
 
 The URL is set in the service definition, `/Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist`.
 
-1. Replace the URL, using your Blokli URL in place of `http://localhost:8080`:
+1. Replace the URL, using your Blokli URL in place of `https://blokli.example.com`:
 
    ```bash
-   sudo plutil -replace EnvironmentVariables.GNOSISVPN_HOPR_BLOKLI_URL -string "http://localhost:8080" /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
+   sudo plutil -replace EnvironmentVariables.GNOSISVPN_HOPR_BLOKLI_URL -string "https://blokli.example.com" /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
    ```
 
 2. Check the new value:
@@ -399,7 +470,7 @@ The URL is set in the service definition, `/Library/LaunchDaemons/com.gnosisvpn.
 
 **Debian / Ubuntu**
 
-The URL is set in `/etc/gnosisvpn/gnosisvpn-dynamic.env`, which the package writes during installation. To change it, reinstall the package with your URL, using your Blokli URL in place of `http://localhost:8080`:
+The URL is set in `/etc/gnosisvpn/gnosisvpn-dynamic.env`, which the package writes during installation. To change it, reinstall the package with your URL, using your Blokli URL in place of `https://blokli.example.com`:
 
 1. Refresh the package list:
 
@@ -410,7 +481,7 @@ The URL is set in `/etc/gnosisvpn/gnosisvpn-dynamic.env`, which the package writ
 2. Reinstall Gnosis VPN with your Blokli URL:
 
    ```bash
-   sudo env GNOSISVPN_HOPR_BLOKLI_URL=http://localhost:8080 apt-get install --reinstall gnosisvpn
+   sudo env GNOSISVPN_HOPR_BLOKLI_URL=https://blokli.example.com apt-get install --reinstall gnosisvpn
    ```
 
    The package checks the URL, writes it and starts the service again.
@@ -438,35 +509,6 @@ Start the client from the app or with `gnosis_vpn-ctl`, then open your [worker l
 Repeat the steps in [Point the client at your Blokli](#point-the-client-at-your-blokli) with the hosted URL, `https://blokli.piz-palu.gnosisvpn.io`.
 
 On macOS, installing Gnosis VPN again also restores it.
-
-#### Run Blokli for an exit node
-
-Exit nodes are paid through PIX payments, which settle through the Curvy contracts on Gnosis Chain. Blokli indexes these contracts only when you turn this on, so a Blokli for an exit node needs two extra settings.
-
-Follow the HOPR guide [Run Blokli locally](https://docs.hoprnet.org/node/run-blokli-locally), with these changes:
-
-1. **Turn on Curvy indexing before the first start.** After the guide's [Set up Blokli](https://docs.hoprnet.org/node/run-blokli-locally#set-up-blokli) steps, and before you start Blokli, open `docker-compose.yml` in the `docker` folder of the Blokli repository. Under the `bloklid` service, add two lines to its `environment` section and keep the line already there:
-
-   ```yaml title="docker-compose.yml" {4-5}
-   bloklid:
-     environment:
-       RUST_LOG: info,blokli_chain_indexer=debug
-       BLOKLI_CURVY_AGGREGATOR: "0x3f2B578C6844b8D65b67dba4107db61D51b9020C"
-       BLOKLI_INDEXER_ENABLE_CURVY_INDEXING: "true"
-   ```
-
-   - `BLOKLI_CURVY_AGGREGATOR` is the Curvy Aggregator contract. Blokli finds the other Curvy contracts from it when it starts.
-   - `BLOKLI_INDEXER_ENABLE_CURVY_INDEXING` makes Blokli index the Curvy notes and nullifiers that PIX payments create, along with the HOPR data.
-
-2. **Start Blokli and check the setting.** Continue with the guide's [Start Blokli](https://docs.hoprnet.org/node/run-blokli-locally#start-blokli) and [Wait for the first sync](https://docs.hoprnet.org/node/run-blokli-locally#wait-for-the-first-sync). In the configuration Blokli prints at startup, next to `network: piz-palu-prod`, check for:
-
-   ```text
-   indexer.enable_curvy_indexing: true
-   ```
-
-3. **Connect your exit node.** Your exit node runs HOPRd, so follow the guide's [Connect your node to Blokli](https://docs.hoprnet.org/node/run-blokli-locally#connect-your-node-to-blokli) to set its `blokli_url`. With the DAppNode exit node package, enter the URL in the setup wizard's **Blokli provider URL (advanced)** field instead.
-
-> Caution: Blokli can't add Curvy indexing to data it has already indexed without it. If you add the settings to a Blokli that has synced before, it refuses to index, and its log shows `Missing address/topic info in log topic info table`. To fix this, delete the indexed data and sync again from the start. This repeats the whole first sync. ```bash docker compose down -v ``` ```bash docker compose up -d ```
 
 ---
 
@@ -588,6 +630,94 @@ Once the connection is fully established, your internet traffic follows a unique
 - **To the public internet:** the exit node forwards your traffic to its final destination. Websites will see the IP address and geographical location of the exit node, not your actual device.
 
 When websites respond, the data travels back through the exit node, back across the HOPR mixnet, and finally to your device. By never relying on a single trusted intermediary, this architecture keeps your browsing activity private.
+
+---
+
+### Privacy model
+
+Source: https://docs.vpn.gnosis.eth.limo/docs/introduction/privacy-model/
+
+Gnosis VPN is a WireGuard tunnel for your whole device, carried over the HOPR network. Your device joins the network as a node, chooses a route and mixes its own packets before sending them through a relay to the exit you picked. The client's mixer holds packets for up to about 1 ms, and relays hold them for up to 20 ms by default.
+
+The aim is that no single party holds both WHO you are (your IP address, and anything that ties the account to you) and WHAT you do (the sites and services you reach). This page sets out who sees which of the two today, where that separation depends on trust, and what you can change yourself.
+
+#### Who sees what
+
+| Party                       | WHO                                                                               | WHAT                                                         | Notes                                                           |
+| --------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------- |
+| Your internet provider      | Your IP address, and that you use Gnosis VPN                                      | Nothing                                                      | The same is true of any VPN.                                    |
+| Relays                      | Your IP address and when you are online                                           | Nothing                                                      | The relay on your route also knows which exit you use.          |
+| The exit                    | A session pseudonym. Exit operators can also see client IP addresses (see below). | Sites and services, DNS lookups, anything sent without HTTPS | With HTTPS the exit sees which site, not the content.           |
+| DNS resolver                | The exit's address, not yours                                                     | Your lookups                                                 | Cloudflare (1.1.1.1) and Google (8.8.8.8) unless you change it. |
+| Blokli server               | Your IP address                                                                   | Nothing                                                      | Sees the chain data your client asks for.                       |
+| Anyone reading Gnosis Chain | Your VPN account and the wallet that funded it                                    | Nothing                                                      | Shows when and roughly how much the account is used.            |
+| Curvy relayer               | Normally the exit's address                                                       | Nothing                                                      | Sees the timing of payments to exits and could refuse them.     |
+
+Operators decide what their own relays and exits record, and the node software can export per-session metrics if an operator turns that on. Assume an operator can keep whatever the node sees.
+
+#### Sessions and payment
+
+Each connection is a session under a random pseudonym chosen by your client. The exit replies along single-use return paths supplied by the client, so the exit never needs the client's address, and everything in one session reaches the exit under that one pseudonym. A session ends when you disconnect or switch exit, and the next session gets a new pseudonym and a new WireGuard key. When a connection drops and the client reconnects by itself, the client keeps the key and tries to continue the same session.
+
+You pay per use in wxHOPR from an account on Gnosis Chain, which consists of a key generated on your device and a Safe that holds the funds. There is no cash or card option. Exits are paid through PIX, in blocks of about 660 MB per session. The client pays out of a balance it keeps in Curvy, a third-party shielded pool, into a one-off address, so the chain does not show which account paid which exit. Curvy's relayer submits those payments on the client's behalf.
+
+#### Where you’re trusting that this separation is maintained
+
+Some current features of Gnosis VPN do still require a measure of trust. We have attempted to list and explain these below. We are working hard to mitigate these for everyone. Some can already be mitigated by making wise choices in setup and usage (see Hardening Your Setup).
+
+We do not intend to make excuses, but for context we do also note that these trust assumptions are generally much worse elsewhere.
+
+##### One relay by default
+
+**What it is:** With one relay on the route, the relay's operator knows your IP address and which exit you use, and the exit's operator knows what you do.
+
+**Who could use it:** One operator running both nodes, or two operators who share records. The client favours faster relays, so an operator with several fast relays is chosen more often.
+
+**By comparison:** A VPN company is in that position on every route it offers, its multi-hop routes included, because it runs every server.
+
+**Mitigation:** You can add relays today by starting the service with `--allow-experimental`, at some cost in speed and price. Routes that step up to a target number of relays automatically are on the roadmap. Whether the default changes has not been decided.
+
+##### Operators can see your IP address
+
+**What it is:** To measure routes, the client contacts relays and exits directly and probes them every few seconds, so their operators can see that a given IP address uses Gnosis VPN, and when.
+
+**Who could use it:** Any relay or exit operator, although an IP address alone says nothing about what its user does. An exit operator carries your traffic and can also see client IP addresses, so could attempt to work out which IP address a session's traffic belongs to.
+
+**By comparison:** Every website you visit learns your IP address, and a VPN company learns the IP address of every customer.
+
+**Mitigation:** Reducing the number of nodes a client contacts directly is on the roadmap.
+
+##### The Blokli server
+
+**What it is:** The client reads Gnosis Chain and submits its transactions through a Blokli server, which it contacts outside the tunnel. The server's operator sees your IP address and the chain data your client asks for, and the client takes Blokli's word for which keys belong to which exit.
+
+**Who could use it:** Whoever controls the Blokli server. Seeing your IP address takes that operator no effort, whereas putting the server between you and an exit would take a deliberate attack. The default Blokli server is hosted by **[dev to confirm which entity]**.
+
+**By comparison:** A wallet's RPC provider sees its users' IP addresses and wallet addresses in the same way.
+
+**Status:** You can run your own Blokli server today (see Hardening your setup). The trust then moves to the Gnosis Chain RPC endpoint behind your server, or to nobody if that endpoint is your own node.
+
+##### Timing
+
+**What it is:** Someone who can watch your connection and your exit's connection at the same moment can try to match them by timing and volume.
+
+**Who could use it:** In practice, a large network operator or a state.
+
+**By comparison:** Low-latency networks in general do not defend against this kind of observer.
+
+**Status:** Cover traffic nodes on the HOPR network send bursts of packets through relays, which pays the relays, checks that they are reachable and gives a basic level of cover. In the current configuration each relay receives a 10-second burst about every 20 minutes **[dev to confirm this configuration is deployed]**. Clients could also generate cover traffic of their own. The code for that exists in the HOPR libraries but is not part of current builds.
+
+#### What the chain shows
+
+Gnosis Chain is public. Anyone can see your VPN account, each payment into it and the wallet the payment came from, and the account's payment-channel activity shows when and roughly how much the account is used. What the account says about you depends on how you fund it: an account funded from a wallet in your name can be traced to you, and one funded from a fresh wallet is a key with a balance. A VPN company holds the equivalent record privately, tied to a card or an email address.
+
+#### Bootstrap mode
+
+Bootstrap mode does not exist yet. It is planned as a setting, off by default, that routes you through relays and exits run by Gnosis so that the app can be tried on a stable path. With bootstrap mode on, Gnosis would see both WHO and WHAT. No relays or exits run by HOPR or Gnosis are in operation at present **[dev to confirm]**.
+
+#### Status
+
+Gnosis VPN is in early access on macOS (Apple Silicon) and on Debian and Ubuntu Linux. If being identified would put you in danger, hold off until the single-relay default and the direct contact with every relay and exit have both changed. The code is public ([gnosis_vpn-client](https://github.com/gnosis/gnosis_vpn-client), [hoprnet](https://github.com/hoprnet/hoprnet)) and releases are signed. This page is updated when any of the above changes.
 
 ---
 

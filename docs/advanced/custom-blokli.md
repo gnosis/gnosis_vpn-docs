@@ -8,19 +8,46 @@ import TabItem from '@theme/TabItem';
 
 # Using your own Blokli
 
-Gnosis VPN reads everything it needs from Gnosis Chain, such as your Safe, your balances, your payment channels and the exit nodes registered on-chain, through **Blokli**, the HOPR on-chain indexer and GraphQL API. By default, the client uses the hosted Blokli for its network, `https://blokli.piz-palu.gnosisvpn.io` for `piz-palu-prod`.
+Gnosis VPN reads everything it needs from Gnosis Chain, such as your Safe, your balances, your payment channels, your PIX payments and the exit nodes registered on-chain, through **Blokli**, the HOPR on-chain indexer and GraphQL API. By default, the client uses the hosted Blokli for its network, `https://blokli.piz-palu.gnosisvpn.io` for `piz-palu-prod`.
 
 You can run your own Blokli and point the client at it instead. The client then sends its on-chain queries to your Blokli and no longer depends on the hosted one.
 
-If you run a Gnosis VPN exit node, its Blokli needs two extra settings. See [Run Blokli for an exit node](#run-blokli-for-an-exit-node).
+## Where to run Blokli
 
-## Before you start
+Run Blokli on a separate machine that your computer reaches through its router, such as a server or a VPS.
 
-1. **Run Blokli and wait for its first sync.** Follow the HOPR guide [Run Blokli locally](https://docs.hoprnet.org/node/run-blokli-locally) up to and including [Wait for the first sync](https://docs.hoprnet.org/node/run-blokli-locally#wait-for-the-first-sync). Skip its [Connect your node to Blokli](https://docs.hoprnet.org/node/run-blokli-locally#connect-your-node-to-blokli) section: it is for HOPRd nodes, and this page replaces it for Gnosis VPN.
+:::caution
+Gnosis VPN can't use a Blokli on the same computer or on the same local network yet. When you connect, it routes Blokli traffic outside the tunnel through your router, which cuts off `localhost` on macOS and makes the connection fail on Linux.
+:::
 
-2. **Index the network your client uses.** The current release runs on `piz-palu-prod`, the network the HOPR guide sets up. The client names your identity folder after the network Blokli reports, so a Blokli that indexes another network gives you a new, unfunded identity instead of your funded one.
+## Set up Blokli
 
-3. **Check that Blokli is ready.** On the machine running Blokli, run:
+1. **Follow the HOPR guide's setup.** On the machine that will run Blokli, follow [Set up Blokli](https://docs.hoprnet.org/node/run-blokli-locally#set-up-blokli) in the HOPR guide [Run Blokli locally](https://docs.hoprnet.org/node/run-blokli-locally). Keep `network = "piz-palu-prod"` in the configuration: it is the network the current release runs on. The client names your identity folder after the network Blokli reports, so a Blokli that indexes another network gives you a new, unfunded identity instead of your funded one.
+
+2. **Turn on Curvy indexing before the first start.** Gnosis VPN pays for traffic with PIX payments, which settle through the Curvy contracts on Gnosis Chain. The client reads its PIX payment notes from Blokli, so without Curvy indexing, payments fail. Blokli indexes these contracts only when you turn this on.
+
+   Open `docker-compose.yml` in the `docker` folder of the Blokli repository. Under the `bloklid` service, add two lines to its `environment` section and keep the line already there:
+
+   ```yaml title="docker-compose.yml" {4-5}
+   bloklid:
+     environment:
+       RUST_LOG: info,blokli_chain_indexer=debug
+       BLOKLI_CURVY_AGGREGATOR: "0x3f2B578C6844b8D65b67dba4107db61D51b9020C"
+       BLOKLI_INDEXER_ENABLE_CURVY_INDEXING: "true"
+   ```
+
+   - `BLOKLI_CURVY_AGGREGATOR` is the Curvy Aggregator contract. Blokli finds the other Curvy contracts from it when it starts.
+   - `BLOKLI_INDEXER_ENABLE_CURVY_INDEXING` makes Blokli index the Curvy notes and nullifiers that PIX payments create, along with the HOPR data.
+
+3. **Start Blokli and wait for the first sync.** Follow the guide's [Start Blokli](https://docs.hoprnet.org/node/run-blokli-locally#start-blokli) and [Wait for the first sync](https://docs.hoprnet.org/node/run-blokli-locally#wait-for-the-first-sync). In the configuration Blokli prints at startup, next to `network: piz-palu-prod`, check for:
+
+   ```text
+   indexer.enable_curvy_indexing: true
+   ```
+
+   Skip the guide's [Connect your node to Blokli](https://docs.hoprnet.org/node/run-blokli-locally#connect-your-node-to-blokli) section: it is for HOPRd nodes, and this page replaces it for Gnosis VPN.
+
+4. **Check that Blokli is ready.** On the machine running Blokli, run:
 
    ```bash
    curl http://localhost:8080/readyz
@@ -28,19 +55,42 @@ If you run a Gnosis VPN exit node, its Blokli needs two extra settings. See [Run
 
    Continue when the response shows `"status":"ready"`. Until then, the client can't start and keeps retrying.
 
+:::caution
+Blokli can't add Curvy indexing to data it has already indexed without it. If you add the settings to a Blokli that has synced before, it refuses to index, and its log shows `Missing address/topic info in log topic info table`. To fix this, delete the indexed data and sync again from the start. This repeats the whole first sync.
+
+```bash
+docker compose down -v
+```
+
+```bash
+docker compose up -d
+```
+
+:::
+
 ## Choose your Blokli URL
 
-The client needs Blokli's base URL, without `/graphql`:
+Reach Blokli through a public IP address or a domain. The client needs Blokli's base URL, without `/graphql`:
 
-| Where Blokli runs                          | Blokli URL                                                                  |
-| ------------------------------------------ | --------------------------------------------------------------------------- |
-| On the same computer as Gnosis VPN         | `http://localhost:8080`                                                     |
-| On another machine in your network         | `http://<BLOKLI_IP>:8080`, where `<BLOKLI_IP>` is that machine's IP address |
-| Behind your own HTTPS proxy or on a domain | `https://<your-blokli-domain>`                                              |
+| Address                           | Blokli URL                     |
+| --------------------------------- | ------------------------------ |
+| A public IP address | `http://<PUBLIC_IP>:8080`      |
+| A domain, behind an HTTPS proxy   | `https://<your-blokli-domain>` |
 
-- If you [changed Blokli's port](https://docs.hoprnet.org/node/run-blokli-locally#change-the-default-ports), use that port instead of `8080`.
-- If Blokli runs on another machine, allow its port in that machine's firewall. The connection is plain HTTP, so use it only on a network you trust.
-- The host name must resolve to an IPv4 address. The client doesn't connect to Blokli over IPv6.
+`<PUBLIC_IP>` is the public IPv4 address of the machine running Blokli, or of the router in front of it. A domain must point at that same address.
+
+Before you use the URL, make sure that:
+
+- **The port is forwarded.** If the machine running Blokli is behind a router, for example at home or in an office, forward Blokli's port on that router to the machine: `8080` for a public IP, or your HTTPS proxy's port, usually `443`, for a domain. A VPS with its own public IP needs no forwarding.
+- **The firewall allows the port** on the machine running Blokli.
+- **The URL has the right port.** If you [changed Blokli's port](https://docs.hoprnet.org/node/run-blokli-locally#change-the-default-ports) or forward a different one, use that port instead of `8080`.
+- **The address is IPv4.** The client doesn't connect to Blokli over IPv6, so a domain needs an IPv4 (`A`) record.
+
+:::note
+The HOPR guide serves Blokli over plain HTTP. With a public IP, anyone on the way can read and change your on-chain queries. A domain with an HTTPS proxy avoids this.
+
+If Blokli runs behind the same router as the computer running Gnosis VPN, the router must support NAT loopback, also called hairpin NAT, to reach its own public address.
+:::
 
 ## Point the client at your Blokli
 
@@ -51,10 +101,10 @@ The Blokli URL is a setting of the client service, so it applies to every user o
 
 The URL is set in the service definition, `/Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist`.
 
-1. Replace the URL, using your Blokli URL in place of `http://localhost:8080`:
+1. Replace the URL, using your Blokli URL in place of `https://blokli.example.com`:
 
    ```bash
-   sudo plutil -replace EnvironmentVariables.GNOSISVPN_HOPR_BLOKLI_URL -string "http://localhost:8080" /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
+   sudo plutil -replace EnvironmentVariables.GNOSISVPN_HOPR_BLOKLI_URL -string "https://blokli.example.com" /Library/LaunchDaemons/com.gnosisvpn.gnosisvpnclient.plist
    ```
 
 2. Check the new value:
@@ -82,7 +132,7 @@ Installing a new version of Gnosis VPN replaces this file and sets the hosted Bl
 </TabItem>
 <TabItem value="debian" label="Debian / Ubuntu">
 
-The URL is set in `/etc/gnosisvpn/gnosisvpn-dynamic.env`, which the package writes during installation. To change it, reinstall the package with your URL, using your Blokli URL in place of `http://localhost:8080`:
+The URL is set in `/etc/gnosisvpn/gnosisvpn-dynamic.env`, which the package writes during installation. To change it, reinstall the package with your URL, using your Blokli URL in place of `https://blokli.example.com`:
 
 1. Refresh the package list:
 
@@ -93,7 +143,7 @@ The URL is set in `/etc/gnosisvpn/gnosisvpn-dynamic.env`, which the package writ
 2. Reinstall Gnosis VPN with your Blokli URL:
 
    ```bash
-   sudo env GNOSISVPN_HOPR_BLOKLI_URL=http://localhost:8080 apt-get install --reinstall gnosisvpn
+   sudo env GNOSISVPN_HOPR_BLOKLI_URL=https://blokli.example.com apt-get install --reinstall gnosisvpn
    ```
 
    The package checks the URL, writes it and starts the service again.
@@ -123,43 +173,3 @@ Start the client from the app or with `gnosis_vpn-ctl`, then open your [worker l
 Repeat the steps in [Point the client at your Blokli](#point-the-client-at-your-blokli) with the hosted URL, `https://blokli.piz-palu.gnosisvpn.io`.
 
 On macOS, installing Gnosis VPN again also restores it.
-
-## Run Blokli for an exit node
-
-Exit nodes are paid through PIX payments, which settle through the Curvy contracts on Gnosis Chain. Blokli indexes these contracts only when you turn this on, so a Blokli for an exit node needs two extra settings.
-
-Follow the HOPR guide [Run Blokli locally](https://docs.hoprnet.org/node/run-blokli-locally), with these changes:
-
-1. **Turn on Curvy indexing before the first start.** After the guide's [Set up Blokli](https://docs.hoprnet.org/node/run-blokli-locally#set-up-blokli) steps, and before you start Blokli, open `docker-compose.yml` in the `docker` folder of the Blokli repository. Under the `bloklid` service, add two lines to its `environment` section and keep the line already there:
-
-   ```yaml title="docker-compose.yml" {4-5}
-   bloklid:
-     environment:
-       RUST_LOG: info,blokli_chain_indexer=debug
-       BLOKLI_CURVY_AGGREGATOR: "0x3f2B578C6844b8D65b67dba4107db61D51b9020C"
-       BLOKLI_INDEXER_ENABLE_CURVY_INDEXING: "true"
-   ```
-
-   - `BLOKLI_CURVY_AGGREGATOR` is the Curvy Aggregator contract. Blokli finds the other Curvy contracts from it when it starts.
-   - `BLOKLI_INDEXER_ENABLE_CURVY_INDEXING` makes Blokli index the Curvy notes and nullifiers that PIX payments create, along with the HOPR data.
-
-2. **Start Blokli and check the setting.** Continue with the guide's [Start Blokli](https://docs.hoprnet.org/node/run-blokli-locally#start-blokli) and [Wait for the first sync](https://docs.hoprnet.org/node/run-blokli-locally#wait-for-the-first-sync). In the configuration Blokli prints at startup, next to `network: piz-palu-prod`, check for:
-
-   ```text
-   indexer.enable_curvy_indexing: true
-   ```
-
-3. **Connect your exit node.** Your exit node runs HOPRd, so follow the guide's [Connect your node to Blokli](https://docs.hoprnet.org/node/run-blokli-locally#connect-your-node-to-blokli) to set its `blokli_url`. With the DAppNode exit node package, enter the URL in the setup wizard's **Blokli provider URL (advanced)** field instead.
-
-:::caution
-Blokli can't add Curvy indexing to data it has already indexed without it. If you add the settings to a Blokli that has synced before, it refuses to index, and its log shows `Missing address/topic info in log topic info table`. To fix this, delete the indexed data and sync again from the start. This repeats the whole first sync.
-
-```bash
-docker compose down -v
-```
-
-```bash
-docker compose up -d
-```
-
-:::
