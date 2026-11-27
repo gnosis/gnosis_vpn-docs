@@ -6,7 +6,7 @@
 > distributions are not supported.
 
 Status: Shangri La v1 (current release)
-Docs-Updated: 2026-11-26T15:29:47+02:00
+Docs-Updated: 2026-11-27T13:39:51+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms.txt
 Full docs, single ~32 KB file: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)

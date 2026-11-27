@@ -72,10 +72,10 @@ docker compose up -d
 
 Reach Blokli through a public IP address or a domain. The client needs Blokli's base URL, without `/graphql`:
 
-| Address                           | Blokli URL                     |
-| --------------------------------- | ------------------------------ |
-| A public IP address | `http://<PUBLIC_IP>:8080`      |
-| A domain, behind an HTTPS proxy   | `https://<your-blokli-domain>` |
+| Address                         | Blokli URL                     |
+| ------------------------------- | ------------------------------ |
+| A public IP address             | `http://<PUBLIC_IP>:8080`      |
+| A domain, behind an HTTPS proxy | `https://<your-blokli-domain>` |
 
 `<PUBLIC_IP>` is the public IPv4 address of the machine running Blokli, or of the router in front of it. A domain must point at that same address.
 

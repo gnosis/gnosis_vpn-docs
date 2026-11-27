@@ -6,7 +6,7 @@
 > distributions are not supported.
 
 Status: Shangri La v1 (current release)
-Docs-Updated: 2026-11-26T15:29:47+02:00
+Docs-Updated: 2026-11-27T13:39:51+02:00
 Canonical: https://raw.githubusercontent.com/gnosis/gnosis_vpn-docs/refs/heads/main/static/llms-full.txt
 Human-facing mirror: https://docs.vpn.gnosis.eth.limo/llms-full.txt (decentralized ENS+IPFS path; gateway caches may serve it stale)
 
@@ -418,10 +418,10 @@ Run Blokli on a separate machine that your computer reaches through its router, 
 
 Reach Blokli through a public IP address or a domain. The client needs Blokli's base URL, without `/graphql`:
 
-| Address                           | Blokli URL                     |
-| --------------------------------- | ------------------------------ |
-| A public IP address | `http://<PUBLIC_IP>:8080`      |
-| A domain, behind an HTTPS proxy   | `https://<your-blokli-domain>` |
+| Address                         | Blokli URL                     |
+| ------------------------------- | ------------------------------ |
+| A public IP address             | `http://<PUBLIC_IP>:8080`      |
+| A domain, behind an HTTPS proxy | `https://<your-blokli-domain>` |
 
 `<PUBLIC_IP>` is the public IPv4 address of the machine running Blokli, or of the router in front of it. A domain must point at that same address.
 
